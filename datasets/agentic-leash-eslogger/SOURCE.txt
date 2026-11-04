@@ -1,0 +1,6 @@
+Source: https://github.com/velusgautam/agentic-leash/tree/main/tests/fixtures/eslogger
+Commit: fixtures added in 4ad9f7772e936f4ac2075d4af09bdf6aa517f678 (2026-10-15T20:58:48Z "chore: Record eslogger volume spike and fixtures"); files fetched from that commit (or main if missing)
+License: MIT (repo LICENSE, copied here; GitHub API spdx_id MIT)
+Downloaded: 2026-11-04
+Provenance (docs/plans/spike-results.md): real eslogger capture on a dev Mac while Claude Code and T3 Code ran; 20 events per type (rename 10, unlink 13);
+ exec args after argv[0] and env redacted; eslogger and sentineld events excluded. ES message version 10.

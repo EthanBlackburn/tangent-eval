@@ -1,0 +1,5 @@
+Source: https://github.com/elastic/detection-rules
+Fetched: 2026-11-04 (git clone --depth 1 --filter=blob:none --sparse; sparse paths: rules/macos rules/cross-platform rules/integrations/anthropic rules/integrations/openai_chatgpt_enterprise)
+Commit: 1a666d715fa7e2079bb7d020f12d638fff17f7f4 (committed 2026-11-04T15:14:11Z)
+License: Elastic License 2.0 (repo LICENSE.txt; GitHub API reports NOASSERTION)
+Use: detection content (Elastic SIEM rules naming macOS paths, GenAI agent process names and config files). Not telemetry. Nothing here was run or installed (top-level Makefile/python tooling is present in the sparse root but untouched).

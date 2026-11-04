@@ -1,0 +1,9 @@
+Source: https://github.com/peterhanily/maccrab (MacCrab, local macOS ES-based detector)
+Commit: e4ce98f5807883536d97a7619d4c29473dcebd80 (main as of 2026-11-04)
+License: Apache-2.0 (LICENSE copied; GitHub API spdx_id Apache-2.0)
+Downloaded: 2026-11-04
+Content: Sigma-style YAML rules over macOS ES process/file events: Rules/ai_safety (32 rules: Claude settings/hook injection by non-Claude process,
+ MCP config injection, skill/SKILL.md poisoning install, canary skill/rules read, binary dropped into ~/.claude, AI tool reads ssh/aws/.env, writes
+ persistence/shell profile, etc.), Rules/graph (AI-agent chain rules, JSON), supply_chain, tcc, persistence, credential_access, sequences;
+ test fixtures fp_corpus.json (12 benign dev-workstation process cases), rule_corpus.json (36 should-fire/should-not cases),
+ LLMEvalFixtures (3 labeled alert->expected verdict cases); BENCHMARK.md. Detection content + tiny labeled fixtures; no raw telemetry.

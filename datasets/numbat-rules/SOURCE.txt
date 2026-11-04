@@ -1,0 +1,5 @@
+Source: https://github.com/perplexityai/numbat (endpoint visibility/detection for AI agent activity)
+Commit: ebb511ff5b4d9ed4b1c732460e128a8601091fed
+Fetched: 2026-11-04
+License: Apache-2.0 (repo LICENSE; GitHub API spdx Apache-2.0)
+Downloaded: rules/**/*.yaml (CEL detection rules incl. agent-config tamper path lists), docs/agent-coverage.md, LICENSE. No code or binaries.

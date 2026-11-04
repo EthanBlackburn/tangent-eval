@@ -1,0 +1,5 @@
+Source: https://github.com/intellectronica/ruler/blob/5e551e60952fb1c81c6c5ad6f5fe8b7a412bda87/README.md
+Commit: 5e551e60952fb1c81c6c5ad6f5fe8b7a412bda87
+License: MIT (GitHub API spdx_id)
+Retrieved: 2026-11-04
+Files: unmodified README (agent -> rules file / MCP file / skills dir / subagents dir table at lines 57-90).

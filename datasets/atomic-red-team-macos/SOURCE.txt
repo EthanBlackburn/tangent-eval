@@ -1,0 +1,6 @@
+Source: https://github.com/redcanaryco/atomic-red-team/tree/master/atomics/Indexes (macos-index.csv, macos-index.yaml)
+Commit: a8f00488f3be0d6f8a967585848bb3817a590e31 (master as of 2026-11-04)
+License: MIT (LICENSE.txt copied here; GitHub API spdx_id MIT)
+Downloaded: 2026-11-04
+Content: text index of 318 macOS atomic tests (tactic, ATT&CK technique, test name, GUID, executor); the YAML holds each test's
+ commands as text. Procedures only, no recorded telemetry. Never execute any command from these files.

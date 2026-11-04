@@ -1,0 +1,7 @@
+Source: https://github.com/elastic/protections-artifacts
+Fetched: 2026-11-04 (git clone --depth 1)
+Commit: c7b3b2eb7fe9a0c73282003d81da4c0e2d32941d (committed 2026-10-23T12:41:15+05:30)
+License: Elastic License 2.0 (ELv2) - repo LICENSE.txt and per-rule `license = "Elastic License v2"`
+Contents kept: behavior/rules/{macos,cross-platform,linux,windows}/*.toml (EQL endpoint behavior rules), yara/ rules (text), ransomware/ docs.
+Removed after clone: ransomware/testing/ (mock_ransomware.py / .ps1 test programs; not data).
+Use: detection content only (rule logic naming macOS paths/process names); not telemetry. Nothing here was run.

@@ -1,0 +1,6 @@
+Source: https://github.com/jamf/jamfprotect (sparse: custom_analytic_detections/ + LICENSE)
+Fetched: 2026-11-04 (git clone --depth 1 --filter=blob:none --sparse)
+Commit: 34e1c6c6e1c96d79ab0e760d2cb0f6cea7f8aa38 (committed 2026-02-10T09:28:56Z)
+License: MIT (repo LICENSE; GitHub API spdx_id MIT)
+Contents: 80 Jamf Protect custom analytic YAML files (NSPredicate filters over GPProcessEvent / GPFSEvent), incl. agentic_detections/openclaw_*.yaml (install, onboard, directory created, ai.openclaw.* LaunchAgent, clawhub skill install), keychain_copied, terminal_persistency, mdfind_search_aws_keys, sqlite3_fda, etc.
+Use: detection content and benign-baseline hints (e.g. OpenClaw's own LaunchAgent ai.openclaw.gateway.plist). Not telemetry. Nothing run.

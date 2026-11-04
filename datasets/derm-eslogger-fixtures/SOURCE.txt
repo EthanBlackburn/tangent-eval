@@ -1,0 +1,9 @@
+Source: https://github.com/aetiusgular/derm/tree/main/macos/activity-collector/tests/fixtures
+Commit: 824ae838c17969b2ed3ee4901832545ee41eeaf9
+License: MIT (repo LICENSE copied here; GitHub API spdx_id MIT)
+Downloaded: 2026-11-04
+Content: synthetic eslogger JSONL (ES msg v7, schema 1; round pids 1000/1001/1002/2000/3000 from tests/end_to_end.rs).
+ harness_session.jsonl (22 lines, 2 intentionally malformed): a codex harness -> zsh -> git/curl session in ~/proj plus an unrelated
+ process (Calculator) and a tcc_modify; open/close/create/rename/unlink/mmap/exit. file_events.jsonl: truncate/link/copyfile/clone/exchangedata.
+Verification note (2026-11-04, skeptic pass): harness_session.jsonl has 24 lines (22 parse, 2 malformed). Besides git work under the codex tree,
+ it has zsh (child of codex) opening ~/.ssh/id_ed25519 and unlinking ~/Documents/notes.txt, and a launchd-parented curl opening ~/.aws/credentials.

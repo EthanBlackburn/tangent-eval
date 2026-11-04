@@ -1,0 +1,7 @@
+Source: https://github.com/sbousseaden/macOS-ATTACK-DATASET
+Commit: 0315ec88d1f4b338c07315223bc6a53619465472 2021-01-26T09:44:13+01:00
+License: README states GNU General Public License (links to LICENSE.GPL in sbousseaden/EVTX-ATTACK-SAMPLES); no LICENSE file in this repo, GitHub API reports none. Redistribution allowed under GPL terms.
+Downloaded: 2026-11-04
+Content: 66 JSON files (Elasticsearch hits: _id/_index/_source in ECS) from Elastic Endpoint Security for macOS (2021), grouped by ATT&CK tactic folder:
+ file/process events for persistence (bash_profile, ssh authorized_keys, LaunchAgents/Daemons, cron, emond, vim plugin, login hooks),
+ credential access (browser cookies, keychain via security), TCC bypass, defense evasion etc. Lab hosts; records hold lab host names/IPs.

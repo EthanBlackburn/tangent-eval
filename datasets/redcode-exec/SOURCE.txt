@@ -1,0 +1,6 @@
+Source: https://github.com/AI-secure/RedCode (dataset/RedCode-Exec only; RedCode-Gen malware-generation prompts deliberately not downloaded)
+Commit: 664e4793dc7309f98b8271baed5bbc04d6ef4c39
+Fetched: 2026-11-04
+License: dataset/ is CC-BY-4.0 (dataset/LICENSE, README "License" section); repo code is MIT
+Paper: https://arxiv.org/abs/2411.07781 (NeurIPS 2024 D&B)
+Content: JSON lists of risky Python/Bash snippets with Text_summary / Text_details natural-language variants and expected_result.

@@ -1,0 +1,5 @@
+Source: https://github.com/dyoshikawa/rulesync (docs/reference/supported-tools.md, docs/guide/global-mode.md)
+Commit: d088ccc8f436255115e0e7fb95f9ce0778375a4a
+License: MIT (GitHub API spdx_id)
+Retrieved: 2026-11-04
+Files: unmodified Markdown documentation.

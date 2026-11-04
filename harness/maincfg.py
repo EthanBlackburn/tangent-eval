@@ -48,7 +48,7 @@ import sys
 import yaml
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))  # the repository
+ROOT = os.path.abspath(os.environ.get("TANGENT_ROOT") or os.path.join(HERE, "..", "tangent"))  # the tangent repository (Makefile)
 EX = os.path.join(ROOT, "examples", "cloud-infra")
 
 ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])

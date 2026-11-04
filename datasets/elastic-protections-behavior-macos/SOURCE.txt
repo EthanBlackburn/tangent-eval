@@ -1,0 +1,6 @@
+Source: https://github.com/elastic/protections-artifacts (behavior/rules/macos/*.toml and behavior/rules/cross-platform/*.toml)
+Commit: c7b3b2eb7fe9a0c73282003d81da4c0e2d32941d (main as of 2026-11-04)
+License: Elastic License 2.0 (LICENSE.txt copied here; each rule also says license = "Elastic License v2"). Distribution allowed with notices; no hosted/managed-service offering.
+Downloaded: 2026-11-04
+Content: Elastic Defend endpoint behavior (EQL) rules for macOS and cross-platform, incl. "Persistence via GenAI Tool" and Cursor/VS Code/node supply-chain rules. Detection content only.
+Verification note (2026-11-04, skeptic pass): every .toml here is also in evaldata/elastic-protections-artifacts/repo (same commit c7b3b2eb, committed 2026-10-23). This dir is a duplicate.

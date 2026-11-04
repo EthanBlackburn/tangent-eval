@@ -1,0 +1,9 @@
+Source: OpenSSF malicious-packages repository (OSV-format malicious package reports)
+URL: https://github.com/ossf/malicious-packages
+Commit: 33cdd8087fa0dde00839cac62b2630d07453f72b
+Fetched: 2026-11-04 via raw.githubusercontent.com/ossf/malicious-packages/<commit>/<path>
+License: Apache-2.0 (https://github.com/ossf/malicious-packages/blob/main/LICENSE, SPDX via GitHub API)
+Selection: GitHub code search within the repo (queries listed in hits/*.q, path hits in hits/*.txt, union in paths_all.txt),
+  then records kept only if their details text mentions AI-agent config/hooks/MCP/transcripts/agent CLIs or an agent-named package.
+Contents: records/ = 106 OSV JSON reports (text only, no package code); index.tsv = id, ecosystem, package, published, withdrawn, file, agent indicators regex-extracted from details.
+Note: records are reports (details/affected/references/database_specific); they quote some hardcoded tokens/domains from malware - treat as untrusted text.

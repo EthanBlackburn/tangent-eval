@@ -1,0 +1,6 @@
+Source: https://github.com/elastic/detection-rules (rules/macos/*.toml; rules/cross-platform/* whose file name names genai/llm/claude/codex/cursor/openclaw/copilot/gemini/mcp; rules/integrations/anthropic/*, rules/integrations/openai_chatgpt_enterprise/*)
+Commit: 1a666d715fa7e2079bb7d020f12d638fff17f7f4 (main as of 2026-11-04)
+License: Elastic License 2.0 (LICENSE.txt copied here; GitHub reports NOASSERTION). ELv2 allows copying and distribution with notices kept; it forbids offering the software as a hosted/managed service and circumventing license keys.
+Downloaded: 2026-11-04
+Content: 184 TOML detection rules (KQL/EQL/ES|QL queries over Elastic Defend endpoint events + Anthropic/OpenAI audit integrations); detection content only, no test events.
+Verification note (2026-11-04, skeptic pass): every .toml here is also in evaldata/elastic-detection-rules/repo (same commit 1a666d71). This dir is a duplicate.

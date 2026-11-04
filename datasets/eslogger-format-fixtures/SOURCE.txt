@@ -1,0 +1,9 @@
+Downloaded 2026-11-04. Small eslogger / ES-derived format fixtures from several repos, one subdir each (license copied into each subdir):
+tstromberg-esl  https://github.com/tstromberg/esl  commit 4d890d24a9aad6e7c848d6ce9f39c73d111004ab  license Apache-2.0  files: pkg/eslogger/testdata/exec.json pkg/eslogger/testdata/opens.json pkg/eslogger/testdata/lookup.json
+tmc-misc  https://github.com/tmc/misc  commit bbbb7f1bdbdab33fc79a2357d7510bfd0cef87e0  license MIT  files: eslog/sample.json
+hoknie-vigil  https://github.com/hoknie/vigil  commit ed32e2ee1a390d37dcd04b3beefddd79429c8e71  license Apache-2.0  files: crates/collectors/vigil-launches/src/parsers/eslogger/tests/exec.ndjson crates/collectors/vigil-launches/src/parsers/eslogger/tests/fork.json
+karib0u-rustinel  https://github.com/Karib0u/rustinel  commit cd8b590759612e4fa19ada7dee1f8dbc4483d241  license Apache-2.0  files: tests/fixtures/esf/process_lifecycle.json tests/fixtures/esf/file_lifecycle.json
+lud1161-agentjail  https://github.com/LuD1161/agentjail  commit 944df1c747f467c7f78dcd57547bbddc86c72b26  license Apache-2.0  files: agentjail/research/eslogger/samples/exec-sample.jsonl agentjail/research/eslogger/README.md agentjail/internal/eslogger/testdata/es.jsonl agentjail/internal/eslogger/testdata/aw.jsonl agentjail/internal/seccomp/testdata/claude-strace.txt
+Notes: tstromberg-esl = pretty-printed eslogger JSON, ES msg v6 (2023); tmc-misc and hoknie-vigil = eslogger msg v8 exec/fork; karib0u-rustinel =
+ rustinel's normalized ESF records captured on macOS 27.0.1 arm64 on 2026-10-19 (provenance block in each file); lud1161-agentjail = sanitized
+ synthetic eslogger exec/fork/exit sample + a strace of Claude Code on Linux (claude-strace.txt).

@@ -1,0 +1,7 @@
+Source: runningoffcode/agent-wormhole (corpus/ directory only)
+URL: https://github.com/runningoffcode/agent-wormhole/tree/a8d48f767f1644aa64728a12f2b3ac27e9a4b972/corpus
+Commit: a8d48f767f1644aa64728a12f2b3ac27e9a4b972
+Fetched: 2026-11-04 (raw.githubusercontent.com per file)
+License: Apache-2.0 (repo LICENSE, copied here as LICENSE; GitHub API spdx_id Apache-2.0). mindvirus/ holds excerpts the repo says are verbatim from arXiv 2608.10218 - original paper licence not checked.
+Contents: corpus/benign (15 md hard negatives), corpus/malicious (17 md instruction-file payloads: replication, exfil, override, skill/MCP-tool poison, memory poison, commit-hook and SessionStart-hook persistence), corpus/mindvirus (6 txt + README), corpus/runtime (1 txt), corpus/devnet-memos-history.json (11 Solana devnet tx JSON).
+Text fixtures only; nothing executable was downloaded.

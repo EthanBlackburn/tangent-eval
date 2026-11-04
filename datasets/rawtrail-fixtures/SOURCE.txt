@@ -1,0 +1,12 @@
+Source: https://github.com/RawTrail/RawTrail (MIT) - sparse checkout of server/rules/internal/catalog/fixtures/, server/cmd/rawtrail-demo-seed/corpus/,
+ extension/edr/Tests/corpus/, scripts/demo/fixtures/README.md, scripts/demo/fixtures/poisoned-repo/README.md, LICENSE
+Commit: 7affc8eb3ac5f38ff0f2b74652636ae0935bd5d6 (2026-11-03T14:12:27-06:00)
+License: MIT (LICENSE copied, "Copyright (c) 2026 Victor Lyuboslavsky and contributors"; GitHub API spdx_id MIT)
+Downloaded: 2026-11-04
+Content: RawTrail's own ESF-derived envelope JSON (event_id, event_type, host_id, payload, timestamp_ns), not raw eslogger.
+ - rules fixtures: one dir per detection rule, positive_*/negative_* JSON with events + expected_findings (incl. agent_credential_read, keychain dump,
+   browser store read, launchagent/login item/ssh authorized_keys persistence, launchd plist write, ~60 Sigma-macOS-derived rules).
+ - demo-seed corpus: synthetic host streams (alex-mbp.jsonl 952 events; ci-builder.jsonl) + scenario YAMLs.
+ - extension corpus: hand-seeded macOS-26 wire-format goldens (sentinel host_id/timestamps).
+ - poisoned-repo README: describes a harmless demo repo (README prompt-injection + npm postinstall reading an SSH key); its scripts were NOT downloaded.
+ - test/efficacy/: README + scenario.yaml/expected.yaml per ATT&CK scenario (attack.sh scripts NOT downloaded).

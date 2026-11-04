@@ -1,0 +1,5 @@
+Source: https://github.com/SigmaHQ/sigma (rules/macos/** and rules-emerging-threats/**macos*)
+Commit: c68bb91abb1146b8a6a65caf6819b1836d97f09d (master as of 2026-11-04)
+License: Detection Rule License (DRL) 1.1 for rules (per repo LICENSE, copied here); redistribution allowed with attribution to the rule authors.
+Downloaded: 2026-11-04
+Content: 69 macOS Sigma rules (67 process_creation, 2 file_event) + 4 macOS emerging-threat rules (AMOS, Axios npm compromise). No test events.

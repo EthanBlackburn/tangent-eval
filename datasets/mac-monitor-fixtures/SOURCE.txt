@@ -1,0 +1,7 @@
+Source: https://github.com/Brandon7CC/mac-monitor (Red Canary Mac Monitor) - ProjectSutro/SutroESFrameworkTests/Fixtures/* and Schema/*
+Commit: d89504af815dac040e1a881ea4617ce08d1ec23b (main as of 2026-11-04)
+License: BSD-3-Clause (LICENSE copied here, "Copyright (c) 2025, Red Canary, a Zscaler company"; GitHub API spdx_id BSD-3-Clause). Redistribution allowed with notice.
+Downloaded: 2026-11-04
+Content: eslogger JSONL fixtures (ES msg version 10): exit, open, lineage (exec/fork via launchd/xpcproxy), od_* directory-service events
+ (create user/group, modify password), remote_thread_create; Mac Monitor 2.1 export fixtures; eslogger-keys.json key inventory;
+ Mac Monitor telemetry JSON Schema (eslogger vs mac-monitor origin per key). Lab/test fixtures with example paths (Example.app), not a dev workstation.

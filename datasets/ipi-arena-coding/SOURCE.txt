@@ -1,0 +1,5 @@
+Source: https://github.com/GraySwanAI/ipi_arena_os (ipi-arena-bench; paper "How Vulnerable Are AI Agents to Indirect Prompt Injections? Insights from a Large-Scale Public Competition")
+Commit: 5e2e285910d581c97767195f1d113ef323f9ab07
+Fetched: 2026-11-04
+License: MIT (GitHub API spdx MIT; LICENSE file downloaded)
+Downloaded: data/coding/*.json (15 coding-agent IPI behaviors: system prompt, seeded conversation with {fill} slot, tools, judge criteria, tool_judge expected-args regex), README, LICENSE. Tool/browser behaviors and code NOT downloaded.

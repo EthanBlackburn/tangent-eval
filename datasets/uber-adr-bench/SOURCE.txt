@@ -1,0 +1,6 @@
+Source: https://github.com/uber/ADR (ADR: Agentic AI Detection and Response; MLSys 2026; arXiv 2605.17380)
+Commit: 6b33dffecd719708c435f772c9e93f1210944e31
+Fetched: 2026-11-04
+License: Apache-2.0 (repo LICENSE; GitHub API spdx Apache-2.0)
+Downloaded: LICENSE, README.md, Detection/README.md, docs/REPRODUCIBILITY.md, Detection/tasks.json (304 scenarios), Detection/benchmark/adr_bench_20251017_151604.jsonl and agentdojo_20251022_190150.jsonl (packed run outputs). MCP server source code, context-provider fixtures and detector code NOT downloaded.
+Card note: fixtures include synthetic credentials and prompt-injection payloads.

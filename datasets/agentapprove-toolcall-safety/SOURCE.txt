@@ -1,0 +1,7 @@
+Source: https://huggingface.co/datasets/agentapprove/coding-agent-tool-call-safety
+Revision: 939f5b969f8703141a78988b9336248550c6d369 (created/lastModified 2026-11-03)
+Fetched: 2026-11-04
+License: CC-BY-4.0 (card YAML + "License and citation": copyright (c) 2026 Agent Approve LLC); LICENSE file downloaded
+Paper: arXiv:2611.02155 (Beno, "Decision Models as Policy Gates for Coding Agents")
+Downloaded: data/ JSONL splits, README, LICENSE, CITATION, SHA256SUMS, rulebook RULEBOOK.md/FAMILIES.md/families.json, rules/product-templates.json, original/main/DATASET-CARD.md. Not downloaded: original/*/dataset.json (same content, nested), mcp-registry.json, author briefs.
+Note: card says all identities/credentials are fictional and cases were written to be classified, never executed.

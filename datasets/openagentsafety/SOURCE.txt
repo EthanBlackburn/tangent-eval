@@ -1,0 +1,6 @@
+Source: https://github.com/sani903/OpenAgentSafety (aka TheAgentCompany/OpenAgentSafety)
+Commit: 857798ff26c4ce6e1d7911ee4d8b3f84a71184e0
+Fetched: 2026-11-04
+License: MIT (repo LICENSE; README "Distributed under the MIT License")
+Downloaded: workspaces/tasks/*/{task.md,checkpoints.md,scenarios.json} (task text only; evaluator.py code and workspace fixtures NOT downloaded) and evaluation/o3-mini/{traj_*,eval_*}.json (OpenHands trajectories, smallest model set; other models' trajectories total ~1.4 GB and were not downloaded).
+Paper: OpenAgentSafety (arXiv 2507.06134)

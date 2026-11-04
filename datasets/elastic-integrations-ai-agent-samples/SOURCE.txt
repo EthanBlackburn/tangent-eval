@@ -1,0 +1,8 @@
+Source: https://github.com/elastic/integrations/tree/main/packages/{claude_code,claude_cowork,cursor}
+Commit: a2c28c4340d5f5285e776504efb4dc8ab7faecdf (main as of 2026-11-04)
+License: Elastic License 2.0 (repo LICENSE.txt copied). Distribution allowed with notices; no hosted/managed-service offering.
+Downloaded: 2026-11-04
+Content: pipeline-test inputs and expected ECS outputs for Elastic's Claude Code and Claude Cowork OpenTelemetry-log integrations
+ (api_request, hook_registered, hook_execution_start/complete, mcp_server_connection(_failed), permission_mode_changed, plugin_loaded,
+ skill_activated, tool_decision, tool_result, user_prompt) and the Cursor admin audit-log integration; sample_event.json, docs/README.md, manifest.
+ Agent-native telemetry fixtures (not eslogger).

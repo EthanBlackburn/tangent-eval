@@ -1,18 +1,22 @@
-# The evals in one command, from the repository root:
+# The evals in one command:
 #
-#   make -C evals                  Claude Haiku 5.5 on Bedrock, signed in as AWS_PROFILE: about $1 a run
-#   make -C evals JUDGE=local      packs/core's judge at JUDGE_URL (README.md#run-it): free, well over an hour
-#   make -C evals corpus           the corpus alone, no model
+#   make                  Claude Haiku 5.5 on Bedrock, signed in as AWS_PROFILE: about $1 a run
+#   make JUDGE=local      packs/core's judge at JUDGE_URL (README.md#run-it): free, well over an hour
+#   make corpus           the corpus alone, no model
 #
 # It makes what is missing or older than what makes it: the corpus (gen.py,
 # stream.py, past.py, windows.py), tangent, the packs' plugins, and the
 # enrichment data once (make -C examples/cloud-infra setup refreshes it). Then
 # it replays the corpus through examples/cloud-infra in SHARDS replays at once,
 # in a run directory of its own (the sinks append), and scores the verdicts
-# into score.txt there. RUN names the directory, relative to evals/:
-# runs/<judge>-<time> by default. TANGENT uses a tangent you built.
+# into score.txt there. RUN names the directory: runs/<judge>-<time> by
+# default. tangent comes from TANGENT_ROOT, a checkout of the tangent
+# repository; by default tangent/ here, a shallow clone at the commit in
+# tangent.ref, made when missing. TANGENT uses a tangent you built.
 
-ROOT := $(abspath ..)
+TANGENT_ROOT ?= $(CURDIR)/tangent
+ROOT := $(abspath $(TANGENT_ROOT))
+export TANGENT_ROOT
 PY := python3 -I
 JUDGE ?= bedrock
 SHARDS ?= 10
@@ -51,7 +55,11 @@ idle:
 	@for p in runs/*/pid; do [ -e "$$p" ] && kill -0 $$(cat "$$p") 2>/dev/null \
 	  && { echo "$${p%/pid} is still running and reads what this would rebuild: wait for it" >&2; exit 1; }; done; true
 
-corpus: idle $(TRUTH) $(WINDOWS)
+corpus: idle $(TRUTH) $(WINDOWS) index
+
+# The case lists (cases/<category>/README.md and the category tables), from gen.py's cases.
+index:
+	$(PY) cases/index.py
 
 # Each step depends on the file its script writes last.
 runs/stratus/cases.json: stratus/splice.py stratus/techniques.json $(wildcard stratus/logs/*.json)
@@ -67,13 +75,17 @@ $(TRUTH): $(STREAM)/truth-v3.json harness/past.py
 $(WINDOWS): $(TRUTH) harness/windows.py
 	$(PY) harness/windows.py $(TRUTH) $(WINDOWS)
 
+# tangent's tree, when TANGENT_ROOT is the default and it is not there yet.
+$(ROOT)/Cargo.toml:
+	git init -q $(ROOT) && cd $(ROOT) && git fetch -q --depth 1 https://github.com/EthanBlackburn/tangent $$(cat $(CURDIR)/tangent.ref) && git checkout -q FETCH_HEAD
+
 # The WASM toolchain and the enrichment data, if there is none yet.
-$(DATA):
+$(DATA): $(ROOT)/Cargo.toml
 	$(ROOT)/examples/cloud-infra/setup.sh
 
 # Cargo and plugin compile do only what changed; a plugin compiled by another
 # tangent build does not load, so both run every time.
-plugins: idle $(DATA)
+plugins: idle $(ROOT)/Cargo.toml $(DATA)
 ifeq ($(TANGENT),$(ROOT)/target/release/tangent)
 	cd $(ROOT) && CARGO_TARGET_DIR=$(ROOT)/target cargo build --release -p tangent-cli
 else
@@ -82,4 +94,4 @@ endif
 	cd $(ROOT)/examples/cloud-infra && $(TANGENT) plugin compile --config ingest.yaml \
 	  && $(TANGENT) plugin compile --config judge.yaml
 
-.PHONY: run new idle corpus plugins
+.PHONY: run new idle corpus plugins index

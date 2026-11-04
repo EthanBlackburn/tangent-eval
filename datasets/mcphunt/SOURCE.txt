@@ -1,0 +1,5 @@
+Source: https://huggingface.co/datasets/lihaonan0716/mcphunt-agent-traces (MCPHunt, NeurIPS 2026 E&D; arXiv 2604.27819)
+Revision: 8f05fed6face78aa48b10edcf3357c9aadfe71f5 (lastModified 2026-10-23)
+Fetched: 2026-11-04
+License: CC-BY-4.0 (dataset card YAML)
+Downloaded: README, croissant.json, main/gpt_5_2.json (723 traces, one of five models), meta/hard_negative_ci.json, meta/regression_data.csv. Other models, mitigation and defense arms (~560 MB) NOT downloaded.

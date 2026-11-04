@@ -1,0 +1,10 @@
+Source: https://github.com/efij/AgentDFIR
+Commit: 5be622d450a477ca1e1dd188f51522a02ffbe1b5 (2026-10-26T15:24:59+02:00), sparse checkout of internal/corpus/testdata, internal/endpoint/testdata, docs, plus root text files
+License: MIT (LICENSE file in repo root, "Copyright (c) 2026 Efi Jeremiah"; GitHub API spdx_id MIT)
+Downloaded: 2026-11-04
+Removed after checkout: install.sh, install.ps1, action.yml, .pre-commit-hooks.yaml, go.mod, internal/corpus/*.go (programs), .git
+Notes: all corpus fixtures are synthetic per internal/corpus/testdata/README-v5-rules.md and internal/endpoint/testdata/macos/README.md.
+ 51 attack + 75 benign cases (case.json with note/expect/twin); 5 macOS eslogger.jsonl cases + eslogger_synthetic.jsonl; Claude Code transcripts, MCP gateway logs, plugin/extension trees, tetragon/Windows logs.
+ Two tiny .js stubs and one .sh stub are inert fixture text inside fake extension/plugin trees; never run them.
+Verification note (2026-11-04, skeptic pass): eslogger_synthetic.jsonl has 34 lines (3 malformed per its README). Only 34 of 126 case.json files carry "twin".
+ endpoint/testdata/macos/unifiedlog_scrubbed.ndjson is real `log show` output, scrubbed (not synthetic). Corpus also has tetragon.jsonl (Linux) and windows.evtx cases.

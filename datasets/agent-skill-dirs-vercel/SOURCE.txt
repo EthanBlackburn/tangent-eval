@@ -1,0 +1,13 @@
+Source: https://github.com/vercel-labs/skills/blob/9197d919034d19010ae303cf96bf19ad087dd4be/src/agents.ts
+Commit: 9197d919034d19010ae303cf96bf19ad087dd4be (repo pushed 2026-11-03)
+License: MIT (GitHub API spdx_id for vercel-labs/skills)
+Retrieved: 2026-11-04
+What: agents.json is DERIVED, not a copy. It was extracted as plain text (regex, nothing executed or imported) from the
+  `agents` table in src/agents.ts: per agent id, displayName, project-level skills dir, global skills dir and the paths
+  its detectInstalled() checks. Home-dir variables are rendered symbolically: ~ = homedir(), ${XDG_CONFIG_HOME:-~/.config},
+  ${CLAUDE_CONFIG_DIR:-~/.claude}, ${CODEX_HOME:-~/.codex}, etc. Expressions the extractor could not resolve are kept as
+  "<expr: ...>" or "<varName>". 79 agents.
+Context: `npx skills add` copies a skill into ~/.agents/skills/<name> (canonical, src/constants.ts UNIVERSAL_SKILLS_DIR)
+  and symlinks it into each selected agent's dir (src/installer.ts install modes symlink/copy/link); lock files
+  ~/.agents/.skill-lock.json (or $XDG_STATE_HOME/skills/.skill-lock.json, src/skill-lock.ts) and ./skills-lock.json
+  (src/local-lock.ts).

@@ -1,0 +1,6 @@
+Source: https://github.com/VadimV1/ESDaemon/blob/main/test/fixtures/file-events-macos26.ndjson
+Commit: 8c6b47c40749cf5a82285c51e51ee2b737744f44
+License: MIT (repo LICENSE copied; GitHub API spdx_id MIT)
+Downloaded: 2026-11-04
+Content: 27 trimmed eslogger records (keys time, global_seq_num, process, event) from macOS 26: create/unlink/rename by shell tools in QA scenarios
+ that write a LaunchAgent plist, a .bash_profile, .command file, codesign temp files under /private/tmp. Provenance (real vs synthetic) not stated.

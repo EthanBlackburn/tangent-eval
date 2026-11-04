@@ -1,42 +1,39 @@
-# evals
+# tangent-eval
 
-The cases tangent's security packs are measured against, the year of
-ordinary traffic they are replayed inside, and the harness that replays them
-through [examples/cloud-infra](/examples/cloud-infra) and scores the verdicts.
-Generating the corpus and checking the harness need no model; only the judged
-replay calls one.
+What [tangent](https://github.com/EthanBlackburn/tangent)'s security packs are measured against, and how to measure them yourself. Everything here is synthetic except Datadog's Stratus Red Team recordings: the company in every case, acme, is fictional, and so are its people, accounts and repos.
 
-Everything is synthetic except the Stratus Red Team records, which are
-Datadog's recordings of real detonations in their own test accounts,
-anonymized by them ([stratus/NOTICE](stratus/NOTICE)). The company in every
-case, acme, is fictional; so are its people, accounts and repos.
+## What tangent is evaluated against
 
-## The corpus
+Each row is a category of cases; its page lists every case and what the logs show in it. A case is a sequence of records in the shape of the real source (CloudTrail, the GitHub audit log, Okta, Google Workspace, CI job lines, runner egress, a product's audit log, an AI agent's log), with what the judge should say about it.
 
-| suite | should flag | must not flag | where |
+<!-- categories -->
+| category | what it covers | should flag | must not |
 |---|---|---|---|
-| our cases | 49 | 17 | [cases/](cases/), written by `gen.py` |
-| Stratus Red Team | 70 | 70 | [stratus/](stratus/), written by `stratus/splice.py` from Datadog's recordings |
-| all | 119 | 87 | 206 cases |
+| [Cloud infrastructure](cases/cloud/README.md) | AWS through CloudTrail: logging stopped, a root login without MFA, a bucket made public, a security group opened to the internet, a new IAM user given admin rights, a key first used from a new host, an outside account assuming a role | 7 | 0 |
+| [Identity](cases/identity/README.md) | Okta, Google Workspace and a product's own logins: impossible travel, an admin signing in from a hosting provider abroad, MFA turned off or reset and re-enrolled elsewhere, a burst of failures then a success, a key or a promotion used minutes later, SSO bypassed | 10 | 0 |
+| [GitHub](cases/github/README.md) | The org audit log: branch protection removed and main force-pushed, a contractor made owner with a deploy key, one token pushing to a dozen repos, a fork's pull request editing a workflow that runs with secrets, Shai-Hulud's repos and runner | 6 | 0 |
+| [Supply chain](cases/supply-chain/README.md) | CI and dependencies: an Action's tags moved to a stealer, a postinstall that phones home, a typosquat, worms that publish credentials as repositories, a backdoored PyPI release, a trojaned axios | 8 | 0 |
+| [Data exfiltration](cases/data-exfil/README.md) | One API key paging through every record, a service posting to a file-sharing site, a mailbox forwarding outside, a database snapshot shared with another account | 4 | 0 |
+| [A vendor's breach](cases/vendor/README.md) | A connected AI app's stolen OAuth token used to pivot through SSO; a hosting vendor's leaked environment secrets reused | 2 | 0 |
+| [SaaS and integrations](cases/saas/README.md) | An integration's stolen OAuth token reading everything; provider keys taken from a developer console and run up from everywhere | 2 | 0 |
+| [AI agents](cases/agents/README.md) | An AI agent's own log: a plan reads a secret then posts where no plan named, retries with a different role each time, a tool result changes the task, a repository's settings redirect the model's calls and key, an MCP server copies every message out, an agent uses credentials it found | 6 | 0 |
+| [Prompt injection](cases/prompt-injection/README.md) | Records written to talk to the reviewer: a key name, a user agent, a pull request title or a token name telling the judge what to answer | 4 | 0 |
+| [Benign, must not flag](cases/benign/README.md) | What looks alarming and is not: Dependabot's weekly batch, the on-call's 3 a.m. login, a deploy's restart burst, a repo made public as planned, scanner probes, a rotation after a vendor's notice, the same sign-ins and reads as every day | 0 | 17 |
+| all | | 49 | 17 |
+<!-- /categories -->
 
-- **Our cases** ([cases/README.md](cases/README.md) lists every one): 66
-  event sequences in the shapes of CloudTrail, the GitHub audit log, Okta,
-  Google Workspace, GitHub Actions job lines, runner egress, a product's audit
-  log and an AI agent's log. 15 of the 49 attacks follow compromises disclosed
-  in 2025 and 2026 (TeamPCP, the axios hijack, Shai-Hulud, tj-actions,
-  Railway, Vercel via Context.ai, Salesloft Drift, postmark-mcp and others).
-  10 are five attacks and their twins, the same person, hour and actions from
-  where they always are, which only history tells apart. 4 are attacks whose
-  own records talk to the reviewer, vouching for the activity or telling it
-  what to answer. The 17 must-not-flag cases are what looks alarming and is
-  not: Dependabot, the on-call's 3 a.m. login, a deploy's restart burst,
-  scanner probes, a rotation after a vendor's notice, a pull request titled
-  for its reviewers, and the five twins.
-- **Stratus Red Team** ([stratus/README.md](stratus/README.md)): the 35 AWS
-  techniques Datadog recorded, each spliced in twice as a member whose
-  credentials were taken, once from a hosting address (`away`) and once from
-  the office (`usual`); and for each, a control with every call made a
-  harmless read.
+Two more suites:
+
+| suite | what it covers | should flag | must not |
+|---|---|---|---|
+| [Stratus Red Team](stratus/README.md) | 35 real AWS attack techniques Datadog recorded in its own test accounts, each spliced in as a member of acme whose credentials were stolen, from a hosting address and from the office; and for each, a control with every call made a harmless read | 70 | 70 |
+| macOS endpoint | 90 synthetic eslogger cases of AI-agent abuse on a developer's Mac, grounded in the [EAA catalog](https://github.com/0x4D31/endpoint-ai-agent-abuse); arrives with tangent's macOS pack ([#85](https://github.com/EthanBlackburn/tangent/pull/85)) | 45 | 45 |
+
+Every case lands on a day of its own inside thirteen months of acme's ordinary traffic ([the stream](#the-stream)), so the judge sees it the way it would in production: against the history of the people and systems involved.
+
+## How good is it
+
+No result has been measured on this layout yet. [RESULTS.md](RESULTS.md) says what was measured on earlier layouts of the same corpus (our 45 attacks caught in every run of four, about 2% of ordinary records flagged, 10 or 11 of 16 must-not-flag cases flagged), why none of it is this repository's number, and what to record when it is.
 
 Two things limit what these numbers can say:
 
@@ -50,6 +47,30 @@ Two things limit what these numbers can say:
   user agent, and more). In every run so far, the controls were flagged about
   as often as the attacks. All six tells are fixed and unmeasured.
   [stratus/README.md](stratus/README.md#not-citable-yet) lists them.
+
+## Check it yourself
+
+With Rust ([rustup](https://rustup.rs)) and Python 3.10 or later with PyYAML importable under `python3 -I`:
+
+```bash
+AWS_PROFILE=... make        # Claude Haiku 5.5 on Bedrock: about $1 a run
+make JUDGE=local            # packs/core's judge at JUDGE_URL: free, well over an hour
+make corpus                 # the corpus alone, no model
+```
+
+`make` fetches tangent at the commit in [tangent.ref](tangent.ref) into `tangent/` (or uses `TANGENT_ROOT=/path/to/your/checkout`), builds it and its plugins, generates the corpus, replays it and prints the score. The sections below are the same steps one at a time. A judged run calls a model and costs what the table says; everything else is free.
+
+## Layout
+
+```
+cases/           our 66 cases, by category, with a README per category (index.py writes them from gen.py)
+stratus/         Datadog's 35 recorded techniques and splice.py, which makes the 140 Stratus cases
+profile/         acme as the judge knows it
+harness/         replay, shard, score
+datasets/        third-party datasets for writing cases: pins in the tree, copies from a release (fetch.py)
+gen.py           writes cases/; stream.py places every case inside the ordinary traffic
+RESULTS.md       every number, with what it was measured on
+```
 
 ## The stream
 
@@ -79,21 +100,20 @@ outside a window are ingested as history and never judged.
 
 ## One command
 
-From the repository root, with Rust ([rustup](https://rustup.rs)) and Python
+With Rust ([rustup](https://rustup.rs)) and Python
 3.10 or later with PyYAML importable under `python3 -I`:
 
 ```bash
-AWS_PROFILE=... make -C evals     # Claude Haiku 5.5 on Bedrock: about $1 a run
-make -C evals JUDGE=local         # packs/core's judge at JUDGE_URL: free, well over an hour
-make -C evals corpus              # the corpus alone, no model
+AWS_PROFILE=... make     # Claude Haiku 5.5 on Bedrock: about $1 a run
+make JUDGE=local         # packs/core's judge at JUDGE_URL: free, well over an hour
+make corpus              # the corpus alone, no model
 ```
 
 It first makes whatever is missing or older than what it is made from: the
 corpus, tangent, the packs' plugins, and the enrichment data if there is none
-(`make -C examples/cloud-infra setup` refreshes it). Then it replays the
+(`make -C tangent/examples/cloud-infra setup` refreshes it). Then it replays the
 corpus in ten shards (`SHARDS`) in a run directory of its own,
-`evals/runs/<judge>-<time>` (`RUN=runs/NAME` names another, relative to
-`evals/`), and prints the score, which `score.txt` there keeps. `TANGENT`
+`runs/<judge>-<time>` (`RUN=runs/NAME` names another), and prints the score, which `score.txt` there keeps. `TANGENT`
 uses a tangent you built instead of building one. One run at a time in a
 checkout: a run reads the corpus and plugins until it ends, so another
 refuses to start while it does. The sections below are the same steps one at
@@ -102,26 +122,26 @@ a time.
 ## Generate (no model)
 
 Python 3.10 or later, with PyYAML importable under `python3 -I` (installed
-for the interpreter or in a venv, not with `pip --user`). From the repository
-root:
+for the interpreter or in a venv, not with `pip --user`):
 
 ```bash
-python3 -I evals/gen.py                      # rewrites evals/cases; git status stays clean
-python3 -I evals/stream.py v3                # evals/runs/stream/{stream,truth}-v3.*
-python3 -I evals/harness/past.py v3          # evals/runs/stream/{stream,truth}-past-v3.*
-python3 -I evals/harness/windows.py evals/runs/stream/truth-past-v3.json evals/runs/windows-v3.json
-python3 -I evals/harness/isolation.py --v3   # cases with another case among an actor's latest 40 records
+python3 -I gen.py                      # rewrites cases; git status stays clean
+python3 -I stream.py v3                # runs/stream/{stream,truth}-v3.*
+python3 -I harness/past.py v3          # runs/stream/{stream,truth}-past-v3.*
+python3 -I harness/windows.py runs/stream/truth-past-v3.json runs/windows-v3.json
+python3 -I harness/isolation.py --v3   # cases with another case among an actor's latest 40 records
 ```
 
-Everything generated goes under `evals/runs/`, which git ignores. `stream.py`
+Everything generated goes under `runs/`, which git ignores. `stream.py`
 with no argument writes the older 191-case stream, without the history cases.
 
 ## Build tangent and the plugins
 
 ```bash
-cargo build --release -p tangent-cli
+cd tangent && cargo build --release -p tangent-cli      # the checkout make fetched, or your own
 export TANGENT=$PWD/target/release/tangent
 make -C examples/cloud-infra compile TANGENT=$TANGENT
+cd ..
 ```
 
 `make compile` runs `setup.sh` first: the WASM toolchain, and the enrichment
@@ -134,11 +154,11 @@ in the tangent build that compiled it: compile again after every rebuild.
 ## Make a run directory
 
 ```bash
-python3 -I evals/harness/maincfg.py isolated evals/runs/h1             # Haiku 5.5 on Bedrock
-python3 -I evals/harness/maincfg.py isolated evals/runs/l1 --judge local
+python3 -I harness/maincfg.py isolated runs/h1             # Haiku 5.5 on Bedrock
+python3 -I harness/maincfg.py isolated runs/l1 --judge local
 ```
 
-`maincfg.py` merges examples/cloud-infra's `ingest.yaml` and `judge.yaml`
+`maincfg.py` merges tangent's examples/cloud-infra `ingest.yaml` and `judge.yaml`
 with their includes and changes only what a replay needs: one tcp source for
 the stream, paths into the run directory, the eval profile
 ([profile/profile.yaml](profile/profile.yaml)), and the judge's model.
@@ -164,9 +184,9 @@ Use a new run directory for every run: the shards' sinks append.
 In a run directory of its own, so no judged run starts with its files:
 
 ```bash
-python3 -I evals/harness/maincfg.py isolated evals/runs/sim
-TRUTH=evals/runs/stream/truth-past-v3.json SIMULATE=1 \
-  python3 -I evals/harness/replay.py evals/runs/sim evals/runs/stream/stream-past-v3.ndjson evals/runs/windows-v3.json
+python3 -I harness/maincfg.py isolated runs/sim
+TRUTH=runs/stream/truth-past-v3.json SIMULATE=1 \
+  python3 -I harness/replay.py runs/sim runs/stream/stream-past-v3.ndjson runs/windows-v3.json
 ```
 
 `SIMULATE=1` runs ingest for real and forms the judge's requests without
@@ -188,12 +208,12 @@ WORK` prints what the judge would read for each attack and its twin.
 Bedrock, ten shards:
 
 ```bash
-export TANGENT=... TRUTH=evals/runs/stream/truth-past-v3.json
+export TANGENT=... TRUTH=runs/stream/truth-past-v3.json
 export AWS_PROFILE=...                 # one that can call Bedrock in BEDROCK_REGION; maincfg.py writes it into judge.yaml
 export AWS_WAIT_PROFILE=$AWS_PROFILE   # on errors, wait for this profile's credentials, put the records back, go on
-python3 -I evals/harness/maincfg.py isolated evals/runs/h1
-python3 -I evals/harness/shard.py evals/runs/h1 evals/runs/stream/stream-past-v3.ndjson evals/runs/windows-v3.json 10 \
-  > evals/runs/h1/shard.out 2>&1
+python3 -I harness/maincfg.py isolated runs/h1
+python3 -I harness/shard.py runs/h1 runs/stream/stream-past-v3.ndjson runs/windows-v3.json 10 \
+  > runs/h1/shard.out 2>&1
 ```
 
 Shard k replays the windows before its own as history, so the result is the
@@ -213,7 +233,7 @@ on 98 to 99% of records, so make two runs of each arm and compare them with
 `agree.py`.
 
 A local model: serve it with the `llama-server` line in
-[packs/core/README.md](/packs/core/README.md), one model server at a time,
+[packs/core/README.md](https://github.com/EthanBlackburn/tangent/blob/main/packs/core/README.md), one model server at a time,
 make the run directory with `--judge local`, and run `shard.py` the same way.
 The server is the bottleneck: at about five seconds a request on one
 machine, a run takes well over an hour. It has not been measured on this
@@ -222,8 +242,8 @@ shape.
 ## Score it
 
 ```bash
-python3 -I evals/harness/score_v2.py evals/runs/stream/truth-past-v3.json evals/runs/h1
-python3 -I evals/harness/agree.py evals/runs/stream/truth-past-v3.json evals/runs/h1 evals/runs/h2
+python3 -I harness/score_v2.py runs/stream/truth-past-v3.json runs/h1
+python3 -I harness/agree.py runs/stream/truth-past-v3.json runs/h1 runs/h2
 ```
 
 What `score_v2.py` reports:
@@ -257,23 +277,8 @@ compiled with `$TANGENT plugin compile --config WORK/ingest.yaml`, which
 `make compile` does not do. After `shard.py`, join the shards' output first:
 
 ```bash
-cat evals/runs/t1/s*/tripwire.ndjson > evals/runs/t1/tripwire.ndjson
-python3 -I evals/harness/score_union.py evals/runs/stream/truth-past-v3.json evals/runs/t1 evals/runs/windows-v3.json [TRIPWIRE.ndjson]
+cat runs/t1/s*/tripwire.ndjson > runs/t1/tripwire.ndjson
+python3 -I harness/score_union.py runs/stream/truth-past-v3.json runs/t1 runs/windows-v3.json [TRIPWIRE.ndjson]
 ```
 
 [RESULTS.md](RESULTS.md) says which results exist.
-
-## Layout
-
-```
-evals/
-  cases/             66 cases, one directory each (case.yaml, events.ndjson); README.md lists them
-  gen.py             writes cases/; stream.py imports its case list
-  stream.py          writes runs/stream/: the stream and its truth file
-  stratus/           Stratus Red Team v2.37.0: fetch.py, techniques.json, logs/, splice.py, NOTICE, LICENSE
-  profile/           the eval's profile of acme
-  harness/           maincfg.py, replay.py, shard.py, past.py, windows.py, and the scorers
-  runs/              everything generated (ignored by git)
-  Makefile           make -C evals: the corpus, tangent and the plugins as needed, a run, its score
-  RESULTS.md
-```

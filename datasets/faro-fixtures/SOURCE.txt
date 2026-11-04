@@ -1,0 +1,7 @@
+Source: https://github.com/natan1506/faro/tree/main/daemon/tests/fixtures
+Commit: 6d9390623e36ffb74130939b23df8a120c7d0d1c
+License: MIT (repo LICENSE copied here; GitHub API spdx_id MIT)
+Downloaded: 2026-11-04
+Content: synthetic, simplified eslogger-shaped JSON (only "process" and "event" keys; pids 80001+; user "dev").
+ ataque.jsonl = 12-event attack chain: terminal -> zsh -> node reads several project .env files and ~/.aws/credentials, spawns sh -> curl,
+ drops a helper under /private/tmp which adds a BTM launch item. Other files are single-event fixtures (btm_add, exec curl, open .env).

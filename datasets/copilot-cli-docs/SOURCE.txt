@@ -1,0 +1,6 @@
+Source: https://github.com/github/docs (content/copilot/reference/copilot-cli-reference/*.md and content/copilot/reference/hooks-reference.md)
+Rendered at: https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-config-dir-reference (and siblings)
+Commit: e44c283a7f901f63aead1ea13cf9062956706e24
+License: CC-BY-4.0 (GitHub API spdx_id for github/docs; docs content). Attribution: GitHub, Inc. and contributors.
+Retrieved: 2026-11-04 (raw.githubusercontent.com)
+Files: unmodified Markdown sources (contain Liquid {% data %} tags). Plain text documentation only.

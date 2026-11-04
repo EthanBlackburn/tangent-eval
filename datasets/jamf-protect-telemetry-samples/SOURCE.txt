@@ -1,0 +1,7 @@
+Source: https://github.com/elastic/integrations/tree/main/packages/jamf_protect/data_stream/telemetry/_dev/test/pipeline
+Commit: a2c28c4340d5f5285e776504efb4dc8ab7faecdf (main as of 2026-11-04)
+License: Elastic License 2.0 (repo LICENSE.txt copied here). Distribution allowed with notices; no hosted/managed-service offering.
+Downloaded: 2026-11-04
+Content: Jamf Protect telemetry pipeline-test inputs (NDJSON in ES-message shape: event_type int, event.<type>, process, metadata, host) and Elastic's
+ expected ECS outputs. 38 sample lines cover ~36 ES event types incl. exec, btm_launch_item_add/remove, tcc_modify, sudo, su, od_*, login, xp_malware_*;
+ test-btm-app-priority.log has more btm events. Test fixtures from a sample device, not a dev workstation or AI agent.

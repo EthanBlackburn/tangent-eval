@@ -1,0 +1,5 @@
+Source: https://github.com/aisa-group/skill-inject
+Commit: 182f3d9d9836e81cdae213e9b9cec1d9be96eea3
+Fetched: 2026-11-04
+License: MIT per GitHub API; note the repo LICENSE file text is the MIT license with the copyright line "The Bootstrap Authors" (apparently copied), so the stated licensor is ambiguous.
+Downloaded: data/obvious_injections.json (36 defs), data/contextual_injections.json (48 defs), README, LICENSE only. Skill fixtures (data/skills), task scripts and startup scripts were NOT downloaded.

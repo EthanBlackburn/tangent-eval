@@ -1,0 +1,8 @@
+Source: https://github.com/GenseeAI/gensee-crate/tree/main/security-traces/autonomous-ai-cross-boundary-capability-escape/v1
+Commit: 0a47b53c4a05fe8af3fa6ecc8099507093fac973 (main as of 2026-11-04); dataset last changed in 309800821616c02c22e912001c7ea12cffd9252c (2026-08-27)
+License: trace data CDLA-Permissive-2.0 (LICENSE-DATA and NOTICE in the dataset dir, copied); tooling Apache-2.0 (tools/*.py NOT downloaded)
+Downloaded: 2026-11-04
+Content: GenseeAI observe-only experiment, 4 trials (1 positive capability-boundary escape by Codex via an overbroad inference gateway, 3 right-censored
+ controls), ~32k runtime events + 1.5k model items: unified-timeline.jsonl, codex-commands.jsonl, gateway-access.jsonl, cloud-network-events.jsonl,
+ package-context-events.jsonl, falco-relevant-events.jsonl, model-interactions.jsonl, ground-truth.json (trial 4), schemas, METHODOLOGY/SCHEMA docs.
+ Linux cloud lab (Falco/VPC flow), not macOS; no eslogger events.

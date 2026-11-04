@@ -1,0 +1,3 @@
+# The copies fetch.py extracts; only their pins (SOURCE.txt) are tracked.
+*/*
+!*/SOURCE.txt

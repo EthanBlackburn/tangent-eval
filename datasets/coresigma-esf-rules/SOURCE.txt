@@ -1,0 +1,9 @@
+Source: https://github.com/Nebulock-Inc/macos-coresigma (coreSigma)
+Commit: ee75bc28eea8a9dfd096282d2aa53a69c138a41e (main as of 2026-11-04)
+License: MIT (LICENSE copied; GitHub API spdx_id MIT)
+Downloaded: 2026-11-04
+Content: Sigma YAML rules written against raw eslogger / unified-log JSON field paths (rules/esf, rules/ul ...), data/fields.csv (ESF/UL field inventory),
+ docs on field-name origins and the ESF->UL pipeline. Detection content only; collectors (Python) NOT downloaded.
+Verification note (2026-11-04, skeptic pass): rules use Sigma taxonomy fields (Image, TargetFilename, UserId) plus flattened esf.* fields
+ (e.g. esf.event_type), which the project's pipeline maps to ECS. They are not raw nested eslogger JSON paths. data/fields.csv is an ECS field list.
+ LICENSE reads "Copyright (c) 2025 macOS Sigma Pipeline Contributors" (MIT).

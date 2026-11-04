@@ -1,0 +1,5 @@
+Source: https://figshare.com/articles/dataset/Replication_packages_for_AIShellJack/30111988 (DOI 10.6084/m9.figshare.30111988), version 4, published 2025-09-13
+Paper: "Your AI, My Shell": Demystifying Prompt Injection Attacks on Agentic AI Coding Editors, arXiv:2509.22040 (v2 28 Apr 2026)
+Fetched: 2026-11-04 (selected files only, by figshare file id; raw_results.zip 1.67 GB and automation scripts NOT downloaded)
+License: CC-BY-4.0 (figshare article license field). A LICENSE file in the package was also downloaded (it belongs to the bundled sample repo; see file).
+Files: payload JSON (Atomic-Red-Team-derived Linux attack payloads), recorded command executions for Cursor auto mode on the search_with_lepton repo (json+txt), labeling results, READMEs, the sample .cursorrules (renamed dot-cursorrules.txt so no agent picks it up).
