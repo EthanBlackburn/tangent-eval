@@ -15,6 +15,7 @@ python3 -I macos/gen.py                                        # runs/macos/{str
 python3 -I macos/shapecheck.py runs/macos/stream.ndjson es-shape.json es-shape-open.json
 python3 -I macos/run.py runs/macos/stream.ndjson runs/macos/haiku-1 --judge bedrock   # or none (free), local
 python3 -I macos/score.py runs/macos/truth.json runs/macos/haiku-1
+python3 -I macos/run.py runs/macos/stream.ndjson runs/macos/haiku-1 --review          # the second reviewer on its alerts; score again
 ```
 
 The pack is not on tangent's main yet, so `tangent.ref` and the Makefile's
@@ -47,10 +48,19 @@ branch.
   summary of a session's earlier windows. No prompts and no network are in
   the stream, so `asked`, turns and `connected` are not exercised either. A
   judged run costs money (Bedrock, about a dollar) or a local model's hours.
+  The first run also writes `WORK/lake`, the records as Parquet through the
+  pack's lake sink, and `--review` runs the pack's second reviewer
+  (packs/macos/review/review.py: Claude Opus 5.5 on Bedrock, with that lake
+  to query through `tangent query`) on each line of `WORK/alerts.ndjson`,
+  four at a time, into `WORK/reviews.ndjson`: about ten cents an alert, nine
+  dollars for the default stream's 91. It needs a tangent that has `query`
+  and list columns in a Parquet schema.
 - `score.py` says which cases' key events came through the plugin and, with
   verdicts, at each alert setting (`flag` alone; `look` or `flag`): the
   must-flag cases caught, the must-not-flag cases marked, and the background
-  summaries marked; `WORK/score.txt`, `WORK/cases.tsv`.
+  summaries marked; with reviews, the cases and background alerts that
+  still stand, an alert standing unless its review says `benign`;
+  `WORK/score.txt`, `WORK/cases.tsv`.
 
 ## A case
 
@@ -237,6 +247,44 @@ must-flag cases passed
 Not in this stream, so not measured here: prompts (`asked`, turns), network
 (`connected`), and the judge's running summary (`so_far`), which run.py's
 two-run layout leaves out.
+
+## Measured: the second reviewer, a sample, 2026-11-11
+
+Not a full run: 22 of that run's 91 alerts (ten that hold an attack's key
+events, four of them the judge's `flag`s; six look-alikes'; six background),
+reviewed once by Claude Opus 5.5 with the lake to query, the table ending at
+each alert's last event.
+
+| alerts | malicious | unresolved | filter stopped it | benign |
+|---|---|---|---|---|
+| 10 holding an attack | 2 | 1 | 4 | 3 |
+| 6 look-alikes' | 1 | 0 | 0 | 5 |
+| 6 background | 0 | 0 | 1 | 5 |
+
+- **It clears the noise**: ten of the twelve alerts that should not stand
+  came back `benign`, each with what the session was. The look-alike it
+  called malicious is `eaa-003-pull-brings-team-claude-settings-twin`, whose
+  settings file it traced to another case's session in the same repository.
+- **It also cleared three attacks**:
+  `eaa-007-dictation-endpoint-redirected-to-local-proxy`,
+  `eaa-008-shadow-claude-config-dir-remote-control` and one alert of
+  `eaa-009-skill-update-fetches-changed-revision`. Each it read as the
+  owner's own doing: a command typed in a terminal, an agent updating its
+  own skill. What tells them from their look-alikes is what a file says,
+  which is not in the log, and the plugin dropped key events of the first
+  two (above). An earlier wording of the brief, on the same alerts, cleared
+  four, one of them a `flag`: a `.git/config` from an archive that ran a
+  command, cleared because the command it ran was harmless.
+- **The model's content filter stopped five reviews**, four of them of
+  attacks: the worm's wipe every time it was tried. A stopped review is an
+  error and its alert stands, so nothing is lost but the write-up, and a
+  blatant attack is the likeliest to go without one.
+- **Cost**: $2.01 for the 22, nine cents and about twenty seconds an alert,
+  four queries each. DataFusion refused 12 of the 83 statements, most for
+  matching a list as text; the tool's description has since said how.
+
+One run of a sample: the same alerts under the same brief moved by one or
+two between runs.
 
 ## What eslogger can't see
 
