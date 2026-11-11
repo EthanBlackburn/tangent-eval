@@ -27,7 +27,7 @@ Two more suites:
 | suite | what it covers | should flag | must not |
 |---|---|---|---|
 | [Stratus Red Team](stratus/README.md) | 35 real AWS attack techniques Datadog recorded in its own test accounts, each spliced in as a member of acme whose credentials were stolen, from a hosting address and from the office; and for each, a control with every call made a harmless read | 70 | 70 |
-| macOS endpoint | 90 synthetic eslogger cases of AI-agent abuse on a developer's Mac, grounded in the [EAA catalog](https://github.com/0x4D31/endpoint-ai-agent-abuse); arrives with tangent's macOS pack ([#85](https://github.com/EthanBlackburn/tangent/pull/85)) | 45 | 45 |
+| [macOS endpoint](macos/README.md) | 94 synthetic eslogger cases on a developer's Mac: 90 of AI-agent abuse, grounded in the [EAA catalog](https://github.com/0x4D31/endpoint-ai-agent-abuse), and the Shai-Hulud npm worm on a Mac, with its wiper, beside the developer's own release and clean-up; for tangent's macOS pack ([#85](https://github.com/EthanBlackburn/tangent/pull/85)) | 47 | 47 |
 
 Every case lands on a day of its own inside thirteen months of acme's ordinary traffic ([the stream](#the-stream)), so the judge sees it the way it would in production: against the history of the people and systems involved.
 
