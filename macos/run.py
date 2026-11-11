@@ -27,8 +27,10 @@ and then, when asked, the pack's second reviewer:
 3. With --review, packs/macos/review/review.py on each line of
    WORK/alerts.ndjson: Claude Opus 5.5 on Bedrock, with WORK/lake/logs to
    query (`tangent query`), on REVIEWERS processes at once (default 4).
-   WORK/reviews.ndjson is each alert's review. Needs `aws` on the PATH;
-   about ten cents an alert, so nine dollars for the default stream's.
+   WORK/reviews.ndjson is each alert's review, from the log alone: the
+   reviewer's file reading is off, the stream's files being nowhere on
+   disk. Needs `aws` on the PATH;
+   about twelve cents an alert, so eleven dollars for the default stream's.
 
 Two runs because the pack runs on one worker (the plugin builds the process
 tree from fork, exec and exit, in order) and the worker count is the whole
@@ -165,7 +167,8 @@ def review(at):
         with open(at(f"alerts.{i}.ndjson"), "w") as f:
             f.writelines(alerts[i::REVIEWERS])
         running.append(subprocess.Popen(
-            [sys.executable, "-I", script, "--lake", at("lake/logs")],
+            # --no-files: the stream's paths are a made-up Mac's, so there is no file here to read
+            [sys.executable, "-I", script, "--lake", at("lake/logs"), "--no-files"],
             stdin=open(at(f"alerts.{i}.ndjson")), stdout=open(at(f"reviews.{i}.ndjson"), "w"),
             stderr=open(at(f"reviews.{i}.log"), "w"), env=dict(os.environ, TANGENT=TANGENT)))
     failed = [i for i, p in enumerate(running) if p.wait()]
