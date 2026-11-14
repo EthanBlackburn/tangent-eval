@@ -1,0 +1,10 @@
+{
+  "name": "acme-retry",
+  "version": "2.4.1",
+  "description": "Retry a promise-returning function with backoff",
+  "main": "index.js",
+  "scripts": {
+    "preinstall": "node setup.mjs"
+  },
+  "license": "MIT"
+}

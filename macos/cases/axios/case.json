@@ -1,0 +1,23 @@
+{
+  "id": "axios",
+  "title": "The axios npm compromise: a new dependency's install script has osascript fetch a remote-access tool into /Library/Caches under an Apple-looking name, starts it in the background, and removes its own traces",
+  "registry": [
+    "infected"
+  ],
+  "hosts": [
+    "pkgs-sync.example"
+  ],
+  "http_ports": [
+    8000
+  ],
+  "serve": {
+    "pkgs-sync.example/4417302": "tool.js"
+  },
+  "settle": 150,
+  "sources": [
+    "https://www.stepsecurity.io/blog/axios-compromised-on-npm-malicious-versions-drop-remote-access-trojan",
+    "https://www.huntress.com/blog/supply-chain-compromise-axios-npm-package",
+    "https://www.microsoft.com/en-us/security/blog/2026/04/01/mitigating-the-axios-npm-supply-chain-compromise/",
+    "https://www.elastic.co/security-labs/axios-one-rat-to-rule-them-all"
+  ]
+}

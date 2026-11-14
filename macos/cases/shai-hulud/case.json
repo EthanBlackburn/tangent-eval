@@ -1,0 +1,14 @@
+{
+  "id": "shai-hulud",
+  "title": "Shai-Hulud: an npm dependency's install script scans the Mac for secrets and republishes the developer's own packages with itself added",
+  "registry": ["infected", "own"],
+  "settle": 180,
+  "sources": [
+    "https://securitylabs.datadoghq.com/articles/shai-hulud-2.0-npm-worm/",
+    "https://www.stepsecurity.io/blog/sha1-hulud-the-second-coming-zapier-ens-domains-and-other-prominent-npm-packages-compromised",
+    "https://www.zscaler.com/blogs/security-research/shai-hulud-v2-poses-risk-npm-supply-chain",
+    "https://redcanary.com/blog/threat-detection/shai-hulud-worm/",
+    "https://securelist.com/shai-hulud-worm-infects-500-npm-packages-in-a-supply-chain-attack/117547/",
+    "https://checkmarx.com/zero-post/inside-shai-huluds-maw-how-the-npm-worm-exploits-and-propagates/"
+  ]
+}

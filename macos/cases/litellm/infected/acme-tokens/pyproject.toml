@@ -1,0 +1,4 @@
+[project]
+name = "acme-tokens"
+version = "1.4.2"
+description = "Count the tokens in a prompt"
