@@ -1,0 +1,12 @@
+{
+  "name": "file-icons",
+  "displayName": "Acme File Icons",
+  "description": "Icons for the files in the explorer",
+  "version": "1.8.1",
+  "publisher": "acme-tools",
+  "engines": { "vscode": "^1.80.0" },
+  "categories": ["Themes"],
+  "extensionKind": ["ui"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./extension.js"
+}

@@ -1,0 +1,15 @@
+{
+  "id": "cursor-extension",
+  "title": "Trojanised Claude Code extension for Cursor: a tampered build of a coding assistant's extension adds an SSH key to the account, tries to turn on Remote Login, starts a reverse SSH tunnel that retries every minute, and writes a LaunchAgent made to look like Apple's",
+  "hosts": ["ext.acme-market.example", "telemetry.acme-assist.example"],
+  "http_ports": [8099],
+  "serve": {"ext.acme-market.example/acme-assist-2.1.3.vsix": "vsix"},
+  "entry": ["com.microsoft.VSCode", "Code", "Terminal"],
+  "settle": 150,
+  "sources": [
+    "https://cursor.com/blog/claude-code-extension-security-notice",
+    "https://www.ox.security/blog/malicious-claude-code-extension-cursor-ssh-backdoor/",
+    "https://www.bleepingcomputer.com/news/security/malicious-claude-code-extension-on-cursor-planted-ssh-backdoors/",
+    "https://www.helpnetsecurity.com/2026/10/30/claude-code-extension-ssh-backdoor/"
+  ]
+}

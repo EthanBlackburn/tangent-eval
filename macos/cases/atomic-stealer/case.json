@@ -1,0 +1,8 @@
+{
+  "id": "atomic-stealer",
+  "title": "Atomic Stealer: a command pasted into Terminal fetches a loader that collects browser, wallet and document files, sends them off and installs a launch item",
+  "hosts": ["get.acme-update.example"],
+  "serve": {"get.acme-update.example/update": "update.sh"},
+  "settle": 120,
+  "sources": []
+}

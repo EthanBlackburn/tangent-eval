@@ -1,0 +1,8 @@
+{
+  "name": "acme-dates",
+  "version": "1.3.0",
+  "description": "acme's dates helpers",
+  "main": "index.js",
+  "author": "dev",
+  "license": "MIT"
+}

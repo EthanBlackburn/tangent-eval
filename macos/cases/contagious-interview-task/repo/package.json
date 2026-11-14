@@ -1,0 +1,7 @@
+{
+  "name": "shop-review",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Storefront cart: code review exercise",
+  "main": "src/cart.js"
+}

@@ -1,0 +1,14 @@
+{
+  "id": "glassworm",
+  "title": "GlassWorm: an editor extension, some time after the editor starts, copies the login keychain, wallet, browser and developer credential files to a staging folder, zips it, uploads it and writes a LaunchAgent",
+  "hosts": ["ext.acme-market.example", "sync.icons-cdn.example"],
+  "serve": {"ext.acme-market.example/file-icons-1.8.1.vsix": "vsix"},
+  "entry": ["com.microsoft.VSCode", "Code", "Terminal"],
+  "settle": 90,
+  "sources": [
+    "https://www.paloaltonetworks.com/blog/security-operations/glassworm-goes-mac-fresh-infrastructure-new-tricks/",
+    "https://thehackernews.com/2025/12/glassworm-returns-with-24-malicious.html",
+    "https://hivepro.com/threat-advisory/glassworm-quiet-infiltration-of-mac-systems/",
+    "https://labs.cloudsecurityalliance.org/research/csa-research-note-glassworm-open-vsx-transitive-dependency-a/"
+  ]
+}

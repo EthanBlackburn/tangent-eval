@@ -1,0 +1,18 @@
+{
+  "id": "litellm",
+  "title": "LiteLLM compromise: a PyPI package installs a .pth file, so every Python start runs a payload that sweeps the Mac's credentials, encrypts the haul and uploads it",
+  "pypi": ["infected"],
+  "hosts": ["models.acme-tokens.example"],
+  "settle": 90,
+  "sources": [
+    "https://docs.litellm.ai/blog/security-update-march-2026",
+    "https://github.com/BerriAI/litellm/issues/24521",
+    "https://www.stepsecurity.io/blog/litellm-credential-stealer-hidden-in-pypi-wheel",
+    "https://research.jfrog.com/post/litellm-compromised-teampcp/",
+    "https://trendmicro.com/en/research/26/c/inside-litellm-supply-chain-compromise.html",
+    "https://snyk.io/articles/poisoned-security-scanner-backdooring-litellm",
+    "https://opensourcemalware.com/blog/teampcp-litellm-pypi-supply-chain-attack",
+    "https://securitylabs.datadoghq.com/articles/litellm-compromised-pypi-teampcp-supply-chain-campaign/",
+    "https://www.wiz.io/blog/threes-a-crowd-teampcp-trojanizes-litellm-in-continuation-of-campaign"
+  ]
+}

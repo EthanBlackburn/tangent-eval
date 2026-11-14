@@ -1,0 +1,8 @@
+{
+  "name": "acme-colors",
+  "version": "1.3.0",
+  "description": "acme's colors helpers",
+  "main": "index.js",
+  "author": "dev",
+  "license": "MIT"
+}
