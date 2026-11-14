@@ -25,6 +25,19 @@
    "stands": 0
   }
  },
+ "contagious-interview-task": {
+  "attack": {
+   "marked": 3,
+   "runs": 3,
+   "stands": 3
+  },
+  "other": 0,
+  "twin": {
+   "marked": 3,
+   "runs": 3,
+   "stands": 0
+  }
+ },
  "cursor-extension": {
   "attack": {
    "marked": 3,

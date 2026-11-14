@@ -7,7 +7,7 @@ watching, and beside each one, a developer doing the same kinds of things
 for honest reasons.
 
 <!-- headline: page.py writes this -->
-**6 of 6 attacks caught, in every run. 6 of 6 look-alikes left alone, in every run.**
+**7 of 7 attacks caught, in every run. 7 of 7 look-alikes left alone, in every run.**
 <!-- /headline -->
 
 <!-- results: page.py writes this -->
@@ -17,7 +17,7 @@ for honest reasons.
 | [axios compromise](cases/axios) | npm package | An install script drops a remote-access tool made to look like an Apple daemon and leaves it running | 3 of 3 runs | 3 of 3 runs |
 | [LiteLLM compromise](cases/litellm) | PyPI package | A file the package installs runs on every Python start and sweeps credentials | 3 of 3 runs | 3 of 3 runs |
 | [Contagious Interview](cases/contagious-interview) | a repository from a fake recruiter | Running the take-home project reads wallet, browser and keychain files, uploads them, and leaves a Python backdoor running | 3 of 3 runs | 3 of 3 runs |
-| [Contagious Interview, by the editor](cases/contagious-interview-task) | a repository opened in the editor | A hidden task runs when the folder opens and pipes a script into bash, which installs the same stealer and backdoor | recorded, not judged yet | recorded, not judged yet |
+| [Contagious Interview, by the editor](cases/contagious-interview-task) | a repository opened in the editor | A hidden task runs when the folder opens and pipes a script into bash, which installs the same stealer and backdoor | 3 of 3 runs | 3 of 3 runs |
 | [GlassWorm](cases/glassworm) | an editor extension | The extension copies the login keychain, wallets and the developer's credentials, uploads them and installs a login item | 3 of 3 runs | 3 of 3 runs |
 | [Trojanised Claude Code extension](cases/cursor-extension) | an editor extension | It adds an SSH key, opens a reverse tunnel and installs a login item | 3 of 3 runs | 3 of 3 runs |
 <!-- /results -->
