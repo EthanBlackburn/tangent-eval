@@ -121,7 +121,7 @@ are.
 | `supply-chain/trojan-dependency-rat` | axios 1.14.1 / 0.30.4 maintainer hijack, March 2026 |
 | `supply-chain/postinstall-ai-cli-inventory-then-repos-public` | nx "s1ngularity", August 2025 |
 | `github/shai-hulud-repo-migration` | Shai-Hulud, first wave, September 2025 |
-| `github/shai-hulud-workflow-runner` | Shai-Hulud, first wave, September 2025 |
+| `github/shai-hulud-workflow-runner` | Shai-Hulud: the workflow and its egress to webhook.site from the first wave, September 2025; the self-hosted runner named SHA1HULUD from the second, November 2025 |
 | `supply-chain/preinstall-worm-publishes-credentials-as-repos` | Shai-Hulud second wave, November 2025; "mini Shai-Hulud" with valid provenance, August 2026 |
 | `supply-chain/action-prints-runner-memory` | tj-actions/changed-files, March 2025 |
 | `vendor/platform-breach-env-secrets-reused` | Railway environment-variable breach, October 2026 |
@@ -136,6 +136,7 @@ Sources: [TeamPCP (Unit 42)](https://unit42.paloaltonetworks.com/teampcp-supply-
 [TeamPCP (Arctic Wolf)](https://arcticwolf.com/resources/blog/teampcp-supply-chain-attack-campaign-targets-trivy-checkmarx-kics-and-litellm-potential-downstream-impact-to-additional-projects/),
 [axios (Elastic)](https://www.elastic.co/security-labs/how-we-caught-the-axios-supply-chain-attack),
 [npm compromise advisory (CISA)](https://www.cisa.gov/news-events/alerts/2025/09/23/widespread-supply-chain-compromise-impacting-npm-ecosystem),
+[Shai-Hulud second wave (Wiz)](https://www.wiz.io/blog/shai-hulud-2-0-ongoing-supply-chain-attack),
 [mini Shai-Hulud (Socket)](https://socket.dev/blog/openapi-react-query-codegen-npm-compromise),
 [Railway (TechCrunch)](https://techcrunch.com/2026/10/22/developer-platform-railway-urges-all-users-to-revoke-secret-keys-after-cyberattack/),
 [Vercel via Context.ai (TechCrunch)](https://techcrunch.com/2026/04/20/app-host-vercel-confirms-security-incident-says-customer-data-was-stolen-via-breach-at-context-ai/),
