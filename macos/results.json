@@ -1,0 +1,80 @@
+{
+ "axios": {
+  "attack": {
+   "marked": 3,
+   "runs": 3,
+   "stands": 3
+  },
+  "other": 0,
+  "twin": {
+   "marked": 3,
+   "runs": 3,
+   "stands": 0
+  }
+ },
+ "contagious-interview": {
+  "attack": {
+   "marked": 3,
+   "runs": 3,
+   "stands": 3
+  },
+  "other": 0,
+  "twin": {
+   "marked": 3,
+   "runs": 3,
+   "stands": 0
+  }
+ },
+ "cursor-extension": {
+  "attack": {
+   "marked": 3,
+   "runs": 3,
+   "stands": 3
+  },
+  "other": 3,
+  "twin": {
+   "marked": 3,
+   "runs": 3,
+   "stands": 0
+  }
+ },
+ "glassworm": {
+  "attack": {
+   "marked": 3,
+   "runs": 3,
+   "stands": 3
+  },
+  "other": 3,
+  "twin": {
+   "marked": 1,
+   "runs": 3,
+   "stands": 0
+  }
+ },
+ "litellm": {
+  "attack": {
+   "marked": 3,
+   "runs": 3,
+   "stands": 3
+  },
+  "other": 0,
+  "twin": {
+   "marked": 0,
+   "runs": 3,
+   "stands": 0
+  }
+ },
+ "shai-hulud": {
+  "attack": {
+   "marked": 3,
+   "runs": 3,
+   "stands": 3
+  },
+  "other": 0,
+  "twin": {
+   "marked": 3,
+   "runs": 3,
+   "stands": 0
+  }
+ }
+}

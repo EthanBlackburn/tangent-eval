@@ -1,0 +1,15 @@
+[
+  {"id": "shai-hulud", "name": "Shai-Hulud", "how": "npm package", "does": "An install script hunts the Mac for tokens and keys, and republishes the developer's own packages with itself added"},
+  {"id": "axios", "name": "axios compromise", "how": "npm package", "does": "An install script drops a remote-access tool made to look like an Apple daemon and leaves it running"},
+  {"id": "litellm", "name": "LiteLLM compromise", "how": "PyPI package", "does": "A file the package installs runs on every Python start and sweeps credentials"},
+  {"id": "atomic-stealer", "name": "Atomic Stealer", "how": "a command pasted into Terminal", "does": "A loader collects browser, wallet and document files, sends them off and installs a launch item"},
+  {"id": "macsync", "name": "MacSync", "how": "a fake \"install Claude\" page", "does": "A loader grants itself Full Disk Access, edits the shell's start-up file and installs a login item"},
+  {"id": "clawhub-skill", "name": "ClawHub skills", "how": "an agent skill", "does": "A skill's \"prerequisites\" have the agent run an encoded command that fetches a stealer"},
+  {"id": "apex-accelerator", "name": "Apex Accelerator", "how": "a trojanised agent CLI", "does": "It phishes the login password, checks it, and installs a backdoor"},
+  {"id": "contagious-interview", "name": "Contagious Interview", "how": "a repository from a fake recruiter", "does": "Running the take-home project reads wallet, browser and keychain files, uploads them, and leaves a Python backdoor running"},
+  {"id": "contagious-interview-task", "name": "Contagious Interview, by the editor", "how": "a repository opened in the editor", "does": "A hidden task runs when the folder opens and pipes a script into bash, which installs the same stealer and backdoor"},
+  {"id": "glassworm", "name": "GlassWorm", "how": "an editor extension", "does": "The extension copies the login keychain, wallets and the developer's credentials, uploads them and installs a login item"},
+  {"id": "cursor-extension", "name": "Trojanised Claude Code extension", "how": "an editor extension", "does": "It adds an SSH key, opens a reverse tunnel and installs a login item"},
+  {"id": "bluenoroff", "name": "BlueNoroff fake Zoom update", "how": "a script from a fake meeting invite", "does": "It tampers with the privacy database and plants itself in the shell's start-up"},
+  {"id": "hijacked-agent", "name": "Hijacked coding agent", "how": "a planted instruction file, MCP server or hook", "does": "The agent's settings are rewritten so it runs someone else's commands or sends its traffic elsewhere"}
+]
