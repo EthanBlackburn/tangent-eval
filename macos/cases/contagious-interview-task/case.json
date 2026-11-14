@@ -1,0 +1,24 @@
+{
+  "id": "contagious-interview-task",
+  "title": "Contagious Interview, by the editor: opening a fake recruiter's repository in VS Code runs a hidden task that pipes a script from the attacker's server into bash, which installs and starts the same stealer and Python backdoor",
+  "hosts": ["git.acme-hire.example", "vscode-config.acme-deploy.example", "cdn.shop-metrics.example"],
+  "http_ports": [1224, 1245],
+  "repos": {"git.acme-hire.example/talent/shop-review.git": "repo"},
+  "serve": {
+    "vscode-config.acme-deploy.example/settings/mac": "stage/mac.sh",
+    "vscode-config.acme-deploy.example/settings/bootstrap": "stage/bootstrap.sh",
+    "vscode-config.acme-deploy.example/settings/package.json": "stage/package.json",
+    "vscode-config.acme-deploy.example/settings/env-setup.js": "stage/env-setup.js",
+    "cdn.shop-metrics.example/client/7": "../contagious-interview/client.py",
+    "cdn.shop-metrics.example/payload/7": "../contagious-interview/payload.py"
+  },
+  "entry": ["com.microsoft.VSCode", "Code", "Terminal"],
+  "settle": 180,
+  "sources": [
+    "https://opensourcemalware.com/blog/contagious-interview-vscode",
+    "https://about.gitlab.com/blog/how-to-detect-and-prevent-contagious-interview-ide-attacks/",
+    "https://thehackernews.com/2026/01/north-korea-linked-hackers-target.html",
+    "https://www.welivesecurity.com/en/eset-research/deceptivedevelopment-targets-freelance-developers/",
+    "https://unit42.paloaltonetworks.com/two-campaigns-by-north-korea-bad-actors-target-job-hunters/"
+  ]
+}

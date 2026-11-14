@@ -1,0 +1,20 @@
+{
+  "id": "contagious-interview",
+  "title": "Contagious Interview: a take-home project from a fake recruiter, when run, reads the Mac's wallet, browser and keychain files, uploads them, and fetches a Python backdoor that it leaves running",
+  "hosts": ["git.acme-hire.example", "cdn.shop-metrics.example"],
+  "http_ports": [1224, 1245],
+  "repos": {"git.acme-hire.example/talent/shop-demo.git": "repo"},
+  "serve": {
+    "cdn.shop-metrics.example/client/7": "client.py",
+    "cdn.shop-metrics.example/payload/7": "payload.py"
+  },
+  "settle": 150,
+  "sources": [
+    "https://unit42.paloaltonetworks.com/two-campaigns-by-north-korea-bad-actors-target-job-hunters/",
+    "https://unit42.paloaltonetworks.com/north-korean-threat-actors-lure-tech-job-seekers-as-fake-recruiters/",
+    "https://www.welivesecurity.com/en/eset-research/deceptivedevelopment-targets-freelance-developers/",
+    "https://socket.dev/blog/north-korean-contagious-interview-campaign-drops-35-new-malicious-npm-packages",
+    "https://opensourcemalware.com/blog/contagious-interview-vscode",
+    "https://about.gitlab.com/blog/how-to-detect-and-prevent-contagious-interview-ide-attacks/"
+  ]
+}
