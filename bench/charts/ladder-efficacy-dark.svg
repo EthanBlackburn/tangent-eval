@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 570" width="760" height="570" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" role="img" aria-label="Attacks caught, of 71">
+<rect width="760" height="570" rx="10" fill="#1a1a19"/>
+<text x="32.0" y="54.0" font-size="20" font-weight="600" text-anchor="start" fill="#f2f1ee">Attacks caught, of 71</text>
+<text x="32.0" y="76.0" font-size="13" font-weight="400" text-anchor="start" fill="#a3a19a">A startup&#x27;s AWS, Okta, GitHub, Google Workspace and CI logs, the same for every row  ·  higher is better</text>
+<circle cx="39" cy="99.5" r="6.5" fill="#184f95"/>
+<text x="52.0" y="104.0" font-size="13" font-weight="400" text-anchor="start" fill="#f2f1ee">judge alone (single pass)</text>
+<circle cx="246.0" cy="99.5" r="4.5" fill="#3987e5"/>
+<text x="259.0" y="104.0" font-size="13" font-weight="400" text-anchor="start" fill="#f2f1ee">judge + reviewer (double pass)</text>
+<circle cx="486.0" cy="99.5" r="5.5" fill="#6f6d67"/>
+<text x="499.0" y="104.0" font-size="13" font-weight="400" text-anchor="start" fill="#f2f1ee">detection rules, no model</text>
+<line x1="288.0" y1="124" x2="288.0" y2="440" stroke="#34332f" stroke-width="1"/>
+<text x="288.0" y="456.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#a3a19a">0</text>
+<line x1="377.6" y1="124" x2="377.6" y2="440" stroke="#34332f" stroke-width="1"/>
+<text x="377.6" y="456.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#a3a19a">20</text>
+<line x1="467.2" y1="124" x2="467.2" y2="440" stroke="#34332f" stroke-width="1"/>
+<text x="467.2" y="456.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#a3a19a">40</text>
+<line x1="556.7" y1="124" x2="556.7" y2="440" stroke="#34332f" stroke-width="1"/>
+<text x="556.7" y="456.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#a3a19a">60</text>
+<line x1="606.0" y1="124" x2="606.0" y2="440" stroke="#34332f" stroke-width="1"/>
+<text x="606.0" y="456.0" font-size="11.5" font-weight="400" text-anchor="middle" fill="#a3a19a">71</text>
+<text x="32.0" y="144.5" font-size="13" font-weight="600" text-anchor="start" fill="#f2f1ee">64 GB</text>
+<text x="102.0" y="144.5" font-size="13" font-weight="400" text-anchor="start" fill="#f2f1ee">Qwen3-Next 80B</text>
+<g><title>64 GB, Qwen3-Next 80B: 70–71 judge alone, 69–70 with the reviewer</title>
+<line x1="603.8" y1="140.0" x2="599.3" y2="140.0" stroke="#6f6d67" stroke-width="2" stroke-linecap="round"/>
+<line x1="601.5" y1="140.0" x2="606.0" y2="140.0" stroke="#184f95" stroke-width="5" stroke-linecap="round" opacity="0.55"/>
+<line x1="597.0" y1="140.0" x2="601.5" y2="140.0" stroke="#3987e5" stroke-width="5" stroke-linecap="round" opacity="0.55"/>
+<circle cx="603.8" cy="140.0" r="6.5" fill="#184f95" stroke="#1a1a19" stroke-width="2"/>
+<circle cx="599.3" cy="140.0" r="4.5" fill="#3987e5" stroke="#1a1a19" stroke-width="1.5"/>
+</g>
+<text x="622" y="144.5" font-size="13" fill="#a3a19a">70–71 → <tspan font-weight="600" fill="#f2f1ee">69–70</tspan></text>
+<text x="32.0" y="176.5" font-size="13" font-weight="600" text-anchor="start" fill="#f2f1ee">128 GB</text>
+<text x="102.0" y="176.5" font-size="13" font-weight="400" text-anchor="start" fill="#f2f1ee">Qwen3.5 122B</text>
+<g><title>128 GB, Qwen3.5 122B: 71 judge alone, 71 with the reviewer</title>
+<circle cx="606.0" cy="172.0" r="6.5" fill="#184f95" stroke="#1a1a19" stroke-width="2"/>
+<circle cx="606.0" cy="172.0" r="4.5" fill="#3987e5" stroke="#1a1a19" stroke-width="1.5"/>
+</g>
+<text x="622.0" y="176.5" font-size="13" font-weight="600" text-anchor="start" fill="#f2f1ee">71</text>
+<text x="32.0" y="208.5" font-size="13" font-weight="600" text-anchor="start" fill="#f2f1ee">256 GB</text>
+<text x="102.0" y="208.5" font-size="13" font-weight="400" text-anchor="start" fill="#f2f1ee">DeepSeek V4 Flash</text>
+<g><title>256 GB, DeepSeek V4 Flash: 71 judge alone, 71 with the reviewer</title>
+<circle cx="606.0" cy="204.0" r="6.5" fill="#184f95" stroke="#1a1a19" stroke-width="2"/>
+<circle cx="606.0" cy="204.0" r="4.5" fill="#3987e5" stroke="#1a1a19" stroke-width="1.5"/>
+</g>
+<text x="622.0" y="208.5" font-size="13" font-weight="600" text-anchor="start" fill="#f2f1ee">71</text>
+<text x="32.0" y="240.5" font-size="13" font-weight="600" text-anchor="start" fill="#f2f1ee">256 GB</text>
+<text x="102.0" y="240.5" font-size="13" font-weight="400" text-anchor="start" fill="#f2f1ee">MiniMax M3.1 Flash</text>
+<g><title>256 GB, MiniMax M3.1 Flash: 71 judge alone, 71 with the reviewer</title>
+<circle cx="606.0" cy="236.0" r="6.5" fill="#184f95" stroke="#1a1a19" stroke-width="2"/>
+<circle cx="606.0" cy="236.0" r="4.5" fill="#3987e5" stroke="#1a1a19" stroke-width="1.5"/>
+</g>
+<text x="622.0" y="240.5" font-size="13" font-weight="600" text-anchor="start" fill="#f2f1ee">71</text>
+<text x="32.0" y="272.5" font-size="13" font-weight="600" text-anchor="start" fill="#f2f1ee">512 GB</text>
+<text x="102.0" y="272.5" font-size="13" font-weight="400" text-anchor="start" fill="#f2f1ee">DeepSeek V4.1 Flash</text>
+<g><title>512 GB, DeepSeek V4.1 Flash: 71 judge alone, 71 with the reviewer</title>
+<circle cx="606.0" cy="268.0" r="6.5" fill="#184f95" stroke="#1a1a19" stroke-width="2"/>
+<circle cx="606.0" cy="268.0" r="4.5" fill="#3987e5" stroke="#1a1a19" stroke-width="1.5"/>
+</g>
+<text x="622.0" y="272.5" font-size="13" font-weight="600" text-anchor="start" fill="#f2f1ee">71</text>
+<text x="32.0" y="304.5" font-size="13" font-weight="600" text-anchor="start" fill="#f2f1ee">&gt; 512 GB</text>
+<text x="102.0" y="304.5" font-size="13" font-weight="400" text-anchor="start" fill="#f2f1ee">DeepSeek V4.1 Flash + GLM 5.3</text>
+<g><title>&gt; 512 GB, DeepSeek V4.1 Flash + GLM 5.3: 71 judge alone, 71 with the reviewer</title>
+<circle cx="606.0" cy="300.0" r="6.5" fill="#184f95" stroke="#1a1a19" stroke-width="2"/>
+<circle cx="606.0" cy="300.0" r="4.5" fill="#3987e5" stroke="#1a1a19" stroke-width="1.5"/>
+</g>
+<text x="622.0" y="304.5" font-size="13" font-weight="600" text-anchor="start" fill="#f2f1ee">71</text>
+<line x1="32" y1="323" x2="728" y2="323" stroke="#34332f" stroke-width="1"/>
+<text x="32.0" y="350.5" font-size="13" font-weight="600" text-anchor="start" fill="#f2f1ee">hosted</text>
+<text x="102.0" y="350.5" font-size="13" font-weight="400" text-anchor="start" fill="#f2f1ee">Claude Haiku 5.5 + Sonnet 5.5</text>
+<g><title>hosted, Claude Haiku 5.5 + Sonnet 5.5: 70 judge alone, 70 with the reviewer</title>
+<circle cx="601.5" cy="346.0" r="6.5" fill="#184f95" stroke="#1a1a19" stroke-width="2"/>
+<circle cx="601.5" cy="346.0" r="4.5" fill="#3987e5" stroke="#1a1a19" stroke-width="1.5"/>
+</g>
+<text x="622.0" y="350.5" font-size="13" font-weight="600" text-anchor="start" fill="#f2f1ee">70</text>
+<line x1="32" y1="369" x2="728" y2="369" stroke="#34332f" stroke-width="1"/>
+<text x="32.0" y="396.5" font-size="13" font-weight="600" text-anchor="start" fill="#f2f1ee">SIEM</text>
+<text x="102.0" y="396.5" font-size="13" font-weight="400" text-anchor="start" fill="#f2f1ee">Elastic detection rules</text>
+<g><title>Elastic detection rules: 51</title><circle cx="516.4" cy="392.0" r="5.5" fill="#6f6d67" stroke="#1a1a19" stroke-width="2"/></g>
+<text x="622.0" y="396.5" font-size="13" font-weight="600" text-anchor="start" fill="#f2f1ee">51</text>
+<text x="32.0" y="428.5" font-size="13" font-weight="600" text-anchor="start" fill="#f2f1ee">SIEM</text>
+<text x="102.0" y="428.5" font-size="13" font-weight="400" text-anchor="start" fill="#f2f1ee">Sigma rules</text>
+<g><title>Sigma rules: 13</title><circle cx="346.2" cy="424.0" r="5.5" fill="#6f6d67" stroke="#1a1a19" stroke-width="2"/></g>
+<text x="622.0" y="428.5" font-size="13" font-weight="600" text-anchor="start" fill="#f2f1ee">13</text>
+<text x="32.0" y="484.0" font-size="11.5" font-weight="400" text-anchor="start" fill="#a3a19a">Two runs each, 2026-11-16, open weights through OpenRouter: the dot is their mean, the bar what they span. One model</text>
+<text x="32.0" y="502.0" font-size="11.5" font-weight="400" text-anchor="start" fill="#a3a19a">judges, then reviews its own alerts; where two are named, the second reviews. The tier is the Mac memory a 4-bit build</text>
+<text x="32.0" y="520.0" font-size="11.5" font-weight="400" text-anchor="start" fill="#a3a19a">fits in; the 64 and 128 GB rows ran at higher precision. Hosted: one earlier run, before this week&#x27;s fixes to tangent.</text>
+<text x="32.0" y="538.0" font-size="11.5" font-weight="400" text-anchor="start" fill="#a3a19a">Rules: Elastic&#x27;s 350 public detection rules, run by Elasticsearch, and Sigma&#x27;s 102, over the same records.</text>
+</svg>

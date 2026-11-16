@@ -1,0 +1,874 @@
+[
+ {
+  "entrant": {
+   "name": "DeepSeek V4 Flash 0731",
+   "kind": "models",
+   "pipeline": "tangent packs/judge, open-weights branch (92fe668 + 4 changes)",
+   "judge": "DeepSeek V4 Flash 0731",
+   "reviewer": "DeepSeek V4 Flash 0731",
+   "served": "OpenRouter, 4-bit",
+   "memory": "256 GB",
+   "runs": [
+    {
+     "judge": "bench/results/deepseek-v4-flash/a/judge.txt",
+     "reviewed": "bench/results/deepseek-v4-flash/a/reviewed.txt",
+     "date": "2026-11-16",
+     "judge_usd": 1.07,
+     "review_usd": 1.23,
+     "alerts": 1081,
+     "review_errors": 0
+    },
+    {
+     "judge": "bench/results/deepseek-v4-flash/b/judge.txt",
+     "reviewed": "bench/results/deepseek-v4-flash/b/reviewed.txt",
+     "date": "2026-11-16",
+     "judge_usd": 1.01,
+     "review_usd": 1.2,
+     "alerts": 1029,
+     "review_errors": 0
+    }
+   ]
+  },
+  "runs": [
+   {
+    "first": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 222,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 8,
+     "away": {
+      "attacks": 35,
+      "controls": 35,
+      "apart": 0
+     },
+     "usual": {
+      "attacks": 32,
+      "controls": 15,
+      "apart": 19
+     }
+    },
+    "last": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 13,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 4,
+     "away": {
+      "attacks": 35,
+      "controls": 35,
+      "apart": 0
+     },
+     "usual": {
+      "attacks": 30,
+      "controls": 3,
+      "apart": 27
+     }
+    },
+    "usd": 2.3,
+    "date": "2026-11-16",
+    "failed": 0
+   },
+   {
+    "first": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 220,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 8,
+     "away": {
+      "attacks": 35,
+      "controls": 35,
+      "apart": 0
+     },
+     "usual": {
+      "attacks": 34,
+      "controls": 12,
+      "apart": 22
+     }
+    },
+    "last": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 10,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 3,
+     "away": {
+      "attacks": 35,
+      "controls": 35,
+      "apart": 0
+     },
+     "usual": {
+      "attacks": 34,
+      "controls": 2,
+      "apart": 32
+     }
+    },
+    "usd": 2.21,
+    "date": "2026-11-16",
+    "failed": 0
+   }
+  ],
+  "sort": 29.5
+ },
+ {
+  "entrant": {
+   "name": "DeepSeek V4.1 Flash",
+   "kind": "models",
+   "pipeline": "tangent packs/judge, open-weights branch (92fe668 + 4 changes)",
+   "judge": "DeepSeek V4.1 Flash",
+   "reviewer": "DeepSeek V4.1 Flash",
+   "served": "OpenRouter, 4-bit",
+   "memory": "512 GB",
+   "runs": [
+    {
+     "judge": "bench/results/deepseek-v4.1-flash/a/judge.txt",
+     "reviewed": "bench/results/deepseek-v4.1-flash/a/reviewed.txt",
+     "date": "2026-11-16",
+     "judge_usd": 1.19,
+     "review_usd": 2.47,
+     "alerts": 857,
+     "review_errors": 0
+    },
+    {
+     "judge": "bench/results/deepseek-v4.1-flash/b/judge.txt",
+     "reviewed": "bench/results/deepseek-v4.1-flash/b/reviewed.txt",
+     "date": "2026-11-16",
+     "judge_usd": 0.93,
+     "review_usd": 2.5,
+     "alerts": 896,
+     "review_errors": 0
+    }
+   ]
+  },
+  "runs": [
+   {
+    "first": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 77,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 6,
+     "away": {
+      "attacks": 35,
+      "controls": 33,
+      "apart": 2
+     },
+     "usual": {
+      "attacks": 30,
+      "controls": 11,
+      "apart": 21
+     }
+    },
+    "last": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 13,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 4,
+     "away": {
+      "attacks": 35,
+      "controls": 33,
+      "apart": 2
+     },
+     "usual": {
+      "attacks": 30,
+      "controls": 6,
+      "apart": 24
+     }
+    },
+    "usd": 3.66,
+    "date": "2026-11-16",
+    "failed": 0
+   },
+   {
+    "first": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 72,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 7,
+     "away": {
+      "attacks": 35,
+      "controls": 35,
+      "apart": 0
+     },
+     "usual": {
+      "attacks": 33,
+      "controls": 5,
+      "apart": 28
+     }
+    },
+    "last": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 13,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 3,
+     "away": {
+      "attacks": 35,
+      "controls": 35,
+      "apart": 0
+     },
+     "usual": {
+      "attacks": 33,
+      "controls": 4,
+      "apart": 29
+     }
+    },
+    "usd": 3.43,
+    "date": "2026-11-16",
+    "failed": 0
+   }
+  ],
+  "sort": 26.5
+ },
+ {
+  "entrant": {
+   "name": "Claude Haiku 5.5 + Claude Sonnet 5.5",
+   "kind": "models",
+   "pipeline": "tangent packs/judge at 0044b6e, before the fixes of 2026-11-16",
+   "judge": "Claude Haiku 5.5",
+   "reviewer": "Claude Sonnet 5.5",
+   "served": "Anthropic API",
+   "memory": "hosted",
+   "runs": [
+    {
+     "judge": "bench/results/haiku-5.5+sonnet-5.5/a/judge.txt",
+     "reviewed": "bench/results/haiku-5.5+sonnet-5.5/a/reviewed.txt",
+     "date": "2026-11-15",
+     "judge_usd": null,
+     "review_usd": 11.05,
+     "alerts": 1577,
+     "review_errors": 4
+    }
+   ]
+  },
+  "runs": [
+   {
+    "first": {
+     "judged": 6832,
+     "not_judged": 4,
+     "ordinary": 462,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 10,
+     "away": {
+      "attacks": 34,
+      "controls": 35,
+      "apart": 0
+     },
+     "usual": {
+      "attacks": 35,
+      "controls": 23,
+      "apart": 12
+     }
+    },
+    "last": {
+     "judged": 6832,
+     "not_judged": 4,
+     "ordinary": 40,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 2,
+     "away": {
+      "attacks": 34,
+      "controls": 34,
+      "apart": 1
+     },
+     "usual": {
+      "attacks": 28,
+      "controls": 2,
+      "apart": 26
+     }
+    },
+    "usd": null,
+    "date": "2026-11-15",
+    "failed": 8
+   }
+  ],
+  "sort": 26.0
+ },
+ {
+  "entrant": {
+   "name": "DeepSeek V4.1 Flash + GLM 5.3",
+   "kind": "models",
+   "pipeline": "tangent packs/judge, open-weights branch (92fe668 + 4 changes)",
+   "judge": "DeepSeek V4.1 Flash",
+   "reviewer": "GLM 5.3",
+   "served": "OpenRouter, fp8",
+   "memory": "over 512 GB",
+   "runs": [
+    {
+     "judge": "bench/results/deepseek-v4.1-flash+glm-5.3/a/judge.txt",
+     "reviewed": "bench/results/deepseek-v4.1-flash+glm-5.3/a/reviewed.txt",
+     "date": "2026-11-16",
+     "judge_usd": 0.39,
+     "review_usd": 4.71,
+     "alerts": 799,
+     "review_errors": 0
+    },
+    {
+     "judge": "bench/results/deepseek-v4.1-flash+glm-5.3/b/judge.txt",
+     "reviewed": "bench/results/deepseek-v4.1-flash+glm-5.3/b/reviewed.txt",
+     "date": "2026-11-16",
+     "judge_usd": 0.39,
+     "review_usd": 4.63,
+     "alerts": 812,
+     "review_errors": 0
+    }
+   ]
+  },
+  "runs": [
+   {
+    "first": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 61,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 4,
+     "away": {
+      "attacks": 35,
+      "controls": 34,
+      "apart": 1
+     },
+     "usual": {
+      "attacks": 31,
+      "controls": 8,
+      "apart": 23
+     }
+    },
+    "last": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 13,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 2,
+     "away": {
+      "attacks": 35,
+      "controls": 34,
+      "apart": 1
+     },
+     "usual": {
+      "attacks": 29,
+      "controls": 3,
+      "apart": 26
+     }
+    },
+    "usd": 5.1,
+    "date": "2026-11-16",
+    "failed": 0
+   },
+   {
+    "first": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 80,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 5,
+     "away": {
+      "attacks": 35,
+      "controls": 34,
+      "apart": 1
+     },
+     "usual": {
+      "attacks": 32,
+      "controls": 8,
+      "apart": 24
+     }
+    },
+    "last": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 6,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 0,
+     "away": {
+      "attacks": 35,
+      "controls": 34,
+      "apart": 1
+     },
+     "usual": {
+      "attacks": 28,
+      "controls": 3,
+      "apart": 25
+     }
+    },
+    "usd": 5.02,
+    "date": "2026-11-16",
+    "failed": 0
+   }
+  ],
+  "sort": 25.5
+ },
+ {
+  "entrant": {
+   "name": "Elastic detection rules (350), run by Elasticsearch",
+   "kind": "rules",
+   "runs": [
+    {
+     "judge": "compare/results/cloud/elasticsearch/score.txt"
+    }
+   ]
+  },
+  "runs": [
+   {
+    "first": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 43,
+     "ordinary_of": 5304,
+     "dev_caught": 16,
+     "dev_flagged": 2,
+     "away": {
+      "attacks": 35,
+      "controls": 34,
+      "apart": 1
+     },
+     "usual": {
+      "attacks": 26,
+      "controls": 6,
+      "apart": 24
+     }
+    },
+    "last": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 43,
+     "ordinary_of": 5304,
+     "dev_caught": 16,
+     "dev_flagged": 2,
+     "away": {
+      "attacks": 35,
+      "controls": 34,
+      "apart": 1
+     },
+     "usual": {
+      "attacks": 26,
+      "controls": 6,
+      "apart": 24
+     }
+    },
+    "usd": 0,
+    "date": null,
+    "failed": 0
+   }
+  ],
+  "sort": 24.0
+ },
+ {
+  "entrant": {
+   "name": "Qwen3-Next 80B",
+   "kind": "models",
+   "pipeline": "tangent packs/judge, open-weights branch (92fe668 + 4 changes)",
+   "judge": "Qwen3-Next 80B",
+   "reviewer": "Qwen3-Next 80B",
+   "served": "OpenRouter, fp8",
+   "memory": "64 GB",
+   "runs": [
+    {
+     "judge": "bench/results/qwen3-next-80b/a/judge.txt",
+     "reviewed": "bench/results/qwen3-next-80b/a/reviewed.txt",
+     "date": "2026-11-16",
+     "judge_usd": 2.41,
+     "review_usd": 3.82,
+     "alerts": 935,
+     "review_errors": 71
+    },
+    {
+     "judge": "bench/results/qwen3-next-80b/b/judge.txt",
+     "reviewed": "bench/results/qwen3-next-80b/b/reviewed.txt",
+     "date": "2026-11-16",
+     "judge_usd": 2.42,
+     "review_usd": 3.86,
+     "alerts": 920,
+     "review_errors": 82
+    }
+   ]
+  },
+  "runs": [
+   {
+    "first": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 194,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 4,
+     "away": {
+      "attacks": 34,
+      "controls": 35,
+      "apart": 0
+     },
+     "usual": {
+      "attacks": 32,
+      "controls": 10,
+      "apart": 22
+     }
+    },
+    "last": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 144,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 4,
+     "away": {
+      "attacks": 33,
+      "controls": 28,
+      "apart": 7
+     },
+     "usual": {
+      "attacks": 31,
+      "controls": 9,
+      "apart": 23
+     }
+    },
+    "usd": 6.23,
+    "date": "2026-11-16",
+    "failed": 71
+   },
+   {
+    "first": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 172,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 4,
+     "away": {
+      "attacks": 35,
+      "controls": 35,
+      "apart": 0
+     },
+     "usual": {
+      "attacks": 31,
+      "controls": 11,
+      "apart": 21
+     }
+    },
+    "last": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 112,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 3,
+     "away": {
+      "attacks": 34,
+      "controls": 31,
+      "apart": 4
+     },
+     "usual": {
+      "attacks": 31,
+      "controls": 10,
+      "apart": 22
+     }
+    },
+    "usd": 6.28,
+    "date": "2026-11-16",
+    "failed": 82
+   }
+  ],
+  "sort": 22.5
+ },
+ {
+  "entrant": {
+   "name": "MiniMax M3.1 Flash",
+   "kind": "models",
+   "pipeline": "tangent packs/judge, open-weights branch (92fe668 + 4 changes)",
+   "judge": "MiniMax M3.1 Flash",
+   "reviewer": "MiniMax M3.1 Flash",
+   "served": "OpenRouter, 4-bit",
+   "memory": "256 GB",
+   "runs": [
+    {
+     "judge": "bench/results/minimax-m3.1-flash/a/judge.txt",
+     "reviewed": "bench/results/minimax-m3.1-flash/a/reviewed.txt",
+     "date": "2026-11-16",
+     "judge_usd": 1.87,
+     "review_usd": 2.38,
+     "alerts": 886,
+     "review_errors": 0
+    },
+    {
+     "judge": "bench/results/minimax-m3.1-flash/b/judge.txt",
+     "reviewed": "bench/results/minimax-m3.1-flash/b/reviewed.txt",
+     "date": "2026-11-16",
+     "judge_usd": 1.83,
+     "review_usd": 2.28,
+     "alerts": 829,
+     "review_errors": 0
+    }
+   ]
+  },
+  "runs": [
+   {
+    "first": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 65,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 6,
+     "away": {
+      "attacks": 35,
+      "controls": 35,
+      "apart": 0
+     },
+     "usual": {
+      "attacks": 31,
+      "controls": 8,
+      "apart": 23
+     }
+    },
+    "last": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 4,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 2,
+     "away": {
+      "attacks": 35,
+      "controls": 35,
+      "apart": 0
+     },
+     "usual": {
+      "attacks": 26,
+      "controls": 7,
+      "apart": 19
+     }
+    },
+    "usd": 4.25,
+    "date": "2026-11-16",
+    "failed": 0
+   },
+   {
+    "first": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 61,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 4,
+     "away": {
+      "attacks": 35,
+      "controls": 35,
+      "apart": 0
+     },
+     "usual": {
+      "attacks": 32,
+      "controls": 8,
+      "apart": 24
+     }
+    },
+    "last": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 6,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 0,
+     "away": {
+      "attacks": 35,
+      "controls": 35,
+      "apart": 0
+     },
+     "usual": {
+      "attacks": 31,
+      "controls": 5,
+      "apart": 26
+     }
+    },
+    "usd": 4.11,
+    "date": "2026-11-16",
+    "failed": 0
+   }
+  ],
+  "sort": 22.5
+ },
+ {
+  "entrant": {
+   "name": "Qwen3.5 122B",
+   "kind": "models",
+   "pipeline": "tangent packs/judge, open-weights branch (92fe668 + 4 changes)",
+   "judge": "Qwen3.5 122B",
+   "reviewer": "Qwen3.5 122B",
+   "served": "OpenRouter, fp8 or unstated",
+   "memory": "128 GB",
+   "runs": [
+    {
+     "judge": "bench/results/qwen3.5-122b/a/judge.txt",
+     "reviewed": "bench/results/qwen3.5-122b/a/reviewed.txt",
+     "date": "2026-11-16",
+     "judge_usd": 6.06,
+     "review_usd": 9.67,
+     "alerts": 949,
+     "review_errors": 0
+    },
+    {
+     "judge": "bench/results/qwen3.5-122b/b/judge.txt",
+     "reviewed": "bench/results/qwen3.5-122b/b/reviewed.txt",
+     "date": "2026-11-16",
+     "judge_usd": 6.04,
+     "review_usd": 9.24,
+     "alerts": 995,
+     "review_errors": 0
+    }
+   ]
+  },
+  "runs": [
+   {
+    "first": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 37,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 6,
+     "away": {
+      "attacks": 35,
+      "controls": 35,
+      "apart": 0
+     },
+     "usual": {
+      "attacks": 31,
+      "controls": 9,
+      "apart": 22
+     }
+    },
+    "last": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 2,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 3,
+     "away": {
+      "attacks": 35,
+      "controls": 35,
+      "apart": 0
+     },
+     "usual": {
+      "attacks": 25,
+      "controls": 4,
+      "apart": 21
+     }
+    },
+    "usd": 15.73,
+    "date": "2026-11-16",
+    "failed": 0
+   },
+   {
+    "first": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 29,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 6,
+     "away": {
+      "attacks": 35,
+      "controls": 35,
+      "apart": 0
+     },
+     "usual": {
+      "attacks": 33,
+      "controls": 10,
+      "apart": 23
+     }
+    },
+    "last": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 2,
+     "ordinary_of": 5304,
+     "dev_caught": 36,
+     "dev_flagged": 2,
+     "away": {
+      "attacks": 35,
+      "controls": 34,
+      "apart": 1
+     },
+     "usual": {
+      "attacks": 28,
+      "controls": 5,
+      "apart": 23
+     }
+    },
+    "usd": 15.28,
+    "date": "2026-11-16",
+    "failed": 0
+   }
+  ],
+  "sort": 22.0
+ },
+ {
+  "entrant": {
+   "name": "Sigma rules (102)",
+   "kind": "rules",
+   "runs": [
+    {
+     "judge": "compare/results/cloud/sigma/score.txt"
+    }
+   ]
+  },
+  "runs": [
+   {
+    "first": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 121,
+     "ordinary_of": 5304,
+     "dev_caught": 8,
+     "dev_flagged": 2,
+     "away": {
+      "attacks": 5,
+      "controls": 0,
+      "apart": 5
+     },
+     "usual": {
+      "attacks": 5,
+      "controls": 0,
+      "apart": 5
+     }
+    },
+    "last": {
+     "judged": 6832,
+     "not_judged": 0,
+     "ordinary": 121,
+     "ordinary_of": 5304,
+     "dev_caught": 8,
+     "dev_flagged": 2,
+     "away": {
+      "attacks": 5,
+      "controls": 0,
+      "apart": 5
+     },
+     "usual": {
+      "attacks": 5,
+      "controls": 0,
+      "apart": 5
+     }
+    },
+    "usd": 0,
+    "date": null,
+    "failed": 0
+   }
+  ],
+  "sort": 5.0
+ }
+]

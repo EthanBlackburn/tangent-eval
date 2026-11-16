@@ -1,0 +1,214 @@
+[
+ {
+  "name": "Qwen3-Next 80B",
+  "kind": "models",
+  "pipeline": "tangent packs/judge, open-weights branch (92fe668 + 4 changes)",
+  "judge": "Qwen3-Next 80B",
+  "reviewer": "Qwen3-Next 80B",
+  "served": "OpenRouter, fp8",
+  "memory": "64 GB",
+  "runs": [
+   {
+    "judge": "bench/results/qwen3-next-80b/a/judge.txt",
+    "reviewed": "bench/results/qwen3-next-80b/a/reviewed.txt",
+    "date": "2026-11-16",
+    "judge_usd": 2.41,
+    "review_usd": 3.82,
+    "alerts": 935,
+    "review_errors": 71
+   },
+   {
+    "judge": "bench/results/qwen3-next-80b/b/judge.txt",
+    "reviewed": "bench/results/qwen3-next-80b/b/reviewed.txt",
+    "date": "2026-11-16",
+    "judge_usd": 2.42,
+    "review_usd": 3.86,
+    "alerts": 920,
+    "review_errors": 82
+   }
+  ]
+ },
+ {
+  "name": "Qwen3.5 122B",
+  "kind": "models",
+  "pipeline": "tangent packs/judge, open-weights branch (92fe668 + 4 changes)",
+  "judge": "Qwen3.5 122B",
+  "reviewer": "Qwen3.5 122B",
+  "served": "OpenRouter, fp8 or unstated",
+  "memory": "128 GB",
+  "runs": [
+   {
+    "judge": "bench/results/qwen3.5-122b/a/judge.txt",
+    "reviewed": "bench/results/qwen3.5-122b/a/reviewed.txt",
+    "date": "2026-11-16",
+    "judge_usd": 6.06,
+    "review_usd": 9.67,
+    "alerts": 949,
+    "review_errors": 0
+   },
+   {
+    "judge": "bench/results/qwen3.5-122b/b/judge.txt",
+    "reviewed": "bench/results/qwen3.5-122b/b/reviewed.txt",
+    "date": "2026-11-16",
+    "judge_usd": 6.04,
+    "review_usd": 9.24,
+    "alerts": 995,
+    "review_errors": 0
+   }
+  ]
+ },
+ {
+  "name": "DeepSeek V4 Flash 0731",
+  "kind": "models",
+  "pipeline": "tangent packs/judge, open-weights branch (92fe668 + 4 changes)",
+  "judge": "DeepSeek V4 Flash 0731",
+  "reviewer": "DeepSeek V4 Flash 0731",
+  "served": "OpenRouter, 4-bit",
+  "memory": "256 GB",
+  "runs": [
+   {
+    "judge": "bench/results/deepseek-v4-flash/a/judge.txt",
+    "reviewed": "bench/results/deepseek-v4-flash/a/reviewed.txt",
+    "date": "2026-11-16",
+    "judge_usd": 1.07,
+    "review_usd": 1.23,
+    "alerts": 1081,
+    "review_errors": 0
+   },
+   {
+    "judge": "bench/results/deepseek-v4-flash/b/judge.txt",
+    "reviewed": "bench/results/deepseek-v4-flash/b/reviewed.txt",
+    "date": "2026-11-16",
+    "judge_usd": 1.01,
+    "review_usd": 1.2,
+    "alerts": 1029,
+    "review_errors": 0
+   }
+  ]
+ },
+ {
+  "name": "MiniMax M3.1 Flash",
+  "kind": "models",
+  "pipeline": "tangent packs/judge, open-weights branch (92fe668 + 4 changes)",
+  "judge": "MiniMax M3.1 Flash",
+  "reviewer": "MiniMax M3.1 Flash",
+  "served": "OpenRouter, 4-bit",
+  "memory": "256 GB",
+  "runs": [
+   {
+    "judge": "bench/results/minimax-m3.1-flash/a/judge.txt",
+    "reviewed": "bench/results/minimax-m3.1-flash/a/reviewed.txt",
+    "date": "2026-11-16",
+    "judge_usd": 1.87,
+    "review_usd": 2.38,
+    "alerts": 886,
+    "review_errors": 0
+   },
+   {
+    "judge": "bench/results/minimax-m3.1-flash/b/judge.txt",
+    "reviewed": "bench/results/minimax-m3.1-flash/b/reviewed.txt",
+    "date": "2026-11-16",
+    "judge_usd": 1.83,
+    "review_usd": 2.28,
+    "alerts": 829,
+    "review_errors": 0
+   }
+  ]
+ },
+ {
+  "name": "DeepSeek V4.1 Flash",
+  "kind": "models",
+  "pipeline": "tangent packs/judge, open-weights branch (92fe668 + 4 changes)",
+  "judge": "DeepSeek V4.1 Flash",
+  "reviewer": "DeepSeek V4.1 Flash",
+  "served": "OpenRouter, 4-bit",
+  "memory": "512 GB",
+  "runs": [
+   {
+    "judge": "bench/results/deepseek-v4.1-flash/a/judge.txt",
+    "reviewed": "bench/results/deepseek-v4.1-flash/a/reviewed.txt",
+    "date": "2026-11-16",
+    "judge_usd": 1.19,
+    "review_usd": 2.47,
+    "alerts": 857,
+    "review_errors": 0
+   },
+   {
+    "judge": "bench/results/deepseek-v4.1-flash/b/judge.txt",
+    "reviewed": "bench/results/deepseek-v4.1-flash/b/reviewed.txt",
+    "date": "2026-11-16",
+    "judge_usd": 0.93,
+    "review_usd": 2.5,
+    "alerts": 896,
+    "review_errors": 0
+   }
+  ]
+ },
+ {
+  "name": "DeepSeek V4.1 Flash + GLM 5.3",
+  "kind": "models",
+  "pipeline": "tangent packs/judge, open-weights branch (92fe668 + 4 changes)",
+  "judge": "DeepSeek V4.1 Flash",
+  "reviewer": "GLM 5.3",
+  "served": "OpenRouter, fp8",
+  "memory": "over 512 GB",
+  "runs": [
+   {
+    "judge": "bench/results/deepseek-v4.1-flash+glm-5.3/a/judge.txt",
+    "reviewed": "bench/results/deepseek-v4.1-flash+glm-5.3/a/reviewed.txt",
+    "date": "2026-11-16",
+    "judge_usd": 0.39,
+    "review_usd": 4.71,
+    "alerts": 799,
+    "review_errors": 0
+   },
+   {
+    "judge": "bench/results/deepseek-v4.1-flash+glm-5.3/b/judge.txt",
+    "reviewed": "bench/results/deepseek-v4.1-flash+glm-5.3/b/reviewed.txt",
+    "date": "2026-11-16",
+    "judge_usd": 0.39,
+    "review_usd": 4.63,
+    "alerts": 812,
+    "review_errors": 0
+   }
+  ]
+ },
+ {
+  "name": "Claude Haiku 5.5 + Claude Sonnet 5.5",
+  "kind": "models",
+  "pipeline": "tangent packs/judge at 0044b6e, before the fixes of 2026-11-16",
+  "judge": "Claude Haiku 5.5",
+  "reviewer": "Claude Sonnet 5.5",
+  "served": "Anthropic API",
+  "memory": "hosted",
+  "runs": [
+   {
+    "judge": "bench/results/haiku-5.5+sonnet-5.5/a/judge.txt",
+    "reviewed": "bench/results/haiku-5.5+sonnet-5.5/a/reviewed.txt",
+    "date": "2026-11-15",
+    "judge_usd": null,
+    "review_usd": 11.05,
+    "alerts": 1577,
+    "review_errors": 4
+   }
+  ]
+ },
+ {
+  "name": "Elastic detection rules (350), run by Elasticsearch",
+  "kind": "rules",
+  "runs": [
+   {
+    "judge": "compare/results/cloud/elasticsearch/score.txt"
+   }
+  ]
+ },
+ {
+  "name": "Sigma rules (102)",
+  "kind": "rules",
+  "runs": [
+   {
+    "judge": "compare/results/cloud/sigma/score.txt"
+   }
+  ]
+ }
+]
