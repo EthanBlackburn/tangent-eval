@@ -1,9 +1,48 @@
 # Results
 
-No result has been measured on this layout yet. Every number below came from
-the same corpus run through an earlier harness, outside this repository, and
-none of them is this repository's until the runs are repeated with
-`harness/` and the packs as they are here. What differs:
+## This layout
+
+**2026-11-15, one run.** The corpus as `make corpus` writes it: the 188
+cases with a record in a source the packs read, 198 judged windows, arm
+`isolated`. tangent at `0044b6e`, with the second reviewer as it merged
+after, in `92fe668` (tangent.ref); not run again at that commit. The
+enrichment data's date was not recorded.
+
+| | Claude Haiku 5.5, the judge | with Claude Sonnet 5.5 reviewing |
+|---|---|---|
+| attacks caught, of 71 | 70 | 70 |
+| our 36 | 36 | 36 |
+| Stratus techniques from an address never seen, of 35 | 34 | 34 |
+| the same from the member's usual place, of 35 (counted apart) | 35 | 28 |
+| must-not-flag cases flagged, of 82 | 68 | 38 |
+| a Stratus control from an address never seen, of 35 | 35 | 34 |
+| a Stratus control from the usual place, of 35 | 23 | 2 |
+| our 12 | 10 | 2 |
+| ordinary records flagged, of 5,304 judged | 462 | 40 |
+
+`score_v2.py`'s output for both is in
+[compare/results/cloud/tangent](compare/results/cloud/tangent). The judge
+left 4 of 6,832 records unjudged. The reviewer was given 1,577 alerts and
+answered for 1,573 (three windows came back short, not looked into): 705
+benign, 636 malicious, 232 unresolved, for $11.05 through Anthropic's API
+(`harness/anthropic_proxy.py`), not Bedrock. The judge's cost was not
+recorded.
+
+The miss in both is `aws.persistence.iam-backdoor-role` from an address
+never seen.
+
+[compare/](compare/README.md) has Elastic's and Sigma's public rules over
+the same records.
+
+What is thin about it: one run of each, where two and `agree.py` were asked
+for; the Stratus controls from an address never seen are flagged as often as
+the attacks, and whether they should be is not settled; and the 36 are the
+development set (below).
+
+## Earlier layouts
+
+Every number below came from the same corpus run through an earlier
+harness, outside this repository, with other packs and another stream:
 
 - **The packs.** The earlier runs used one cloud-infra pack (normalizer,
   enrichment and facts plugins, and a history plugin stamping `_hist`). Here
@@ -19,9 +58,7 @@ none of them is this repository's until the runs are repeated with
   `benign`, `data-exfil`), and cases are placed in name order, so many land
   on other days than in earlier runs.
 
-## What exists
-
-**v3 corpus, 201 cases** (the corpus here). Claude Haiku 5.5 on Bedrock,
+**v3 corpus, 201 cases.** Claude Haiku 5.5 on Bedrock,
 logfmt, ten shards, four complete runs on 2026-10-31 and 11-01, two without
 a history header and two with one (the `_hist` that `_baseline` replaced):
 
@@ -44,8 +81,8 @@ re-scored for it.
 judge (Haiku 4.5, every record judged in batches with each org's history):
 38 to 39 of 40 attacks, 1 of 11 negatives, 13 of 16,199 ordinary records.
 
-**Stratus Red Team**: every number measured on it is withdrawn
-([stratus/README.md](stratus/README.md#not-citable-yet)).
+**Stratus Red Team**: every number measured on it before this layout is
+withdrawn ([stratus/README.md](stratus/README.md#not-citable-yet)).
 
 ## What the numbers can say
 
@@ -55,6 +92,6 @@ to measure the history header. Nothing here estimates alerts a day for a real
 company: only window hours are judged, they sit around business hours, and
 acme has nine people.
 
-When this layout is measured, record here: the date, the tangent commit, the
-enrichment data's date, the arm (`isolated` or `shipped`), the model, and
+With a result, record here: the date, the tangent commit, the enrichment
+data's date, the arm (`isolated` or `shipped`), the model, and
 `score_v2.py`'s and `agree.py`'s output for two runs.
