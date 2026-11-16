@@ -1,0 +1,335 @@
+{
+ "legend": [
+  "judge alone (single pass)",
+  "judge + reviewer (double pass)",
+  "detection rules, no model"
+ ],
+ "charts": [
+  {
+   "name": "efficacy",
+   "key": "caught",
+   "title": "Attacks caught, of 71",
+   "subtitle": "A startup's AWS, Okta, GitHub, Google Workspace and CI logs, the same for every row  \u00b7  higher is better",
+   "scale": "linear",
+   "domain": [
+    0,
+    71
+   ],
+   "ticks": [
+    0,
+    20,
+    40,
+    60,
+    71
+   ],
+   "format": "int",
+   "note": [
+    "Two runs each, 2026-11-16, open weights through OpenRouter: the dot is their mean, the bar what they span. One model",
+    "judges, then reviews its own alerts; where two are named, the second reviews. The tier is the Mac memory a 4-bit build",
+    "fits in; the 64 and 128 GB rows ran at higher precision. Hosted: one earlier run, before this week's fixes to tangent.",
+    "Rules: Elastic's 350 public detection rules, run by Elasticsearch, and Sigma's 102, over the same records."
+   ]
+  },
+  {
+   "name": "noise",
+   "key": "ordinary",
+   "title": "Ordinary records flagged, of 5,304",
+   "subtitle": "The same logs: records that belong to no attack, flagged anyway  \u00b7  lower is better, log scale",
+   "scale": "log",
+   "domain": [
+    0.8,
+    600
+   ],
+   "ticks": [
+    1,
+    10,
+    100
+   ],
+   "format": "int",
+   "note": [
+    "Two runs each, 2026-11-16, open weights through OpenRouter: the dot is their mean, the bar what they span. One model",
+    "judges, then reviews its own alerts; where two are named, the second reviews. The tier is the Mac memory a 4-bit build",
+    "fits in; the 64 and 128 GB rows ran at higher precision. Hosted: one earlier run, before this week's fixes to tangent.",
+    "Rules: Elastic's 350 public detection rules, run by Elasticsearch, and Sigma's 102, over the same records."
+   ]
+  },
+  {
+   "name": "cost",
+   "key": "cost",
+   "title": "What one run costs in model fees",
+   "subtitle": "6,832 records judged and the alerts reviewed, at hosted prices  \u00b7  lower is better",
+   "scale": "linear",
+   "domain": [
+    -1.5,
+    18
+   ],
+   "ticks": [
+    0,
+    5,
+    10,
+    15
+   ],
+   "format": "usd",
+   "note": [
+    "Two runs each, 2026-11-16: the whole run's fees as OpenRouter billed them, with the hosts' prompt caches warm from",
+    "earlier runs (a first run's judge pass costs up to $1.60 more); on your own machine they cost hardware and power.",
+    "Hosted: the reviewer's $11.05 was measured; the judge's was not recorded and is about $1.80 at list price for the",
+    "same tokens, so both figures are marked ~. Rules pay no model; running Elasticsearch is not counted."
+   ],
+   "figure": "mean"
+  }
+ ],
+ "rows": [
+  {
+   "tier": "64 GB",
+   "model": "Qwen3-Next 80B",
+   "caught": [
+    [
+     70,
+     71
+    ],
+    [
+     69,
+     70
+    ]
+   ],
+   "ordinary": [
+    [
+     194,
+     172
+    ],
+    [
+     144,
+     112
+    ]
+   ],
+   "cost": [
+    [
+     2.41,
+     2.42
+    ],
+    [
+     6.23,
+     6.28
+    ]
+   ]
+  },
+  {
+   "tier": "128 GB",
+   "model": "Qwen3.5 122B",
+   "caught": [
+    [
+     71,
+     71
+    ],
+    [
+     71,
+     71
+    ]
+   ],
+   "ordinary": [
+    [
+     37,
+     29
+    ],
+    [
+     2,
+     2
+    ]
+   ],
+   "cost": [
+    [
+     6.06,
+     6.04
+    ],
+    [
+     15.73,
+     15.28
+    ]
+   ]
+  },
+  {
+   "tier": "256 GB",
+   "model": "DeepSeek V4 Flash",
+   "caught": [
+    [
+     71,
+     71
+    ],
+    [
+     71,
+     71
+    ]
+   ],
+   "ordinary": [
+    [
+     222,
+     220
+    ],
+    [
+     13,
+     10
+    ]
+   ],
+   "cost": [
+    [
+     1.07,
+     1.01
+    ],
+    [
+     2.3,
+     2.21
+    ]
+   ]
+  },
+  {
+   "tier": "256 GB",
+   "model": "MiniMax M3.1 Flash",
+   "caught": [
+    [
+     71,
+     71
+    ],
+    [
+     71,
+     71
+    ]
+   ],
+   "ordinary": [
+    [
+     65,
+     61
+    ],
+    [
+     4,
+     6
+    ]
+   ],
+   "cost": [
+    [
+     1.87,
+     1.83
+    ],
+    [
+     4.25,
+     4.11
+    ]
+   ]
+  },
+  {
+   "tier": "512 GB",
+   "model": "DeepSeek V4.1 Flash",
+   "caught": [
+    [
+     71,
+     71
+    ],
+    [
+     71,
+     71
+    ]
+   ],
+   "ordinary": [
+    [
+     77,
+     72
+    ],
+    [
+     13,
+     13
+    ]
+   ],
+   "cost": [
+    [
+     1.19,
+     0.93
+    ],
+    [
+     3.66,
+     3.43
+    ]
+   ]
+  },
+  {
+   "tier": "> 512 GB",
+   "model": "DeepSeek V4.1 Flash + GLM 5.3",
+   "caught": [
+    [
+     71,
+     71
+    ],
+    [
+     71,
+     71
+    ]
+   ],
+   "ordinary": [
+    [
+     61,
+     80
+    ],
+    [
+     13,
+     6
+    ]
+   ],
+   "cost": [
+    [
+     0.39,
+     0.39
+    ],
+    [
+     5.1,
+     5.02
+    ]
+   ]
+  },
+  {
+   "tier": "hosted",
+   "model": "Claude Haiku 5.5 + Sonnet 5.5",
+   "caught": [
+    70,
+    70
+   ],
+   "ordinary": [
+    462,
+    40
+   ],
+   "cost": [
+    1.8,
+    12.85
+   ],
+   "about": [
+    "cost"
+   ],
+   "apart": true
+  },
+  {
+   "tier": "SIEM",
+   "model": "Elastic detection rules",
+   "caught": [
+    51
+   ],
+   "ordinary": [
+    43
+   ],
+   "cost": [
+    0
+   ],
+   "apart": true
+  },
+  {
+   "tier": "SIEM",
+   "model": "Sigma rules",
+   "caught": [
+    13
+   ],
+   "ordinary": [
+    121
+   ],
+   "cost": [
+    0
+   ]
+  }
+ ]
+}
