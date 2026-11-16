@@ -1,0 +1,302 @@
+{
+ "fired": {
+  "AWS EC2 Unauthorized Admin Credential Fetch via Assumed Role": {
+   "severity": "medium",
+   "type": "new_terms",
+   "count": 2
+  },
+  "AWS IAM Long-Term Access Key First Seen from Source IP": {
+   "severity": "medium",
+   "type": "new_terms",
+   "count": 161
+  },
+  "First Time Seen AWS Secret Value Accessed in Secrets Manager": {
+   "severity": "medium",
+   "type": "new_terms",
+   "count": 4
+  },
+  "AWS Secrets Manager Rapid Secrets Retrieval": {
+   "severity": "medium",
+   "type": "threshold",
+   "count": 40
+  },
+  "AWS Systems Manager SecureString Parameter Request with Decryption Flag": {
+   "severity": "medium",
+   "type": "new_terms",
+   "count": 2
+  },
+  "AWS CloudTrail Log Deleted": {
+   "severity": "medium",
+   "type": "query",
+   "count": 2
+  },
+  "AWS CloudTrail Log Suspended": {
+   "severity": "high",
+   "type": "query",
+   "count": 3
+  },
+  "AWS CloudTrail Management Events Disabled via PutEventSelectors": {
+   "severity": "medium",
+   "type": "query",
+   "count": 2
+  },
+  "AWS VPC Flow Logs Deletion": {
+   "severity": "high",
+   "type": "query",
+   "count": 2
+  },
+  "AWS EC2 Serial Console Access Enabled": {
+   "severity": "high",
+   "type": "query",
+   "count": 2
+  },
+  "AWS Attempt to Leave Organization": {
+   "severity": "medium",
+   "type": "query",
+   "count": 2
+  },
+  "AWS Route 53 Resolver Query Log Configuration Deleted": {
+   "severity": "medium",
+   "type": "query",
+   "count": 2
+  },
+  "AWS First Occurrence of STS GetFederationToken Request by User": {
+   "severity": "high",
+   "type": "new_terms",
+   "count": 2
+  },
+  "AWS STS GetCallerIdentity API Called for the First Time": {
+   "severity": "medium",
+   "type": "new_terms",
+   "count": 122
+  },
+  "AWS Account Discovery By Rare User": {
+   "severity": "low",
+   "type": "new_terms",
+   "count": 134
+  },
+  "AWS SSM Inventory Reconnaissance by Rare User": {
+   "severity": "medium",
+   "type": "new_terms",
+   "count": 102
+  },
+  "AWS Lambda Layer Added to Existing Function": {
+   "severity": "low",
+   "type": "query",
+   "count": 2
+  },
+  "AWS SSM `SendCommand` Execution by Rare User": {
+   "severity": "low",
+   "type": "new_terms",
+   "count": 4
+  },
+  "AWS EC2 AMI Shared with Another Account": {
+   "severity": "high",
+   "type": "query",
+   "count": 2
+  },
+  "AWS EC2 EBS Snapshot Shared or Made Public": {
+   "severity": "medium",
+   "type": "eql",
+   "count": 2
+  },
+  "AWS RDS DB Snapshot Shared with Another Account": {
+   "severity": "medium",
+   "type": "eql",
+   "count": 3
+  },
+  "AWS S3 Bucket Policy Added to Allow Public Access": {
+   "severity": "medium",
+   "type": "eql",
+   "count": 1
+  },
+  "AWS Management Console Root Login": {
+   "severity": "medium",
+   "type": "query",
+   "count": 1
+  },
+  "AWS IAM User Console Login Without MFA": {
+   "severity": "medium",
+   "type": "new_terms",
+   "count": 2
+  },
+  "AWS SSM Session Started to EC2 Instance": {
+   "severity": "high",
+   "type": "new_terms",
+   "count": 2
+  },
+  "AWS EC2 Instance Connect SSH Public Key Uploaded": {
+   "severity": "high",
+   "type": "query",
+   "count": 12
+  },
+  "AWS Bedrock Foundation Model Access Enabled or Entitlement Granted": {
+   "severity": "medium",
+   "type": "query",
+   "count": 6
+  },
+  "AWS EC2 Security Group Configuration Change": {
+   "severity": "low",
+   "type": "query",
+   "count": 3
+  },
+  "AWS IAM API Calls via Temporary Session Tokens": {
+   "severity": "high",
+   "type": "new_terms",
+   "count": 43
+  },
+  "AWS IAM Login Profile Created or Modified for an IAM User": {
+   "severity": "medium",
+   "type": "query",
+   "count": 4
+  },
+  "AWS IAM Roles Anywhere Profile Creation": {
+   "severity": "high",
+   "type": "query",
+   "count": 2
+  },
+  "AWS IAM Roles Anywhere Trust Anchor Created with External CA": {
+   "severity": "medium",
+   "type": "eql",
+   "count": 2
+  },
+  "AWS Lambda Function Policy Updated to Allow Public Invocation": {
+   "severity": "high",
+   "type": "eql",
+   "count": 2
+  },
+  "AWS IAM AdministratorAccess Policy Attached to Role": {
+   "severity": "medium",
+   "type": "eql",
+   "count": 2
+  },
+  "AWS IAM AdministratorAccess Policy Attached to User": {
+   "severity": "high",
+   "type": "eql",
+   "count": 4
+  },
+  "AWS STS Role Assumption by User": {
+   "severity": "low",
+   "type": "new_terms",
+   "count": 8
+  },
+  "Attempt to Create Okta API Token": {
+   "severity": "medium",
+   "type": "query",
+   "count": 2
+  },
+  "Attempt to Reset MFA Factors for an Okta User Account": {
+   "severity": "low",
+   "type": "query",
+   "count": 11
+  },
+  "GitHub Protected Branch Settings Changed": {
+   "severity": "medium",
+   "type": "new_terms",
+   "count": 1
+  },
+  "GitHub Owner Role Granted To User": {
+   "severity": "medium",
+   "type": "eql",
+   "count": 1
+  }
+ },
+ "not_run": {
+  "esql": [
+   "AWS Bedrock Model Invocation From High Number of Countries",
+   "AWS Bedrock Model Invocation Impossible Travel",
+   "AWS IAM Long-Term Access Key Correlated with Elevated Detection Alerts",
+   "AWS EKS Rapid Secret GET Activity Against Multiple Objects",
+   "AWS EKS Pod Exec Cloud Instance Metadata Access",
+   "AWS EKS Pod Exec Sensitive File or Credential Path Access",
+   "AWS EC2 Bulk User Data Enumeration",
+   "AWS EKS Potential Endpoint Permission Enumeration Attempt by Anonymous User Detected",
+   "AWS EKS Potential Endpoint Permission Enumeration Attempt Detected",
+   "AWS EKS Multi-Resource Discovery",
+   "AWS Discovery API Calls via CLI from a Single Resource",
+   "AWS S3 Rapid Bucket Posture API Calls from a Single Principal",
+   "AWS Service Quotas Multi-Region GetServiceQuota Requests",
+   "AWS STS GetCallerIdentity Bulk Account Enumeration",
+   "AWS EC2 Stop, Start, and User Data Modification Correlation",
+   "AWS EKS Pod Exec with Curl or Wget to HTTPS",
+   "AWS EKS Pod Exec Potential Reverse Shell",
+   "AWS Lambda Function Invoked Cross-Account",
+   "AWS Bedrock High-Frequency Single-Model Inference API Probing",
+   "AWS ECR Repository or Registry Policy Granted Public Access",
+   "AWS Bedrock API Key Used for Destructive or Anti-Recovery Action",
+   "AWS Potential Cryptomining via ECS Task Definition Deployment",
+   "AWS Lambda Function High-Frequency Invocation by a Single Principal",
+   "AWS S3 Object Encryption Using External KMS Key",
+   "AWS S3 Static Site JavaScript File Uploaded",
+   "AWS Rare Source AS Organization Activity",
+   "AWS IAM User Console Login from Multiple Geolocations",
+   "AWS Credentials Used from GitHub Actions and Non-CI/CD Infrastructure",
+   "AWS Access Token Used from Multiple Addresses",
+   "AWS Lateral Movement from Kubernetes SA via AssumeRoleWithWebIdentity",
+   "AWS IAM User Created Access Keys For Another User",
+   "AWS IAM User Self-Created Access Key Subsequently Used",
+   "AWS SageMaker Notebook Lifecycle Configuration With Suspicious Script Content",
+   "AWS EKS Creation or Modification of Sensitive Role",
+   "AWS IAM Credentials Added to a Bedrock API Key Phantom User",
+   "AWS EKS RBAC Wildcard Elevation on Existing Role",
+   "AWS SageMaker Execution Role Passed by Unusual Principal",
+   "AWS SES Email Identity Verified Then Deleted",
+   "Multiple Device Token Hashes for Single Okta Session",
+   "Okta AiTM Session Cookie Replay",
+   "Multiple Okta User Authentication Events with Same Device Token Hash",
+   "Potential Okta Brute Force (Device Token Rotation)",
+   "Potential Okta Brute Force (Multi-Source)",
+   "Potential Okta Credential Stuffing (Single Source)",
+   "Potential Okta Password Spray (Multi-Source)",
+   "Potential Okta Password Spray (Single Source)",
+   "Okta Successful Login After Credential Attack",
+   "Okta User Sessions Started from Different Geolocations",
+   "GitHub Private Repository Forking Enabled",
+   "GitHub Webhook Created or Configuration Changed",
+   "GitHub SSO Recovery Codes Activity",
+   "GitHub Secret Scanning Alert for a Publicly Leaked Secret",
+   "GitHub Advanced Security Disabled",
+   "GitHub Audit Log Streaming Configuration Modified or Deleted",
+   "GitHub Dependabot Alerts or Security Updates Disabled",
+   "GitHub IP Allow List Modified",
+   "GitHub MFA Requirement Disabled",
+   "GitHub OAuth App Access Restrictions Disabled",
+   "GitHub PAT Access Restriction Disabled",
+   "GitHub Fine-Grained PAT Auto-Approve Enabled",
+   "GitHub SAML SSO Disabled",
+   "GitHub Secret Scanning Push Protection Bypassed or Disabled",
+   "GitHub SSH Certificate Authority or Requirement Modified",
+   "GitHub API Failed Access Burst",
+   "GitHub API Sensitive Resource Enumeration",
+   "GitHub Exfiltration via High Number of Repository ZIP Downloads",
+   "GitHub Repository Transferred Out of Organization",
+   "GitHub Token Clone Push or ZIP from Unusual ASN",
+   "GitHub Exfiltration via High Number of Repository Clones by User",
+   "GitHub Activity on a Private Repository from an Unusual ASN",
+   "High Number of Closed Pull Requests by User",
+   "Several Failed Protected Branch Force Pushes by User",
+   "High Number of Protected Branch Force Pushes by User",
+   "GitHub Actions Workflow Modification Blocked",
+   "New GitHub Self Hosted Action Runner",
+   "GitHub OAuth Application Authorized",
+   "GitHub SSH or Deploy Key Added",
+   "Google Workspace Impossible Travel Login",
+   "Google Workspace Device Registration Burst for Single User"
+  ],
+  "machine_learning": [
+   "Spike in AWS Error Messages",
+   "Rare AWS Error Code",
+   "Unusual City For an AWS Command",
+   "Unusual Country For an AWS Command",
+   "Unusual AWS Command for a User"
+  ]
+ },
+ "failed": [
+  {
+   "rule": "MFA Deactivation with no Re-Activation for Okta User Account",
+   "type": "eql",
+   "error": "EqlSemanticError: Error at line:1,column:1\nNegative subquery used \nsequence by okta.target.id with maxspan=12h\n^\n    [any where data_stream.dataset == \"okta.system\" and okta.event_type in (\"user.mfa.f"
+  }
+ ],
+ "ran": 291
+}

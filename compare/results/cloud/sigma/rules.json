@@ -1,0 +1,57 @@
+{
+ "rules": 102,
+ "skipped": [
+  "AWS IAM Backdoor Users Keys",
+  "AWS User Login Profile Was Modified"
+ ],
+ "fired": {
+  "AWS STS AssumeRole Misuse": {
+   "level": "low",
+   "count": 12764
+  },
+  "AWS Suspicious SAML Activity": {
+   "level": "medium",
+   "count": 785
+  },
+  "Potential Bucket Enumeration on AWS": {
+   "level": "low",
+   "count": 576
+  },
+  "Okta MFA Reset or Deactivated": {
+   "level": "medium",
+   "count": 12
+  },
+  "AWS CloudTrail Important Change": {
+   "level": "medium",
+   "count": 5
+  },
+  "AWS Successful Console Login Without MFA": {
+   "level": "medium",
+   "count": 3
+  },
+  "AWS Root Credentials": {
+   "level": "medium",
+   "count": 1
+  },
+  "Ingress/Egress Security Group Modification": {
+   "level": "medium",
+   "count": 3
+  },
+  "Okta User Session Start Via An Anonymising Proxy Service": {
+   "level": "high",
+   "count": 3
+  },
+  "Okta API Token Created": {
+   "level": "medium",
+   "count": 2
+  },
+  "AWS Snapshot Backup Exfiltration": {
+   "level": "medium",
+   "count": 2
+  },
+  "AWS New Lambda Layer Attached": {
+   "level": "low",
+   "count": 2
+  }
+ }
+}

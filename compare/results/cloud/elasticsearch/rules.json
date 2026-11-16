@@ -1,0 +1,309 @@
+{
+ "fired": {
+  "AWS EC2 Unauthorized Admin Credential Fetch via Assumed Role": {
+   "severity": "medium",
+   "type": "new_terms",
+   "language": "kuery",
+   "count": 2
+  },
+  "AWS IAM Long-Term Access Key First Seen from Source IP": {
+   "severity": "medium",
+   "type": "new_terms",
+   "language": "kuery",
+   "count": 161
+  },
+  "First Time Seen AWS Secret Value Accessed in Secrets Manager": {
+   "severity": "medium",
+   "type": "new_terms",
+   "language": "kuery",
+   "count": 4
+  },
+  "AWS Secrets Manager Rapid Secrets Retrieval": {
+   "severity": "medium",
+   "type": "threshold",
+   "language": "kuery",
+   "count": 40
+  },
+  "AWS Systems Manager SecureString Parameter Request with Decryption Flag": {
+   "severity": "medium",
+   "type": "new_terms",
+   "language": "kuery",
+   "count": 2
+  },
+  "AWS CloudTrail Log Deleted": {
+   "severity": "medium",
+   "type": "query",
+   "language": "kuery",
+   "count": 2
+  },
+  "AWS CloudTrail Log Suspended": {
+   "severity": "high",
+   "type": "query",
+   "language": "kuery",
+   "count": 3
+  },
+  "AWS CloudTrail Management Events Disabled via PutEventSelectors": {
+   "severity": "medium",
+   "type": "query",
+   "language": "kuery",
+   "count": 2
+  },
+  "AWS VPC Flow Logs Deletion": {
+   "severity": "high",
+   "type": "query",
+   "language": "kuery",
+   "count": 2
+  },
+  "AWS EC2 Serial Console Access Enabled": {
+   "severity": "high",
+   "type": "query",
+   "language": "kuery",
+   "count": 2
+  },
+  "AWS Attempt to Leave Organization": {
+   "severity": "medium",
+   "type": "query",
+   "language": "kuery",
+   "count": 2
+  },
+  "AWS Route 53 Resolver Query Log Configuration Deleted": {
+   "severity": "medium",
+   "type": "query",
+   "language": "kuery",
+   "count": 2
+  },
+  "AWS First Occurrence of STS GetFederationToken Request by User": {
+   "severity": "high",
+   "type": "new_terms",
+   "language": "kuery",
+   "count": 2
+  },
+  "AWS STS GetCallerIdentity API Called for the First Time": {
+   "severity": "medium",
+   "type": "new_terms",
+   "language": "kuery",
+   "count": 122
+  },
+  "AWS Account Discovery By Rare User": {
+   "severity": "low",
+   "type": "new_terms",
+   "language": "kuery",
+   "count": 134
+  },
+  "AWS SSM Inventory Reconnaissance by Rare User": {
+   "severity": "medium",
+   "type": "new_terms",
+   "language": "kuery",
+   "count": 102
+  },
+  "AWS EC2 Stop, Start, and User Data Modification Correlation": {
+   "severity": "high",
+   "type": "esql",
+   "language": "esql",
+   "count": 70
+  },
+  "AWS Lambda Layer Added to Existing Function": {
+   "severity": "low",
+   "type": "query",
+   "language": "kuery",
+   "count": 2
+  },
+  "AWS SSM `SendCommand` Execution by Rare User": {
+   "severity": "low",
+   "type": "new_terms",
+   "language": "kuery",
+   "count": 4
+  },
+  "AWS EC2 AMI Shared with Another Account": {
+   "severity": "high",
+   "type": "query",
+   "language": "kuery",
+   "count": 2
+  },
+  "AWS EC2 EBS Snapshot Shared or Made Public": {
+   "severity": "medium",
+   "type": "eql",
+   "language": "eql",
+   "count": 2
+  },
+  "AWS RDS DB Snapshot Shared with Another Account": {
+   "severity": "medium",
+   "type": "eql",
+   "language": "eql",
+   "count": 3
+  },
+  "AWS S3 Bucket Policy Added to Allow Public Access": {
+   "severity": "medium",
+   "type": "eql",
+   "language": "eql",
+   "count": 1
+  },
+  "AWS Management Console Root Login": {
+   "severity": "medium",
+   "type": "query",
+   "language": "kuery",
+   "count": 1
+  },
+  "AWS IAM User Console Login Without MFA": {
+   "severity": "medium",
+   "type": "new_terms",
+   "language": "kuery",
+   "count": 2
+  },
+  "AWS SSM Session Started to EC2 Instance": {
+   "severity": "high",
+   "type": "new_terms",
+   "language": "kuery",
+   "count": 2
+  },
+  "AWS EC2 Instance Connect SSH Public Key Uploaded": {
+   "severity": "high",
+   "type": "query",
+   "language": "kuery",
+   "count": 12
+  },
+  "AWS Bedrock Foundation Model Access Enabled or Entitlement Granted": {
+   "severity": "medium",
+   "type": "query",
+   "language": "kuery",
+   "count": 6
+  },
+  "AWS EC2 Security Group Configuration Change": {
+   "severity": "low",
+   "type": "query",
+   "language": "kuery",
+   "count": 3
+  },
+  "AWS IAM API Calls via Temporary Session Tokens": {
+   "severity": "high",
+   "type": "new_terms",
+   "language": "kuery",
+   "count": 43
+  },
+  "AWS IAM Login Profile Created or Modified for an IAM User": {
+   "severity": "medium",
+   "type": "query",
+   "language": "kuery",
+   "count": 4
+  },
+  "AWS IAM Roles Anywhere Profile Creation": {
+   "severity": "high",
+   "type": "query",
+   "language": "kuery",
+   "count": 2
+  },
+  "AWS IAM Roles Anywhere Trust Anchor Created with External CA": {
+   "severity": "medium",
+   "type": "eql",
+   "language": "eql",
+   "count": 2
+  },
+  "AWS IAM User Created Access Keys For Another User": {
+   "severity": "high",
+   "type": "esql",
+   "language": "esql",
+   "count": 30
+  },
+  "AWS Lambda Function Policy Updated to Allow Public Invocation": {
+   "severity": "high",
+   "type": "eql",
+   "language": "eql",
+   "count": 2
+  },
+  "AWS IAM AdministratorAccess Policy Attached to Role": {
+   "severity": "medium",
+   "type": "eql",
+   "language": "eql",
+   "count": 2
+  },
+  "AWS IAM AdministratorAccess Policy Attached to User": {
+   "severity": "high",
+   "type": "eql",
+   "language": "eql",
+   "count": 4
+  },
+  "AWS STS Role Assumption by User": {
+   "severity": "low",
+   "type": "new_terms",
+   "language": "kuery",
+   "count": 8
+  },
+  "Attempt to Create Okta API Token": {
+   "severity": "medium",
+   "type": "query",
+   "language": "kuery",
+   "count": 2
+  },
+  "Attempt to Reset MFA Factors for an Okta User Account": {
+   "severity": "low",
+   "type": "query",
+   "language": "kuery",
+   "count": 11
+  },
+  "GitHub Protected Branch Settings Changed": {
+   "severity": "medium",
+   "type": "new_terms",
+   "language": "kuery",
+   "count": 1
+  },
+  "GitHub Owner Role Granted To User": {
+   "severity": "medium",
+   "type": "eql",
+   "language": "eql",
+   "count": 1
+  }
+ },
+ "not_run": {
+  "reads other rules' alerts": [
+   "AWS IAM Long-Term Access Key Correlated with Elevated Detection Alerts",
+   "Okta Successful Login After Credential Attack",
+   "Okta Alerts Following Unusual Proxy Authentication",
+   "GitHub UEBA - Multiple Alerts from a GitHub Account"
+  ],
+  "its index is not in the corpus": [
+   "AWS EKS Rapid Secret GET Activity Against Multiple Objects (logs-aws.eks_audit-*)",
+   "AWS EKS Pod Exec Cloud Instance Metadata Access (logs-aws.eks_audit-*)",
+   "AWS EKS Pod Exec Sensitive File or Credential Path Access (logs-aws.eks_audit-*)",
+   "AWS EKS Potential Endpoint Permission Enumeration Attempt by Anonymous User Detected (logs-aws.eks_audit-*)",
+   "AWS EKS Potential Endpoint Permission Enumeration Attempt Detected (logs-aws.eks_audit-*)",
+   "AWS EKS Multi-Resource Discovery (logs-aws.eks_audit-*)",
+   "AWS EKS Anonymous User Create/Update/Patch Pods Request (logs-aws.eks_audit-*)",
+   "AWS EKS Forbidden Creation Request (logs-aws.eks_audit-*)",
+   "AWS EKS Pod Exec with Curl or Wget to HTTPS (logs-aws.eks_audit-*)",
+   "AWS EKS Pod Exec Potential Reverse Shell (logs-aws.eks_audit-*)",
+   "AWS EKS User Exec into Pod (logs-aws.eks_audit-*)",
+   "AWS EKS Creation or Modification of Sensitive Role (logs-aws.eks_audit-*)",
+   "AWS EKS RBAC Wildcard Elevation on Existing Role (logs-aws.eks_audit-*)",
+   "AWS EKS Sensitive RBAC Change Followed by Workload Modification (logs-aws.eks_audit-*)",
+   "External User Added to Google Workspace Group (filebeat-*, logs-google_workspace.admin-*)",
+   "Google Workspace Device Registration Burst for Single User (logs-google_workspace.device-*)"
+  ],
+  "machine learning": [
+   "Spike in AWS Error Messages",
+   "Rare AWS Error Code",
+   "Unusual City For an AWS Command",
+   "Unusual Country For an AWS Command",
+   "Unusual AWS Command for a User"
+  ]
+ },
+ "failed": [
+  {
+   "rule": "Google Workspace Object Copied from External Drive with App Consent",
+   "type": "eql",
+   "language": "eql",
+   "error": "RuntimeError: {\"error\": {\"root_cause\": [{\"type\": \"verification_exception\", \"reason\": \"Found 1 problem\\nline 33:5: Unknown column [google_workspace.token.scope.value], did you mean any of [google_workspace.token.client.id, google_workspace.token.client.type, google_workspace.drive.copy_type, google_workspace.drive"
+  }
+ ],
+ "ran": 350,
+ "whole_log": {
+  "AWS EC2 Stop, Start, and User Data Modification Correlation": true,
+  "AWS Bedrock High-Frequency Single-Model Inference API Probing": false,
+  "AWS Lateral Movement from Kubernetes SA via AssumeRoleWithWebIdentity": false,
+  "AWS IAM User Self-Created Access Key Subsequently Used": true,
+  "Potential Okta Brute Force (Multi-Source)": false,
+  "Potential Okta Credential Stuffing (Single Source)": false,
+  "Potential Okta Password Spray (Multi-Source)": false,
+  "Potential Okta Password Spray (Single Source)": false,
+  "GitHub Exfiltration via High Number of Repository Clones by User": true
+ }
+}
