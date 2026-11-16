@@ -46,9 +46,10 @@ for k in range(n):
     os.makedirs(d, exist_ok=True)
     for f in sorted(f for f in os.listdir(work) if f.endswith((".yaml", ".md"))):  # maincfg.py's configs, profile and judge.md
         text = open(os.path.join(work, f)).read().replace(work + "/", d + "/")
+        text = text.replace(d + "/plugins", work + "/plugins")  # compiled once, in WORK
         if f == "ingest.yaml":
-            port = next(l.rsplit(":", 1)[1] for l in text.splitlines() if "bind_address:" in l)
-            text = text.replace(f":{port}", f":{free_port()}")
+            port = next(l.rsplit(":", 1)[1].rstrip('",') for l in text.splitlines() if "bind_address" in l)
+            text = text.replace(f'127.0.0.1:{port}"', f'127.0.0.1:{free_port()}"')
         open(os.path.join(d, f), "w").write(text)
     json.dump([[iso(a), iso(b)] for a, b in merged[:cuts[k + 1]]], open(os.path.join(d, "windows.json"), "w"))
     env = dict(os.environ, FROM_WINDOW=str(cuts[k] + 1))

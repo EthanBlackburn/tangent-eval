@@ -1,55 +1,68 @@
 #!/usr/bin/env python3
-"""A WORK dir for replay.py / shard.py that runs this repo's shipped shape:
-examples/cloud-infra's ingest.yaml and judge.yaml with their includes (packs/core
-+ aws, github, okta, google_workspace, app) merged the way tangent merges them,
-fed by one tcp source.
+"""A WORK dir for replay.py / shard.py: tangent's packs as examples/cloud-infra
+includes them (judge, which brings enrich-ip and behavior-baseline, and
+cloudtrail, github, okta, google_workspace), fed by one tcp source.
 
-    python3 -I evals/harness/maincfg.py shipped|isolated WORK [--port N] [--judge bedrock|local]
-                                        [--profile FILE] [--plugins DIR] [--tripwire NAME=PATH]
+    python3 -I harness/maincfg.py shipped|isolated WORK [--port N] [--judge bedrock|local]
+                                  [--profile FILE] [--tripwire NAME=PATH]
 
-shipped:  as examples/cloud-infra runs it: baseline_builder in ingest folds every
-          record (every case too) into WORK/state.sqlite; the judge reads it
-          read-only. An earlier case's calls, addresses and resources are then
-          "seen" for a later case.
-isolated: baseline_builder taken out of ingest; history.yaml (the learn config
+examples/cloud-infra is one process whose judge takes each actor's records
+as a group closed by the clock (thirty records, or an hour). A replay of
+thirteen months cannot wait an hour per group, so the harness runs the same
+plugins, brief and model as two processes with a queue between them, which
+replay.py steps by the records' own times:
+
+  ingest.yaml  the four packs' plugins, each record to logs.sqlite (a sqlite
+               sink partitioned by actor) and to baseline_builder
+  judge.yaml   a sqlite source over logs.sqlite handing baseline_renderer an
+               actor's forty latest records, the new ones and, marked
+               `_context`, what tops them up; then the judge pack's judge,
+               fresh and flagged, as it ships
+
+So the model reads what it reads live: one actor's records, forty at most,
+`_baseline` on them, as logfmt, under packs/judge's brief. What differs is
+when a group closes: here at forty pending or an hour of record time, live
+at thirty new or an hour of the clock.
+
+shipped:  baseline_builder in ingest folds every record (every case too)
+          into WORK/state.sqlite; the judge reads it read-only. An earlier
+          case's calls, addresses and resources are then "seen" for a later
+          case.
+isolated: no baseline_builder in ingest; history.yaml (the learn config
           replay.py runs per window) folds the ordinary stream plus only that
-          window's cases into state.window.sqlite, which the judge reads. No case
-          reads another case's history.
+          window's cases into state.window.sqlite, which the judge reads. No
+          case reads another case's history.
 
 --judge bedrock (the default): Claude Haiku 5.5 on Bedrock: thinking disabled,
           max_tokens 400, no temperature or top_p (Haiku 5.5 refuses them),
           concurrency 16, retries 6. BEDROCK_MODEL overrides the model,
           BEDROCK_REGION the region (us-west-2); AWS_PROFILE, when set, is the
           profile written into judge.yaml (else the default credential chain).
---judge local: packs/core's judge as it ships, any OpenAI-compatible server at
-          JUDGE_URL (http://localhost:8080/v1 by default), JUDGE_MODEL, with one
-          request in flight: one model on one machine is no faster with more.
+--judge local: packs/judge's model as it ships, any OpenAI-compatible server
+          at JUDGE_URL (http://localhost:8080/v1 by default), JUDGE_MODEL,
+          with one request in flight: one model on one machine is no faster
+          with more.
+--tripwire NAME=PATH: a plugin NAME at PATH after every pack plugin (beside
+          `logs`), writing to WORK/tripwire.ndjson; left out of history.yaml.
 
-What it changes from examples/cloud-infra (and nothing else):
-- sources: one tcp source `events` on 127.0.0.1:PORT (9501), routed to every
-  pack as examples/cloud-infra routes its `events`
-- profile: FILE (evals/profile/profile.yaml) copied to WORK/profile.yaml
-- paths absolute into WORK; plugins_path DIR (examples/cloud-infra/plugins,
-  where `make compile` there writes them, with the binary replay.py runs)
-- ingest runs one worker and no runtime partition; the judge's runtime takes
-  batch_size 4096 / batch_age 200, and a `seen` sink records every record the
-  model read, for cost
-- --tripwire NAME=PATH: a plugin NAME at PATH after every pack plugin (beside
-  `logs`), writing to WORK/tripwire.ndjson; left out of history.yaml
+The configs include the packs' own files, so tangent merges them, and are
+written as JSON, which YAML holds: nothing here or in replay.py parses YAML.
+Their plugins are compiled into WORK/plugins by the tangent that runs them:
+
+    $TANGENT plugin compile --config WORK/ingest.yaml && $TANGENT plugin compile --config WORK/judge.yaml
 
 It also writes judge-sim.yaml: the judge's groups with `_baseline` stamped and
 written to WORK/headers.ndjson, no model (JUDGE=judge-sim.yaml replay.py ...)."""
 import argparse
 import copy
+import json
 import os
 import shutil
 import sys
 
-import yaml
-
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.environ.get("TANGENT_ROOT") or os.path.join(HERE, "..", "tangent"))  # the tangent repository (Makefile)
-EX = os.path.join(ROOT, "examples", "cloud-infra")
+PACKS = ["cloudtrail", "github", "okta", "google_workspace"]  # examples/cloud-infra's
 
 ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
 ap.add_argument("arm", choices=["shipped", "isolated"])
@@ -57,181 +70,103 @@ ap.add_argument("work")
 ap.add_argument("--port", type=int, default=9501)
 ap.add_argument("--judge", choices=["bedrock", "local"], default="bedrock")
 ap.add_argument("--profile", default=os.path.join(HERE, "..", "profile", "profile.yaml"))
-ap.add_argument("--plugins", default=os.path.join(EX, "plugins"))
 ap.add_argument("--tripwire", metavar="NAME=PATH")
 args = ap.parse_args()
 arm, port = args.arm, args.port
-work, profile, plugins = (os.path.abspath(p) for p in (args.work, args.profile, args.plugins))
+work, profile = os.path.abspath(args.work), os.path.abspath(args.profile)
 trip = args.tripwire.split("=", 1) if args.tripwire else None
 os.makedirs(work, exist_ok=True)
 at = lambda f: os.path.join(work, f)
+pack = lambda name, f="ingest.yaml": os.path.join(ROOT, "packs", name, f)
 
 
-class Plain(yaml.SafeDumper):
-    def ignore_aliases(self, data):
-        return True
+def put(f, c):
+    with open(at(f), "w") as out:
+        json.dump(c, out, indent=1)
+        out.write("\n")
 
 
-put = lambda f, c: yaml.dump(c, open(at(f), "w"), Dumper=Plain, sort_keys=False, width=160)
-node = lambda kind, name: {"kind": kind, "name": name}
-
-# ---- include, as crates/shared/src/include.rs merges it (maps by key, a file over
-# what it includes, `dag` edges added up in file order, paths rebased to their file)
-PATHS = [("plugins", "*", "path"), ("plugins", "*", "data"), ("inference", "*", "prompt_file"),
-         ("inference", "*", "schema_file"), ("enrichment_tables", "*", "path")]
+def state(path, **more):
+    return {"backend": "sqlite", "path": at(path), "default_ttl_ms": 0, "max_ttl_ms": 0, **more}
 
 
-def rebase(m, d):
-    for p in PATHS:
-        for k, v in (m.get(p[0]) or {}).items():
-            if isinstance(v, dict) and isinstance(v.get(p[2]), str) and not os.path.isabs(v[p[2]]):
-                v[p[2]] = os.path.normpath(os.path.join(d, v[p[2]]))
-
-
-def merge(a, b):
-    """b over a"""
-    if not isinstance(a, dict) or not isinstance(b, dict):
-        return copy.deepcopy(b)
-    out = dict(a)
-    for k, v in b.items():
-        if v is None:
-            out.pop(k, None)
-        else:
-            out[k] = merge(a.get(k), v) if k in a else copy.deepcopy(v)
-    return out
-
-
-def load(path, seen=None):
-    seen = set() if seen is None else seen
-    path = os.path.abspath(path)
-    m = yaml.safe_load(open(path)) or {}
-    rebase(m, os.path.dirname(path))
-    tree, dag = {}, []
-    for inc in m.pop("include", None) or []:
-        p = os.path.normpath(os.path.join(os.path.dirname(path), inc))
-        if p in seen:
-            continue
-        seen.add(p)
-        t, d = load(p, seen)
-        tree, dag = merge(tree, t), dag + d
-    dag += m.pop("dag", None) or []
-    return merge(tree, m), dag
-
-
-def flat(path):
-    tree, dag = load(path)
-    tree["dag"] = dag
-    for p in (tree.get("plugins") or {}).values():
-        p.pop("tests", None)
-    tree["runtime"]["plugins_path"] = plugins
-    return tree
-
-
-def drop(c, name):
-    """`c` without plugin `name`: what fed it feeds what it fed."""
-    me = node("plugin", name)
-    outs = [t for e in c["dag"] if e["from"] == me for t in e["to"]]
-    c["plugins"].pop(name, None)
-    dag = []
-    for e in c["dag"]:
-        to = [x for t in e["to"] for x in (outs if t == me else [t])]
-        to = [t for i, t in enumerate(to) if t not in to[:i]]
-        if e["from"] != me and to:
-            dag.append(dict(e, to=to))
-    c["dag"] = dag
-
-
-# ---- the profile
 shutil.copyfile(profile, at("profile.yaml"))
+tables = {"profile": {"type": "document", "path": at("profile.yaml"), "required": True}}
+plain = {"type": "none"}
 
-# ---- ingest
-i = flat(os.path.join(EX, "ingest.yaml"))
-packs = next(e["to"] for e in i["dag"] if e["from"] == node("source", "events"))
-i["dag"] = [e for e in i["dag"] if e["from"]["kind"] != "source"]
-i["sources"] = {"events": {"type": "tcp", "bind_address": f"127.0.0.1:{port}"}}
-i["dag"].insert(0, {"from": node("source", "events"), "to": packs})
-i["enrichment_tables"]["profile"]["path"] = at("profile.yaml")
-i["runtime"]["state"]["path"] = at("state.sqlite")
-i["runtime"]["workers"] = 1
-i["runtime"].pop("partition", None)
-i["sinks"]["logs"]["path"] = at("logs.sqlite")
-if trip:
-    name, path = trip
-    i["plugins"][name] = {"module_type": "rust", "path": os.path.abspath(path)}
-    i["sinks"]["tripwire"] = {"type": "file", "path": at("tripwire.ndjson"), "compression": {"type": "none"}}
-    for e in i["dag"]:
-        if node("sink", "logs") in e["to"]:
-            e["to"].append(node("plugin", name))
-    i["dag"].append({"from": node("plugin", name), "to": [node("sink", "tripwire")]})
+# ---- ingest: every record to the judge's queue, and into its actor's history
+i = {
+    "include": [pack("enrich-ip"), pack("behavior-baseline")] + [pack(p) for p in PACKS],
+    "runtime": {"workers": 1, "plugins_path": at("plugins"), "state": state("state.sqlite")},
+    "enrichment_tables": tables,
+    "sources": {"events": {"type": "tcp", "bind_address": f"127.0.0.1:{port}"}},
+    "sinks": {"logs": {"type": "sqlite", "path": at("logs.sqlite"), "table": "logs", "timestamp_key": "ts",
+                       "partitions": {"org": ["_norm.org"], "actor": ["_norm.org", "_norm.actor"]}}},
+    "dag": [{"from": "events", "to": PACKS}] + [{"from": p, "to": ["logs", "baseline_builder"]} for p in PACKS],
+}
 learn = copy.deepcopy(i)
 if arm == "isolated":
-    drop(i, "baseline_builder")
+    for e in i["dag"][1:]:
+        e["to"].remove("baseline_builder")
+if trip:
+    name, path = trip
+    i["plugins"] = {name: {"module_type": "rust", "path": os.path.abspath(path)}}
+    i["sinks"]["tripwire"] = {"type": "file", "path": at("tripwire.ndjson"), "compression": plain}
+    for e in i["dag"][1:]:
+        e["to"].append(name)
+    i["dag"].append({"from": name, "to": ["tripwire"]})
 put("ingest.yaml", i)
 
 # ---- history.yaml: the learn config replay.py runs per window (isolated only)
 if arm == "isolated":
     h = learn
-    if trip:  # a leaf: its plugin, its sink and every edge to them go
-        gone = (node("plugin", trip[0]), node("sink", "tripwire"))
-        h["plugins"].pop(trip[0])
-        h["dag"] = [dict(e, to=[t for t in e["to"] if t not in gone]) for e in h["dag"] if e["from"] not in gone]
-    h["runtime"]["state"] = {"backend": "sqlite", "path": at("state.window.sqlite"), "default_ttl_ms": 0, "max_ttl_ms": 0}
+    h["runtime"]["state"] = state("state.window.sqlite")
     h["sources"] = {"learn": {"type": "file", "path": at("learn.ndjson"),
-                              "decoding": {"format": {"type": "ndjson"}, "compression": {"type": "none"}}}}
-    h["sinks"] = {"none": {"type": "blackhole"}}
-    for e in h["dag"]:
-        if e["from"]["kind"] == "source":
-            e["from"] = node("source", "learn")
-        e["to"] = [node("sink", "none") if t == node("sink", "logs") else t for t in e["to"]]
+                              "decoding": {"format": {"type": "ndjson"}, "compression": plain}}}
+    h["sinks"] = {"none": {"type": "blackhole"}}  # a config wants a sink
+    h["dag"] = [{"from": "learn", "to": PACKS}] + [{"from": p, "to": ["baseline_builder", "none"]} for p in PACKS]
     put("history.yaml", h)
 
-# ---- judge
-j = flat(os.path.join(EX, "judge.yaml"))
-j["runtime"].update(batch_size=4096, batch_age=200)
-j["runtime"].pop("partition", None)
-j["runtime"]["state"]["path"] = at("state.window.sqlite" if arm == "isolated" else "state.sqlite")
-for s in j["sources"].values():
-    s["path"] = at("logs.sqlite")
+# ---- judge: the queue's batches in place of the renderer's groups
+shutil.copyfile(pack("judge", "judge.md"), at("judge.md"))
+ungrouped = {"group_by": None, "max_events": None, "max_age_ms": None, "expire_after_ms": None, "history": None}
+j = {
+    "include": [pack("judge")],
+    "runtime": {"workers": 1, "plugins_path": at("plugins"), "batch_size": 4096, "batch_age": 200,
+                "state": state("state.window.sqlite" if arm == "isolated" else "state.sqlite", read_only=True)},
+    "enrichment_tables": tables,
+    "sources": {"actors": {"type": "sqlite", "path": at("logs.sqlite"), "table": "logs", "partition": "actor",
+                           "batch_size": 40, "timeout_secs": 3600}},
+    "plugins": {"baseline_renderer": ungrouped},
+    "inference": {"judge": {"prompt_file": at("judge.md")}},
+    "sinks": {"alerts": {"path": at("alerts.ndjson")}, "verdicts": {"path": at("verdicts.ndjson")},
+              "seen": {"type": "file", "path": at("seen.ndjson"), "compression": plain}},  # every record the model read, for cost
+    "dag": [{"from": "actors", "to": ["baseline_renderer"]}, {"from": "judge", "to": ["seen"]}],
+}
 m = j["inference"]["judge"]
-shutil.copyfile(m["prompt_file"], at("judge.md"))
 if args.judge == "bedrock":
     aws = {"region": os.environ.get("BEDROCK_REGION") or "us-west-2"}
     if os.environ.get("AWS_PROFILE"):
         aws["profile"] = os.environ["AWS_PROFILE"]
-    j["inference"]["judge"] = {
-        "backend": "bedrock",
-        "model": os.environ.get("BEDROCK_MODEL") or "us.anthropic.claude-haiku-5-5",
-        "aws": aws,
-        "prompt_file": at("judge.md"),
-        "schema_file": m["schema_file"],
-        "group_by": m["group_by"],
-        "batch_bytes": m["batch_bytes"],
-        "max_tokens": 400,
-        "timeout_ms": 90000,
-        "retries": 6,
-        "concurrency": 16,
-        "extra": {"thinking": {"type": "disabled"}},
-        "encoding": m["encoding"],
-    }
+    j["include"] = [pack("judge", "hosted.yaml")]  # the judge pack without the local model's sampling settings
+    m.update(backend="bedrock", model=os.environ.get("BEDROCK_MODEL") or "us.anthropic.claude-haiku-5-5", aws=aws,
+             url=None, api_key=None, max_tokens=400, timeout_ms=90000, retries=6, concurrency=16,
+             extra={"thinking": {"type": "disabled"}})
+    if os.environ.get("THINKING"):  # THINKING=low: it thinks before the verdict, as examples/macos/haiku.yaml has it
+        m.update(max_tokens=1000, extra={"thinking": {"type": "adaptive"}, "output_config": {"effort": os.environ["THINKING"]}})
 else:
-    m.update(prompt_file=at("judge.md"), concurrency=1)
-for s in j["sinks"].values():
-    if "path" in s:
-        s["path"] = at(os.path.basename(s["path"]))
-j["sinks"]["seen"] = {"type": "file", "path": at("seen.ndjson"), "compression": {"type": "none"}}
-for e in j["dag"]:
-    if e["from"] == node("inference", "judge"):
-        e["to"].append(node("sink", "seen"))
+    m.update(concurrency=1)
 put("judge.yaml", j)
 
-# judge-sim: the same groups with `_baseline` stamped and written down, no model
+# judge-sim: the same batches with `_baseline` stamped and written down, no model
 # (JUDGE=judge-sim.yaml replay.py ...: WORK/headers.ndjson, free)
-sim = copy.deepcopy(j)
-del sim["inference"]
-sim["plugins"] = {"baseline_renderer": j["plugins"]["baseline_renderer"]}
-sim["sinks"] = {"headers": {"type": "file", "path": at("headers.ndjson"), "compression": {"type": "none"}}}
-src = next(iter(sim["sources"]))
-sim["dag"] = [{"from": node("source", src), "to": [node("plugin", "baseline_renderer")]},
-              {"from": node("plugin", "baseline_renderer"), "to": [node("sink", "headers")]}]
+sim = {
+    "include": [pack("enrich-ip"), pack("behavior-baseline")],
+    "runtime": j["runtime"],
+    "enrichment_tables": tables,
+    "sources": j["sources"],
+    "sinks": {"headers": {"type": "file", "path": at("headers.ndjson"), "compression": plain}},
+    "dag": [{"from": "actors", "to": ["baseline_renderer"]}, {"from": "baseline_renderer", "to": ["headers"]}],
+}
 put("judge-sim.yaml", sim)
-print(f"{work}: {arm}, judge {args.judge}; plugins from {plugins}", file=sys.stderr)
+print(f"{work}: {arm}, judge {args.judge}; tangent's packs from {ROOT}", file=sys.stderr)

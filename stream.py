@@ -704,6 +704,31 @@ def v3_noise(ordinary, start, end, seed):
     return out
 
 
+def own_keys(ordinary, spliced):
+    """A spliced technique is the member's call, so it is signed with the access
+    key the member has that day (the one their ordinary calls last used), not a
+    key of the case's own: a key the log has never seen is new whoever holds it,
+    and would mark the attack and its harmless twin alike."""
+    used = {}
+    for e in ordinary:
+        u = e.get("userIdentity") or {} if e.get("source") == "cloudtrail" else {}
+        if u.get("type") == "IAMUser" and (u.get("accessKeyId") or "").startswith("AKIA"):
+            used.setdefault(u["userName"], []).append((e["ts"], u["accessKeyId"], u.get("principalId")))
+    for keys in used.values():
+        keys.sort()
+    for e in spliced:
+        u = e.get("userIdentity") or {}
+        if u.get("type") != "IAMUser" or not (u.get("accessKeyId") or "").startswith("AKIA"):
+            continue
+        before = [k for k in used.get(u.get("userName"), []) if k[0] <= e["ts"]]
+        if before:
+            u["accessKeyId"] = before[-1][1]
+            if before[-1][2]:
+                u["principalId"] = before[-1][2]
+            else:
+                u.pop("principalId", None)
+
+
 def main():
     """`stream.py` writes stream.ndjson and truth.json as they always were;
     `stream.py v3` adds gen.py's history cases and the history they need
@@ -728,6 +753,8 @@ def main():
             end = more
         events = v3_noise(events, START, end, seed=13)
     owner = {id(e): t["id"] for t, e in zip([t for t in truth for _ in range(t["events"])], cases)}
+    if v3:
+        own_keys(events, [e for e in cases if owner[id(e)].startswith(("stratus/", "control/"))])
     events += cases
     events.sort(key=lambda e: e["ts"])
     if v3:

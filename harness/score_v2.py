@@ -8,7 +8,6 @@ import os
 import re
 import sys
 
-import yaml
 
 truth = json.load(open(sys.argv[1]))
 work = sys.argv[2]
@@ -56,8 +55,16 @@ fps = [c for c in neg if any(near(r, c) for r in flags)]
 ordinary = [r for r in out if r.get("ts") not in case_times]
 ord_flags = [r for r in ordinary if flagged(r)]
 print(f"judged {len(out)} records, {errors} not judged, {len(flags)} flagged")
-print(f"recall {len(caught)}/{len(pos)} (a flag on the case's actor in its last two hours); "
-      f"{len(caught_own)}/{len(pos)} on one of the case's own records")
+# A technique run as the member from the office (stratus/usual) is the member's
+# own call from where they always work: the cloud's log holds nothing that
+# says it was not them, so it is counted apart, not as an attack to catch.
+usual = [c for c in pos if c["id"].startswith("stratus/usual/")]
+must = [c for c in pos if c not in usual]
+print(f"recall {sum(c in caught for c in must)}/{len(must)} (a flag on the case's actor in its last two hours); "
+      f"{sum(c in caught_own for c in must)}/{len(must)} on one of the case's own records")
+if usual:
+    print(f"a technique from the member's usual place, which the cloud's log cannot tell from their own work: "
+          f"{sum(c in caught for c in usual)}/{len(usual)} flagged")
 print(f"negatives flagged {len(fps)}/{len(neg)}")
 print(f"ordinary: {len(ord_flags)} of {len(ordinary)} flagged ({len(ord_flags) / max(len(ordinary), 1):.1%})")
 
@@ -86,7 +93,9 @@ if pairs:
     for c, t in pairs:
         print(f"   {c['id']}: {'caught' if c in caught else 'MISSED'}; twin {'flagged' if t in fps else 'quiet'}")
 
-g = yaml.safe_load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "stratus", "grounding.yaml")))
+# grounding.yaml is a line a technique: `<id>: {decides: <what>, ...}`
+g = {m[1]: {"decides": m[2]} for m in re.finditer(r"^(\S+):\s*\{decides: (\w+)", open(os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "..", "stratus", "grounding.yaml")).read(), re.M)}
 print("\nstratus by what decides it:")
 for d in ("event", "actor", "volume", "data"):
     row = []
