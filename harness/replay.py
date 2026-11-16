@@ -40,8 +40,6 @@ import sys
 import time
 from datetime import datetime, timezone
 
-import yaml
-
 STEP = int(os.environ.get("STEP", "300"))
 SIMULATE = os.environ.get("SIMULATE") == "1"  # no model: the source's groups formed and acked here, and counted
 FROM_WINDOW = int(os.environ.get("FROM_WINDOW", "1"))  # resume: earlier windows are history
@@ -61,8 +59,8 @@ def log(*a):
 
 
 work, stream, windows = sys.argv[1:4]
-ingest_cfg = yaml.safe_load(open(os.path.join(work, "ingest.yaml")))
-judge_cfg = yaml.safe_load(open(os.path.join(work, JUDGE)))
+ingest_cfg = json.load(open(os.path.join(work, "ingest.yaml")))  # maincfg.py writes them as JSON
+judge_cfg = json.load(open(os.path.join(work, JUDGE)))
 port = next(int(s["bind_address"].rsplit(":", 1)[1]) for s in ingest_cfg["sources"].values() if s["type"] == "tcp")
 sink = next(s for s in ingest_cfg["sinks"].values() if s["type"] == "sqlite")
 src = next(s for s in judge_cfg["sources"].values() if s["type"] == "sqlite")
@@ -78,7 +76,7 @@ for a, b in wins:
         merged.append([a, b])
 
 sim = {"groups": 0, "requests": 0, "fresh": 0, "context": 0, "bytes": 0, "windows": []}
-BATCH_BYTES = ((judge_cfg.get("inference") or {}).get("judge") or {}).get("batch_bytes", 48000)
+BATCH_BYTES = 96000  # packs/judge's batch_bytes, for SIMULATE's count of requests
 for f in ("logs.sqlite", "state.sqlite", "state.window.sqlite", "state.ordinary.sqlite"):
     for x in ("", "-wal", "-shm"):
         if os.path.exists(os.path.join(work, f + x)):
