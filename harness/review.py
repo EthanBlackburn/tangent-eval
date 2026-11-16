@@ -23,7 +23,8 @@ run's verdicts with `judge.flag` false where the review said benign
 
 TANGENT_ROOT is the tangent checkout whose packs the lake is made with and
 REVIEW_ROOT the one with packs/judge/review.yaml (TANGENT_ROOT unless set).
-AWS_PROFILE, when set, is the profile the reviewer signs in with. REVIEW_URL
+AWS_PROFILE, when set, is the profile the reviewer signs in with. STALL (900) is
+how many seconds a window may go without a new review before it is given up. REVIEW_URL
 names an OpenAI-compatible server in Bedrock's place: a stand-in, to check the
 harness without a model, or with REVIEW_MODEL and REVIEW_API_KEY a hosted one. Standard library only."""
 import argparse
@@ -44,6 +45,7 @@ T = os.environ.get("TANGENT") or sys.exit("TANGENT: set it to the tangent binary
 TRUTH = os.environ.get("TRUTH") or sys.exit("TRUTH: the truth file, for the cases' rows")
 PACKS = ["cloudtrail", "github", "okta", "google_workspace"]
 DAYS = int(os.environ.get("DAYS", "30"))
+STALL = int(os.environ.get("STALL", "900"))  # a window with no new review for this long is given up
 
 ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
 ap.add_argument("run")
@@ -147,6 +149,38 @@ def tangent(w, *a):
         return subprocess.run([T, *a], cwd=w, env=env, stdout=logf, stderr=subprocess.STDOUT).returncode
 
 
+def lines(p):
+    return sum(1 for _ in open(p)) if os.path.exists(p) else 0
+
+
+def reviewed(w, want):
+    """review.yaml over the window's alerts, until the `want` the judge flagged have their reviews (an alert
+    whose verdict is an error is not reviewed) or none has come for STALL seconds; then tangent is stopped.
+    Not `run --once`: that gives the open groups two minutes from the end of input, and a review by a slow
+    model takes longer. The reviews that came back."""
+    p = os.path.join(w, "reviews.ndjson")
+    if not want:
+        return 0
+    with open(os.path.join(w, "tangent.log"), "ab") as logf:
+        proc = subprocess.Popen([T, "run", "--config", "review.yaml"], cwd=w, env=env, stdout=logf, stderr=subprocess.STDOUT)
+    got, last = 0, time.time()
+    while proc.poll() is None and got < want and time.time() - last < STALL:
+        time.sleep(2)
+        n = lines(p)
+        if n > got:
+            got, last = n, time.time()
+    if proc.poll() is None:
+        time.sleep(3)  # the sink's last write
+        proc.terminate()
+        try:
+            proc.wait(timeout=300)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+    elif proc.returncode:
+        sys.exit(f"{w}: review.yaml failed; see tangent.log")
+    return lines(p)
+
+
 def window(k):
     a, b = merged[k]
     mine = [r for r in alerts if a <= ms(r["ts"]) <= b]
@@ -166,11 +200,10 @@ def window(k):
             f.write(json.dumps(r) + "\n")
     if tangent(w, "run", "--once", "--config", "lake.yaml"):
         sys.exit(f"{w}: lake.yaml failed; see tangent.log")
-    if tangent(w, "run", "--once", "--config", "review.yaml"):
-        sys.exit(f"{w}: review.yaml failed; see tangent.log")
-    got = sum(1 for _ in open(os.path.join(w, "reviews.ndjson"))) if os.path.exists(os.path.join(w, "reviews.ndjson")) else 0
-    if got != len(mine):
-        log(f"window {k + 1}: {got} of {len(mine)} alerts came back; see {w}/tangent.log")
+    want = sum(1 for r in mine if (r.get("judge") or {}).get("flag") is True)
+    got = reviewed(w, want)
+    if got != want:
+        log(f"window {k + 1}: {got} of {want} flagged alerts came back; see {w}/tangent.log")
     else:
         open(os.path.join(w, "done"), "w").close()
     log(f"window {k + 1}/{len(merged)}: {len(mine)} alerts, {hi - lo} ordinary records and {len(touched)} cases in the lake")

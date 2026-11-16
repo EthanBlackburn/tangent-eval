@@ -260,9 +260,10 @@ def errors():
         data = f.read()
     cut = data.rfind(b"\n") + 1
     verdict_at += cut
-    # a reply that skipped a record is the model's miss, not a failed request: counted, not retried
+    # a reply that skipped a record, or that tangent could not read after asking again ("reply is not JSON": one
+    # `max_tokens` cut, say), is the model's miss, not a failed request: counted, not retried
     return [r for r in map(json.loads, data[:cut].splitlines())
-            if "error" in (r.get("judge") or {}) and not r["judge"]["error"].startswith("no answer for record")]
+            if "error" in (r.get("judge") or {}) and not r["judge"]["error"].startswith(("no answer for record", "reply "))]
 
 
 PROFILE = os.environ.get("AWS_WAIT_PROFILE")  # on errors, wait for this profile's credentials, then go on
