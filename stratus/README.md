@@ -26,10 +26,11 @@ Stratus covers AWS, Azure, GCP, Entra ID and Kubernetes; it says nothing about O
 
 ## Not citable yet
 
-An audit on 2026-10-28 found that the splice could be told from acme's own traffic by things that have nothing to do with the attack, and every number measured on these cases so far is withdrawn until the runs are repeated. All six tells are fixed; no run has been scored since.
+An audit on 2026-10-28 found that the splice could be told from acme's own traffic by things that have nothing to do with the attack, and every number measured on these cases before the fixes is withdrawn. All six tells are fixed, and a seventh found since. One run has been scored on the fixed cases (2026-11-15, [RESULTS.md](../RESULTS.md)): the controls from an address never seen are still flagged as often as the attacks.
 
 Fixed in November 2026:
 
+- every spliced case signed with an access key of its own, which the log had never seen: a new key is new whoever holds it, so it marked the attack and its control alike, and a rule on a key's first use fired on 34 of every 35. Each spliced IAM user's call now carries the key that member's own calls last used (`own_keys` in `stream.py`).
 - every control was on a different member from its attack: the member and address came from the case's position in the output, and 70 attacks is not a multiple of nine members. They now come from the technique and the variant, so attack and control share both.
 - the controls carried `requestParameters` on none of their 620 records, the attacks on 600. Each read now carries the request CloudTrail records for it, shaped as the service writes it and naming what the attack named (the same instances, secret, trail, function or role). Null remains only where the service records null (`GetCallerIdentity`, `GetAccountSummary`, `ListFoundationModels`, `DescribeOrganization`): 56 control records to the attacks' 20.
 
@@ -38,7 +39,7 @@ Fixed in November 2026:
 - all four spliced console sign-ins carried the CLI's user agent, since every user agent that named Stratus became the CLI's. A console sign-in now carries the browser's, as the members' own sign-ins do.
 - none of the roles the techniques' warm-up created was in the profile: each case named them afresh (`acme-role-cbb41`), so every role session was a principal nobody knew. They are now acme's own roles (`WARM_UP` in `splice.py`), in the profile's `services` and `about`, and at work on the ordinary days of both streams: the web tier's instance checks in with SSM from the VPC, the nightly org inventory lists the accounts, and members look at instances as `ec2-support` (in v3, after assuming it from their own IAM user). A role the detonation itself creates keeps a new name, as an attacker's would.
 
-In every run before the fixes, the controls were flagged about as often as the attacks (from away, all 35; from the office, 18 to 29 of 35), so on Stratus the corpus measured what gets escalated, not whether the judge tells an attack from its harmless twin. No run has been scored on the fixed cases yet. Stratus has been public since 2022 and documents its detections, so a model may also know these techniques.
+In every run before the fixes, the controls were flagged about as often as the attacks (from away, all 35; from the office, 18 to 29 of 35), so on Stratus the corpus measured what gets escalated, not whether the judge tells an attack from its harmless twin. In the run on the fixed cases, with the second reviewer: from away 34 of 35 attacks and 34 of 35 controls flagged; from the office 28 of 35 attacks and 2 of 35 controls. From away the corpus still measures what gets escalated; from the office the judge and reviewer tell most attacks from their twins. Stratus has been public since 2022 and documents its detections, so a model may also know these techniques.
 
 Not yet looked at: the recorded `roleSessionName` (`aws-go-sdk-<nanoseconds>`, the Go SDK's default) and the recorded access key and principal ids on IAM-user records, which no pack reads.
 
