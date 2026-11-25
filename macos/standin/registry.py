@@ -21,12 +21,24 @@ else.
 
 Each DIR holds package directories (DIR/<name>/package.json); each --pypi DIR
 holds projects (DIR/<name>/pyproject.toml, beside the files to install).
+
+With --model-api, `api.anthropic.com` is here too, for a case whose VM runs a
+coding agent: the agent's requests for a model's answer are passed to that
+address (one that speaks Anthropic's Messages API), with the key in
+MODEL_API_KEY, and the answer is passed back as it comes. The key stays on
+this machine: the VM's own is random bytes. Anything else the agent asks of
+that name is answered 404. A --model-name is answered the same way: a server
+of the attacker's that a hijacked agent is pointed at, which passes its
+traffic on so that the agent goes on working.
+
 Standard library only.
 """
 
 import argparse
 import base64
+import gzip
 import hashlib
+import http.client
 import io
 import ipaddress
 import json
@@ -50,6 +62,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 HOST = "registry.npmjs.org"
 PYPI = "pypi.org"
 PYPI_FILES = "files.pythonhosted.org"
+MODEL = {"api.anthropic.com"}   # and a case's --model-name: a server of the attacker's that an agent is pointed at, passing its traffic on
+MODEL_API = None   # where a coding agent's requests for an answer go, and the key they go with
 UPSTREAM_TIMEOUT = 60
 # The maintainer every local package is published by: the VM's developer.
 MAINTAINER = {"name": "dev", "email": "dev@acme.example"}
@@ -237,10 +251,54 @@ class Handler(BaseHTTPRequestHandler):
     def host(self):
         return (self.headers.get("Host") or "").split(":")[0].lower()
 
+    def model(self):
+        """Whether the request was a coding agent's to its model, and so
+        answered here: a request for an answer by the model API given, any
+        other with 404."""
+        if not MODEL_API or self.host() not in MODEL:
+            return False
+        body = self.rfile.read(int(self.headers.get("Content-Length") or 0))
+        if self.command != "POST" or self.path.split("?")[0] != "/v1/messages":
+            self.send(404, {"type": "error", "error": {"type": "not_found_error", "message": "not here"}})
+            return True
+        url, key = MODEL_API
+        if self.headers.get("Content-Encoding") == "gzip":
+            body = gzip.decompress(body)
+        ask = json.loads(body)
+        # `claude-sonnet-5-5-20260101` is `anthropic/claude-sonnet-5.5` there
+        named = re.fullmatch(r"claude-([a-z]+)-(\d+)(?:-(\d{1,2}))?(?:-\d{8})?", ask.get("model", ""))
+        if named:
+            ask["model"] = f"anthropic/claude-{named[1]}-{named[2]}" + (f".{named[3]}" if named[3] else "")
+        ask["provider"] = {"order": ["anthropic"], "allow_fallbacks": False}
+        headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
+        for name in ("anthropic-version", "anthropic-beta", "accept"):
+            if self.headers.get(name):
+                headers[name] = self.headers[name]
+        to = urllib.parse.urlsplit(url)
+        conn = http.client.HTTPSConnection(to.netloc, timeout=600)
+        conn.request("POST", to.path.rstrip("/") + "/v1/messages", json.dumps(ask).encode(), headers)
+        got = conn.getresponse()
+        sys.stderr.write(f"model: {ask.get('model')} {got.status}\n")
+        self.send_response(got.status)
+        self.send_header("Content-Type", got.getheader("Content-Type", "application/json"))
+        self.send_header("Connection", "close")
+        self.end_headers()
+        while True:
+            part = got.read1(1 << 16)
+            if not part:
+                break
+            self.wfile.write(part)
+            self.wfile.flush()
+        conn.close()
+        self.close_connection = True
+        return True
+
     def sink(self):
         """Whether the request was for a name other than the registry's or
         PyPI's, and so taken and answered here."""
         host = self.host()
+        if self.model():
+            return True
         if host in (HOST, PYPI, PYPI_FILES) and isinstance(self.connection, ssl.SSLSocket):
             return False
         size = int(self.headers.get("Content-Length") or 0)
@@ -339,7 +397,7 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main():
-    global LOG, SINK_LOG
+    global LOG, SINK_LOG, MODEL_API
     ap = argparse.ArgumentParser()
     ap.add_argument("dirs", nargs="*")
     ap.add_argument("--pypi", action="append", default=[], help="a directory of PyPI projects (DIR/<name>/pyproject.toml)")
@@ -355,9 +413,15 @@ def main():
                     help="what a case's host answers a path with: the payload its attack downloads (default: nothing)")
     ap.add_argument("--repo", action="append", default=[], metavar="HOST/PATH=DIR",
                     help="a directory a case's host serves as a git repository at that address, for `git clone`")
+    ap.add_argument("--model-api", metavar="URL",
+                    help="pass a coding agent's requests to api.anthropic.com for an answer on to this Messages API, with the key in MODEL_API_KEY")
+    ap.add_argument("--model-name", action="append", default=[], help="another name answered as api.anthropic.com is")
     ap.add_argument("--allow", action="append", help="a network to answer (default: tart's, 192.168.64.0/24, and this machine)")
     a = ap.parse_args()
     ALLOW.extend(ipaddress.ip_network(n) for n in (a.allow or ["192.168.64.0/24", "127.0.0.0/8"]))
+    if a.model_api:
+        MODEL_API = (a.model_api, os.environ.get("MODEL_API_KEY") or sys.exit("--model-api needs the key in MODEL_API_KEY"))
+    MODEL.update(n.lower() for n in a.model_name)
     load(a.dirs)
     load_pypi(a.pypi)
     for spec in a.serve:

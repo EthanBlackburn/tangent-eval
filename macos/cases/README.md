@@ -7,7 +7,7 @@ person, on their own work. [`shai-hulud`](shai-hulud) is the model to copy.
 
 ```
 cases/<id>/
-  case.json     id, title, registry, pypi, hosts, http_ports, serve, repos, settle, sources
+  case.json     id, title, registry, pypi, hosts, http_ports, serve, repos, agent, settle, sources
   attack.sh     what the person types in Terminal that sets it off
   twin.sh       what the person types for the twin
   README.md     the incident, what happens in the recording, what is real and what is stood in, what is not recorded
@@ -26,6 +26,7 @@ cases/<id>/
 | `http_ports` | ports where the stand-in also answers plain HTTP for those names |
 | `serve` | what the stand-in answers a host's path with, `{"host/path": "file here"}`: the payload the attack downloads. A directory is served as a zip of its files (an editor extension's `.vsix`). Any other request to the case's hosts gets an empty 200 |
 | `repos` | git repositories a host holds, `{"host/path.git": "directory here"}`: the stand-in serves the directory's files as a repository of one commit, so that `git clone https://host/path.git` works in the VM |
+| `agent` | present (a list, empty or not) when the case runs the VM's Claude Code: `api.anthropic.com` in the VM is then the stand-in, which passes the agent's requests to a model API with a key that stays on the host (`MODEL_API_KEY`, see [`../record.sh`](../record.sh)). The names in the list are answered the same way: where an attack sends the agent's traffic instead |
 | `entry` | where the case's sessions begin, by which they are told from the VM's own: the app the lines are typed into (default `Terminal`). A case that runs inside an app its lines open names both, as the pack names them: `["com.microsoft.VSCode", "Code", "Terminal"]` (the editor's session goes by either of the first two) |
 | `settle` | seconds to keep recording after the last typed line returns |
 | `sources` | the public write-ups the steps come from |
@@ -47,7 +48,8 @@ login password is `admin`.
 ## The VM
 
 macOS 26, user `admin` (/Users/admin), Homebrew, `node` and `npm`, `gh`,
-`trufflehog`, `git`, `python3`, `curl`, and VS Code (`code` on the PATH). In the home: an npm token in
+`trufflehog`, `git`, `python3`, `curl`, VS Code (`code` on the PATH), and
+Claude Code (`claude`). In the home: an npm token in
 `~/.npmrc`, AWS keys in `~/.aws/`, an SSH key, a GitHub token in
 `~/.config/gh/hosts.yml` (all random bytes in the right shapes), and the
 projects `~/code/acme-web` (an app with real dependencies), `~/code/acme-colors`
@@ -70,7 +72,15 @@ wallets themselves are not installed):
 
 VS Code has been opened before and trusts `~/code`, so a folder under it
 opens with no question, and its settings have `task.allowAutomaticTasks`
-on, so a task a folder sets to run on opening does run. Terminal reads Documents and Desktop with no privacy prompt, and `sudo` asks
+on, so a task a folder sets to run on opening does run. Claude Code is signed in with a key of random bytes, accepts edits and runs
+shell commands without asking, and uses Claude Sonnet; it works only in a
+case with `agent`, where the stand-in answers for the model. What it does
+with a prompt is the model's choice on the day of the recording. A prompt
+given with `claude -p` is on the command line, where the sensor sees it; it
+is not among the prompts the pack reads from the transcripts, which are the
+ones typed into a session. The names are pointed at the stand-in by IPv4
+address only: Claude Code's connections over IPv6 still reach the real
+`api.anthropic.com`, which has no use for the key of random bytes. Terminal reads Documents and Desktop with no privacy prompt, and `sudo` asks
 for no password. The stand-in's
 certificate authority is trusted by the system and by npm; `curl` accepts it.
 Bun's and node's own `fetch` do not read the keychain: a payload passes
