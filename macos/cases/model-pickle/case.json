@@ -1,0 +1,15 @@
+{
+  "id": "model-pickle",
+  "title": "Malicious Hugging Face models (nullifAI): a model file that is a pickle, when a developer loads it, has their Python connect back to a hard-coded address and start a shell",
+  "hosts": ["hub.acme-models.example", "node.acme-relay.example"],
+  "http_ports": [4242],
+  "serve": {
+    "hub.acme-models.example/acme-lab/tiny-sentiment/resolve/main/pytorch_model.bin": "pytorch_model.bin"
+  },
+  "settle": 90,
+  "sources": [
+    "https://www.reversinglabs.com/blog/rl-identifies-malware-ml-model-hosted-on-hugging-face",
+    "https://jfrog.com/blog/data-scientists-targeted-by-malicious-hugging-face-ml-models-with-silent-backdoor/",
+    "https://www.helpnetsecurity.com/2025/02/10/malicious-ml-models-found-on-hugging-face-hub/"
+  ]
+}

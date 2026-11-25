@@ -1,0 +1,4 @@
+[project]
+name = "acme-vision"
+version = "2.6.1"
+description = "Find the objects in a picture"
