@@ -1,8 +1,8 @@
 """page.py [RUNS_DIR]: the suite's results, and the front page's table.
 
-Reads every judged replay under RUNS_DIR (default ../runs/macos/replay), a
+Reads every replay under RUNS_DIR (default ../runs/macos/replay), a
 directory `<case>-<attack|twin>` or `<case>-<attack|twin>-<n>` that
-`replay.py --judge` wrote, and says of each case:
+`replay.py` wrote, and says of each case:
 
   attack   in how many runs the judge marked the case, and in how many an
            alert was still standing after the reviewer

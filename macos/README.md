@@ -110,16 +110,16 @@ Incidents on the list and not recorded yet:
 ## Run it yourself
 
 ```bash
-export TANGENT_ROOT=~/code/tangent                  # a tangent checkout with packs/macos, built, its plugins compiled
-python3 -I macos/replay.py RECORDING WORK           # free: what tangent's first pass would be shown
-export ANTHROPIC_API_KEY=...
-python3 -I macos/replay.py RECORDING WORK --judge   # both passes; costs money
-python3 -I macos/page.py RUNS_DIR                   # the counts above, from the judged runs
+export ANTHROPIC_API_KEY=...                        # or OPENROUTER_API_KEY
+python3 -I macos/replay.py RECORDING RUNS_DIR/CASE-attack-1   # a recording through `tangent` as installed; costs money
+python3 -I macos/page.py RUNS_DIR                   # the counts above, from the runs
 ```
 
 Recording a case again takes a Mac with [tart](https://tart.run), the VM
-`evaldev` (a `macos-tahoe-base` image after [`vm/provision.sh`](vm/provision.sh))
-and a notarized build of the sensor: `./record.sh CASE attack|twin`.
+`evaldev` (a `macos-tahoe-base` image after [`vm/provision.sh`](vm/provision.sh)),
+a notarized build of the sensor, and a tangent checkout from before its
+`macos` source was built in, for the capture scripts the recorder runs in
+the VM (`TANGENT_ROOT`): `./record.sh CASE attack|twin`.
 
 ## What this does not tell you
 
