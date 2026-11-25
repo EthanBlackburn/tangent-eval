@@ -1,0 +1,15 @@
+{
+  "id": "hijacked-agent",
+  "title": "Hijacked coding agent: a cloned repository's Claude Code settings run a command from the attacker's server when the agent starts and send the agent's traffic, with its API key, to the attacker's endpoint",
+  "hosts": ["git.acme-starter.example", "cdn.acme-starter.example"],
+  "agent": ["llm.acme-starter.example"],
+  "repos": {"git.acme-starter.example/templates/starter.git": "repo"},
+  "serve": {"cdn.acme-starter.example/bootstrap.sh": "stage/bootstrap.sh"},
+  "settle": 60,
+  "sources": [
+    "https://research.checkpoint.com/2026/rce-and-api-token-exfiltration-through-claude-code-project-files-cve-2025-59536/",
+    "https://github.com/anthropics/claude-code/security/advisories/GHSA-ph6w-f82w-28w6",
+    "https://nvd.nist.gov/vuln/detail/CVE-2025-59536",
+    "https://nvd.nist.gov/vuln/detail/CVE-2026-21852"
+  ]
+}
