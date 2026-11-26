@@ -2,7 +2,7 @@
 
 What looks alarming and is not: Dependabot's weekly batch, the on-call's 3 a.m. login, a deploy's restart burst, a repo made public as planned, scanner probes, a rotation after a vendor's notice, the same sign-ins and reads as every day.
 
-17 cases: 0 should flag, 17 must not. `P1` is the first corpus to pass; `P2` is next. Each case is a directory with `case.yaml` (what it is, and what the judge should say) and `events.ndjson` (its records, in the shape of the real source); [gen.py](../../gen.py) writes both.
+22 cases: 0 should flag, 22 must not. `P1` is the first corpus to pass; `P2` is next. Each case is a directory with `case.yaml` (what it is, and what the judge should say) and `events.ndjson` (its records, in the shape of the real source); [gen.py](../../gen.py) writes both.
 
 | case | | sources | events | what the logs show |
 |---|---|---|---|---|
@@ -23,5 +23,10 @@ What looks alarming and is not: Dependabot's weekly batch, the on-call's 3 a.m. 
 | [`secret-rotation-after-vendor-notice`](secret-rotation-after-vendor-notice/) | must not flag | `cloudtrail`, `app` | 10 | Admins rotate keys the morning after a vendor's breach notice |
 | [`top-of-hour-sync-fanout`](top-of-hour-sync-fanout/) | must not flag | `agent` | 60 | The poller fans out to GitHub at the top of the hour |
 | [`vendor-429-burst`](vendor-429-burst/) | must not flag | `agent` | 9 | Okta rate-limits the poller, which backs off and succeeds |
+| [`workspace-delegation-audit-reader`](workspace-delegation-audit-reader/) | must not flag | `google_workspace` | 4 | The admin lets a log reader read the audit log, and sets up a new hire, at the office |
+| [`workspace-helpdesk-reset-at-office`](workspace-helpdesk-reset-at-office/) | must not flag | `google_workspace` | 7 | The admin resets alice's password and 2-step verification after a lost phone; she signs in at the office and enrolls again |
+| [`workspace-new-phone-reenroll`](workspace-new-phone-reenroll/) | must not flag | `google_workspace` | 8 | carol moves 2-step verification to a new phone at the office and changes her password |
+| [`workspace-oauth-known-app-again`](workspace-oauth-known-app-again/) | must not flag | `google_workspace` | 4 | bob connects Figma, as most of the company has, and opens two documents with it |
+| [`workspace-press-kit-to-agency`](workspace-press-kit-to-agency/) | must not flag | `google_workspace` | 3 | grace shares the launch press kit with the PR agency she always sends it to |
 
 [All categories](../README.md)

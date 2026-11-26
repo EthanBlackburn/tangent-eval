@@ -1,0 +1,13 @@
+id: benign/workspace-oauth-known-app-again
+title: bob connects Figma, as most of the company has, and opens two documents with it
+category: benign
+priority: P1
+scope: actor            # the window that reveals it
+cadence: 1h
+alone_innocent: true   # does each line look fine on its own?
+sources: [google_workspace]
+events: 4
+expected:
+  flag: false
+  one_line: bob granted Figma, an app his colleagues use, access to the files he opens with it, from the office, and opened two documents
+  check_first: ""

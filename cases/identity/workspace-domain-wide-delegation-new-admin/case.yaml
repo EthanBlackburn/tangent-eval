@@ -1,0 +1,13 @@
+id: identity/workspace-domain-wide-delegation-new-admin
+title: "The admin's session, from a hosting provider, gives an API client the whole domain's mail and Drive, then makes a second super admin"
+category: identity
+priority: P1
+scope: actor            # the window that reveals it
+cadence: 1h
+alone_innocent: true   # does each line look fine on its own?
+sources: [google_workspace]
+events: 4
+expected:
+  flag: true
+  one_line: "admin signed in with a password only from a Dutch hosting address, authorised an API client for every user's mail and Drive and the directory, created svc-directory-sync@acme.io and made it a super admin"
+  check_first: "remove the client's domain-wide delegation; suspend svc-directory-sync; end admin's sessions and reset the password"

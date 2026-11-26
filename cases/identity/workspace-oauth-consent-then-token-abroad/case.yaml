@@ -1,0 +1,13 @@
+id: identity/workspace-oauth-consent-then-token-abroad
+title: "A person grants an unknown app their mail and Drive; minutes later the app's token reads both from a hosting provider"
+category: identity
+priority: P1
+scope: actor            # the window that reveals it
+cadence: 1h
+alone_innocent: true   # does each line look fine on its own?
+sources: [google_workspace]
+events: 18
+expected:
+  flag: true
+  one_line: bob granted an app nobody at acme has used, Drive Sync Assistant, full access to his mail and Drive from the office; twenty minutes later its token listed and read his mail and downloaded six documents from a Vultr host in Germany
+  check_first: "revoke the app's grant; ask bob what he clicked; which messages and documents it read"
