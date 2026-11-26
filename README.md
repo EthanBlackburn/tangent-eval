@@ -102,6 +102,7 @@ cases/           our 66 cases, by category, with a README per category (index.py
 stratus/         Datadog's 35 recorded techniques and splice.py, which makes the 140 Stratus cases
 profile/         acme as the judge knows it
 harness/         replay, shard, score, and the second reviewer (review.py)
+                 release.py: the same stream through a released tangent
 compare/         Elastic's and Sigma's public rules over the same logs
 datasets/        third-party datasets for writing cases: pins in the tree, copies from a release (fetch.py)
 gen.py           writes cases/; stream.py places every case inside the ordinary traffic
@@ -318,6 +319,35 @@ with.
 ANTHROPIC_API_KEY=... python3 -I harness/anthropic_proxy.py 8765 runs/r1-usage.ndjson &
 REVIEW_URL=http://127.0.0.1:8765/v1 REVIEW_MODEL=claude-sonnet-5-5 python3 -I harness/review.py ...
 ```
+
+## On a released tangent
+
+Everything above runs tangent at the commit in `tangent.ref`, which is
+0.1.9; later tangents do not read the configs `maincfg.py` writes.
+`release.py` plays the same stream through the tangent you have installed,
+in the pipeline `tangent init cloud` writes: one process, the judge and the
+reviewer in it.
+
+```bash
+export ANTHROPIC_API_KEY=...       # or OPENROUTER_API_KEY, held to Anthropic as the host
+ulimit -n                          # wants tens of thousands: the lake is a file an hour, and each review opens a month of them
+DATA=/path/to/tangent/examples/enrich/data \
+  python3 -I harness/release.py runs/stream/stream-packs-v3.ndjson runs/windows-packs-v3.json runs/rel1
+python3 -I harness/score_v2.py runs/stream/truth-packs-v3.json runs/rel1            # the judge alone
+python3 -I harness/score_v2.py runs/stream/truth-packs-v3.json runs/rel1/reviewed   # with the reviewer
+```
+
+A record inside a window is judged, and reviewed if flagged; one outside is
+history, learned and kept by a second copy of each pack that feeds only the
+baseline and the lake. `release.py`'s first lines say how the config differs
+from init's: sockets for sources, seconds for the waits, and the models
+through OpenRouter when that is the key set. Before each window it waits
+for the lake to hold the days before it, about a quarter of an hour for a
+year of history. `TANGENT` names a tangent that is not on the PATH, `SOURCES`
+init's sources, `PROFILE` the profile.
+
+It has run a few windows at a time (RESULTS.md), not the whole corpus: the
+numbers at the top are still the 0.1.9 harness's.
 
 ## Score it
 
