@@ -704,6 +704,51 @@ def v3_noise(ordinary, start, end, seed):
     return out
 
 
+def workspace_days(start, end, seed):
+    """The ordinary Workspace days gen.py's Workspace cases sit in, from their
+    own seed so nothing else's draws move: a sign-in a day for the members
+    `noise` gives none, each person's documents opened and edited, now and
+    then one downloaded or shared with a colleague, the apps the company uses
+    connected and connected again, grace's press material shared with the PR
+    agency, the admin's group changes and, rarely, a password reset."""
+    r = random.Random(seed)
+    jit = lambda minutes: timedelta(seconds=r.uniform(0, minutes * 60))
+    office, out = gen.OFFICE["ip"], []
+    for who in MEMBERS:
+        for app_name, (client, scopes) in gen.WS_APPS.items():
+            if int(gen.h(who, app_name), 16) % 4:   # three people in four use each app
+                for d in every(start, end, 45, who, app_name):
+                    out.append(gen.ws_grant(iso(d + timedelta(hours=16) + jit(300)), who, office, app_name, client, scopes))
+    d = start
+    while d < end:
+        if d.weekday() < 5:
+            for who in MEMBERS:
+                ip = HOME["ip"] if who.startswith("oncall") else office
+                if who.split("@")[0] not in ("cfo", "alice", "bob"):
+                    out.append(gen.ws_login(iso(d + timedelta(hours=15) + jit(180)), who, ip))
+                t = d + timedelta(hours=16) + jit(120)
+                for _ in range(r.randint(3, 9)):
+                    t += timedelta(seconds=r.uniform(30, 2400))
+                    title = r.choice(gen.WS_OWN[who] if r.random() < 0.6 else gen.WS_SHARED)
+                    out.append(gen.ws_doc(iso(t), who, ip, r.choice(["view"] * 6 + ["edit"] * 3 + ["download"]), title))
+                if r.random() < 0.08:
+                    out.append(gen.ws_share(iso(t + jit(20)), who, ip, r.choice(gen.WS_OWN[who]),
+                                            r.choice([m for m in MEMBERS if m != who])))
+            if r.random() < 0.12:
+                t = d + timedelta(hours=17) + jit(240)
+                out += [gen.ws_share(iso(t + timedelta(seconds=20 * i)), "grace@acme.io", office, title, gen.AGENCY)
+                        for i, title in enumerate(r.sample(gen.WS_OWN["grace@acme.io"], r.randint(1, 2)))]
+            if r.random() < 0.2:
+                out.append(gen.ws_admin(iso(d + timedelta(hours=17) + jit(240)), "GROUP_SETTINGS", "ADD_GROUP_MEMBER", office,
+                                        GROUP_EMAIL=r.choice(["eng@acme.io", "all@acme.io", "oncall@acme.io"]),
+                                        USER_EMAIL=r.choice(MEMBERS)))
+            if r.random() < 0.03:
+                out.append(gen.ws_admin(iso(d + timedelta(hours=16) + jit(300)), "USER_SETTINGS", "CHANGE_PASSWORD", office,
+                                        USER_EMAIL=r.choice([m for m in MEMBERS if m[:3] not in ("adm", "cfo")])))
+        d += timedelta(days=1)
+    return out
+
+
 def own_keys(ordinary, spliced):
     """A spliced technique is the member's call, so it is signed with the access
     key the member has that day (the one their ordinary calls last used), not a
@@ -752,6 +797,7 @@ def main():
             events += noise_between(end, more, seed=12)
             end = more
         events = v3_noise(events, START, end, seed=13)
+        events += workspace_days(START, end, seed=17)
     owner = {id(e): t["id"] for t, e in zip([t for t in truth for _ in range(t["events"])], cases)}
     if v3:
         own_keys(events, [e for e in cases if owner[id(e)].startswith(("stratus/", "control/"))])
