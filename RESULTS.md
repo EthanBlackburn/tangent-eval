@@ -110,6 +110,25 @@ windows, not a sample of the stream. The cases were written the same day
 they were measured, by the same hands; nothing in them or in the brief was
 changed after the first run.
 
+## The Workspace windows on tangent 0.3.3
+
+**2026-11-25, one run.** The same eleven windows through
+`harness/release.py`: the released 0.3.3 binary, the pipeline
+`tangent init cloud` writes, the same two models through OpenRouter.
+
+| | the judge | with the reviewer |
+|---|---|---|
+| attacks caught, of 6 | 6 | 6 |
+| look-alikes flagged, of 5 | 4 | 3 |
+| ordinary records flagged, of 580 judged | 28 | 16 |
+
+The look-alikes standing after review are the two that stand on 0.1.9 and
+`benign/workspace-new-phone-reenroll`. The judge left 1 of 690 records
+unjudged. The reviewer answered for 126 of 127 alerts in 18 reviews, two of
+which found the lake empty: the player did not yet wait long enough for it
+(it does now). One run says the release does about what 0.1.9 did on these
+windows, and no more than that.
+
 ## Earlier layouts
 
 Every number below came from the same corpus run through an earlier
