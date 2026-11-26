@@ -2,7 +2,7 @@
 
 One API key paging through every record, a service posting to a file-sharing site, a mailbox forwarding outside, a database snapshot shared with another account.
 
-4 cases: 4 should flag, 0 must not. `P1` is the first corpus to pass; `P2` is next. Each case is a directory with `case.yaml` (what it is, and what the judge should say) and `events.ndjson` (its records, in the shape of the real source); [gen.py](../../gen.py) writes both.
+5 cases: 5 should flag, 0 must not. `P1` is the first corpus to pass; `P2` is next. Each case is a directory with `case.yaml` (what it is, and what the judge should say) and `events.ndjson` (its records, in the shape of the real source); [gen.py](../../gen.py) writes both.
 
 | case | | sources | events | what the logs show |
 |---|---|---|---|---|
@@ -10,5 +10,6 @@ One API key paging through every record, a service posting to a file-sharing sit
 | [`egress-new-destination`](egress-new-destination/) | flag P2 | `agent` | 4 | A service that only talks to vendors posts to a file-sharing site |
 | [`gmail-forwarding-rule`](gmail-forwarding-rule/) | flag P1 | `google_workspace` | 1 | Finance user's mailbox starts forwarding to an outside Gmail address |
 | [`snapshot-shared-external`](snapshot-shared-external/) | flag P1 | `cloudtrail` | 1 | An RDS snapshot is shared with another AWS account |
+| [`workspace-drive-shared-to-personal-address`](workspace-drive-shared-to-personal-address/) | flag P1 | `google_workspace` | 18 | A salesperson shares every customer and pricing document with a personal address in three minutes, then downloads them |
 
 [All categories](../README.md)

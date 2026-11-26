@@ -1,0 +1,13 @@
+id: benign/workspace-press-kit-to-agency
+title: grace shares the launch press kit with the PR agency she always sends it to
+category: benign
+priority: P1
+scope: actor            # the window that reveals it
+cadence: 1h
+alone_innocent: true   # does each line look fine on its own?
+sources: [google_workspace]
+events: 3
+expected:
+  flag: false
+  one_line: "grace shared three launch documents with the PR agency's address she has shared press material with before"
+  check_first: ""

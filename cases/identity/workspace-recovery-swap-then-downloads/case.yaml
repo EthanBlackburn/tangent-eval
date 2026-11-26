@@ -1,0 +1,13 @@
+id: identity/workspace-recovery-swap-then-downloads
+title: A sign-in from a new country changes the recovery address and phone, turns off 2-step verification and the password, then downloads
+category: identity
+priority: P1
+scope: actor            # the window that reveals it
+cadence: 1h
+alone_innocent: true   # does each line look fine on its own?
+sources: [google_workspace]
+events: 13
+expected:
+  flag: true
+  one_line: "carol's password was accepted from Singapore with no second step; in eight minutes her recovery address and phone were changed, 2-step verification turned off and the password changed, then eight documents downloaded"
+  check_first: whether carol is in Singapore; suspend the account, restore her recovery details; which documents left

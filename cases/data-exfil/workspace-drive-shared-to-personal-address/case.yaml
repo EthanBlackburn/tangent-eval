@@ -1,0 +1,13 @@
+id: data-exfil/workspace-drive-shared-to-personal-address
+title: A salesperson shares every customer and pricing document with a personal address in three minutes, then downloads them
+category: data-exfil
+priority: P1
+scope: actor            # the window that reveals it
+cadence: 1h
+alone_innocent: true   # does each line look fine on its own?
+sources: [google_workspace]
+events: 18
+expected:
+  flag: true
+  one_line: dave shared nine documents (the customer list, pricing, the pipeline, partner contracts) with a gmail.com address nobody at acme has shared with, in three minutes, and downloaded all nine
+  check_first: remove the outside address from the nine documents; whether dave is leaving; what else he took

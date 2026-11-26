@@ -1,0 +1,13 @@
+id: benign/workspace-helpdesk-reset-at-office
+title: "The admin resets alice's password and 2-step verification after a lost phone; she signs in at the office and enrolls again"
+category: benign
+priority: P1
+scope: actor            # the window that reveals it
+cadence: 1h
+alone_innocent: true   # does each line look fine on its own?
+sources: [google_workspace]
+events: 7
+expected:
+  flag: false
+  one_line: "admin reset alice's password and turned off her 2-step verification; she signed in at the office, enrolled 2-step verification again and opened her usual documents"
+  check_first: ""

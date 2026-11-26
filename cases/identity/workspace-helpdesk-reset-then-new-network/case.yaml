@@ -1,0 +1,13 @@
+id: identity/workspace-helpdesk-reset-then-new-network
+title: "The admin resets the CFO's password and turns off her 2-step verification; she signs in from a hosting provider and downloads the finance documents"
+category: identity
+priority: P1
+scope: actor            # the window that reveals it
+cadence: 1h
+alone_innocent: true   # does each line look fine on its own?
+sources: [google_workspace]
+events: 11
+expected:
+  flag: true
+  one_line: "admin reset cfo's password and turned off her 2-step verification; eleven minutes later cfo signed in with the password alone from a Hetzner address and downloaded eight finance documents, the cap table and payroll among them"
+  check_first: "who asked admin for the reset and how; suspend cfo's account; which documents left"

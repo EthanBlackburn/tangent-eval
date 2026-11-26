@@ -1,0 +1,13 @@
+id: benign/workspace-new-phone-reenroll
+title: carol moves 2-step verification to a new phone at the office and changes her password
+category: benign
+priority: P1
+scope: actor            # the window that reveals it
+cadence: 1h
+alone_innocent: true   # does each line look fine on its own?
+sources: [google_workspace]
+events: 8
+expected:
+  flag: false
+  one_line: carol, at the office, changed her recovery phone, turned 2-step verification off and on again for a new phone, changed her password and opened her usual documents
+  check_first: ""

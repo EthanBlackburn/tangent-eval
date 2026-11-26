@@ -1,0 +1,13 @@
+id: benign/workspace-delegation-audit-reader
+title: The admin lets a log reader read the audit log, and sets up a new hire, at the office
+category: benign
+priority: P1
+scope: actor            # the window that reveals it
+cadence: 1h
+alone_innocent: true   # does each line look fine on its own?
+sources: [google_workspace]
+events: 4
+expected:
+  flag: false
+  one_line: "admin, at the office, authorised an API client to read the audit reports and nothing else, created henry@acme.io and added him to the engineering group"
+  check_first: ""

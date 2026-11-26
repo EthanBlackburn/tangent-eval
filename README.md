@@ -10,16 +10,16 @@ Each row is a category of cases; its page lists every case and what the logs sho
 | category | what it covers | should flag | must not |
 |---|---|---|---|
 | [Cloud infrastructure](cases/cloud/README.md) | AWS through CloudTrail: logging stopped, a root login without MFA, a bucket made public, a security group opened to the internet, a new IAM user given admin rights, a key first used from a new host, an outside account assuming a role | 7 | 0 |
-| [Identity](cases/identity/README.md) | Okta, Google Workspace and a product's own logins: impossible travel, an admin signing in from a hosting provider abroad, MFA turned off or reset and re-enrolled elsewhere, a burst of failures then a success, a key or a promotion used minutes later, SSO bypassed | 10 | 0 |
+| [Identity](cases/identity/README.md) | Okta, Google Workspace and a product's own logins: impossible travel, an admin signing in from a hosting provider abroad, MFA turned off or reset and re-enrolled elsewhere, a burst of failures then a success, a key or a promotion used minutes later, SSO bypassed | 14 | 0 |
 | [GitHub](cases/github/README.md) | The org audit log: branch protection removed and main force-pushed, a contractor made owner with a deploy key, one token pushing to a dozen repos, a fork's pull request editing a workflow that runs with secrets, Shai-Hulud's repos and runner | 6 | 0 |
 | [Supply chain](cases/supply-chain/README.md) | CI and dependencies: an Action's tags moved to a stealer, a postinstall that phones home, a typosquat, worms that publish credentials as repositories, a backdoored PyPI release, a trojaned axios | 8 | 0 |
-| [Data exfiltration](cases/data-exfil/README.md) | One API key paging through every record, a service posting to a file-sharing site, a mailbox forwarding outside, a database snapshot shared with another account | 4 | 0 |
+| [Data exfiltration](cases/data-exfil/README.md) | One API key paging through every record, a service posting to a file-sharing site, a mailbox forwarding outside, a database snapshot shared with another account | 5 | 0 |
 | [A vendor's breach](cases/vendor/README.md) | A connected AI app's stolen OAuth token used to pivot through SSO; a hosting vendor's leaked environment secrets reused | 2 | 0 |
 | [SaaS and integrations](cases/saas/README.md) | An integration's stolen OAuth token reading everything; provider keys taken from a developer console and run up from everywhere | 2 | 0 |
 | [AI agents](cases/agents/README.md) | An AI agent's own log: a plan reads a secret then posts where no plan named, retries with a different role each time, a tool result changes the task, a repository's settings redirect the model's calls and key, an MCP server copies every message out, an agent uses credentials it found | 6 | 0 |
-| [Prompt injection](cases/prompt-injection/README.md) | Records written to talk to the reviewer: a key name, a user agent, a pull request title or a token name telling the judge what to answer | 4 | 0 |
-| [Benign, must not flag](cases/benign/README.md) | What looks alarming and is not: Dependabot's weekly batch, the on-call's 3 a.m. login, a deploy's restart burst, a repo made public as planned, scanner probes, a rotation after a vendor's notice, the same sign-ins and reads as every day | 0 | 17 |
-| all | | 49 | 17 |
+| [Prompt injection](cases/prompt-injection/README.md) | Records written to talk to the reviewer: a key name, a user agent, a pull request title or a token name telling the judge what to answer | 5 | 0 |
+| [Benign, must not flag](cases/benign/README.md) | What looks alarming and is not: Dependabot's weekly batch, the on-call's 3 a.m. login, a deploy's restart burst, a repo made public as planned, scanner probes, a rotation after a vendor's notice, the same sign-ins and reads as every day | 0 | 22 |
+| all | | 55 | 22 |
 <!-- /categories -->
 
 Two more suites:
@@ -29,21 +29,44 @@ Two more suites:
 | [Stratus Red Team](stratus/README.md) | 35 real AWS attack techniques Datadog recorded in its own test accounts, each spliced in as a member of acme whose credentials were stolen, from a hosting address and from the office; and for each, a control with every call made a harmless read | 70 | 70 |
 | macOS endpoint | 90 synthetic eslogger cases of AI-agent abuse on a developer's Mac, grounded in the [EAA catalog](https://github.com/0x4D31/endpoint-ai-agent-abuse); arrives with tangent's macOS pack ([#85](https://github.com/EthanBlackburn/tangent/pull/85)) | 45 | 45 |
 
-tangent's packs read six of the stream's eight sources (acme's product log and its agent's log have no pack), so a run judges the 188 cases with a record among those: 71 attacks to catch, the 35 Stratus techniques run from the member's usual place, which are counted apart, and 82 that must not be flagged.
+tangent's packs read six of the stream's eight sources (acme's product log and its agent's log have no pack), so a run judges the 199 cases with a record among those: 77 attacks to catch, the 35 Stratus techniques run from the member's usual place, which are counted apart, and 87 that must not be flagged.
 
-Every case lands on a day of its own inside thirteen months of acme's ordinary traffic ([the stream](#the-stream)), so the judge sees it the way it would in production: against the history of the people and systems involved.
+Every case lands on a day of its own inside fourteen months of acme's ordinary traffic ([the stream](#the-stream)), so the judge sees it the way it would in production: against the history of the people and systems involved.
 
 ## How good is it
 
-Measured on 2026-11-15, one run, with Claude Haiku 5.5 as the judge and Claude Sonnet 5.5 as the second reviewer of what it flagged ([RESULTS.md](RESULTS.md) has the run):
+Measured on 2026-11-25, one run over all 199 cases, with Claude Haiku 5.5 as the judge and Claude Sonnet 5.5 as the second reviewer of what it flagged ([RESULTS.md](RESULTS.md) has the run, and the one of 2026-11-15 before it):
 
 | | the judge alone | with the reviewer |
 |---|---|---|
-| attacks caught, of 71 | 70 | 70 |
-| ordinary records flagged, of 5,304 | 462 | 40 |
-| must-not-flag cases flagged, of 82 | 68 | 38 |
+| attacks caught, of 77 | 77 | 77 |
+| ordinary records flagged, of 8,894 | 867 | 70 |
+| must-not-flag cases flagged, of 87 | 76 | 42 |
 
-[compare/](compare/README.md) puts the same logs to Elastic's and Sigma's public detection rules: 51 and 13 of the 71, with 43 and 121 ordinary records flagged.
+Of the 42, 35 are a Stratus technique's harmless twin from an address never seen (below), 3 the same from the usual place, and 4 our own look-alikes of 17.
+
+By the log our own cases are in, after review (a case in two logs counts in both; the Stratus techniques are all CloudTrail and are not in this table):
+
+| log | attacks caught | look-alikes flagged |
+|---|---|---|
+| AWS CloudTrail | 16 of 16 | 0 of 4 |
+| GitHub audit log | 13 of 13 | 1 of 5 |
+| GitHub Actions runs | 7 of 7 | 1 of 2 |
+| runner egress | 6 of 6 | 1 of 2 |
+| Okta | 9 of 9 | 0 of 5 |
+| Google Workspace | 8 of 8 | 2 of 5 |
+
+[compare/](compare/README.md) puts the logs of the 2026-11-15 run (188 cases, 71 attacks, of which tangent caught 70) to Elastic's and Sigma's public detection rules: 51 and 13 of the 71, with 43 and 121 ordinary records flagged. Neither was run over the cases added since.
+
+The eleven Google Workspace cases added on 2026-11-25 (six attacks, five look-alikes) were first run apart, three times over their own windows, with the same two models:
+
+| | the judge alone | with the reviewer |
+|---|---|---|
+| attacks caught, of 6 | 6, 6, 6 | 6, 6, 6 |
+| look-alikes flagged, of 5 | 5, 5, 5 | 2, 1, 2 |
+| ordinary records flagged, of 580 | 38, 37, 44 | 18, 12, 13 |
+
+The look-alikes left standing are the admin resetting a colleague's password and 2-step verification (three runs of three) and the admin authorizing a new API client and creating a user (two of three). The reviewer calls both unresolved: the log does not hold the request behind either.
 
 Two things limit what these numbers can say:
 
@@ -57,8 +80,8 @@ Two things limit what these numbers can say:
   ([stratus/README.md](stratus/README.md#not-citable-yet) lists them); those
   are fixed, and so is one found since: every spliced case signed with an
   access key the log had never seen. With them fixed, a technique's harmless
-  twin from an address never seen is flagged 34 times of 35. Whether it
-  should be is not settled, so read the 82 with that in it.
+  twin from an address never seen is flagged 35 times of 35. Whether it
+  should be is not settled, so read the 87 with that in it.
 
 ## Check it yourself
 
@@ -88,27 +111,29 @@ RESULTS.md       every number, with what it was measured on
 ## The stream
 
 `stream.py v3` puts every case on a day of its own (Tuesday to Saturday;
-two cases that share an actor at least ten days apart) inside thirteen months
+two cases that share an actor at least ten days apart) inside fourteen months
 of acme's ordinary traffic from every source: sign-ins, the product's API
 traffic, pushes and pull requests, CI builds, each member's own AWS work, the
-agent's health checks, poller and plans. 207,886 records:
+agent's health checks, poller and plans, and the day's work in Google
+Workspace (sign-ins, documents opened and shared, apps granted access, the
+admin's group changes). 252,936 records:
 
 | source | records |
 |---|---|
-| `agent` | 136,946 |
-| `cloudtrail` | 21,271 |
-| `app` | 20,072 |
-| `okta` | 13,412 |
-| `github_audit` | 9,240 |
-| `gha_ci` | 3,302 |
-| `runner_egress` | 2,750 |
-| `google_workspace` | 893 |
+| `agent` | 147,570 |
+| `cloudtrail` | 32,409 |
+| `app` | 21,584 |
+| `google_workspace` | 20,679 |
+| `okta` | 14,416 |
+| `github_audit` | 9,844 |
+| `gha_ci` | 3,512 |
+| `runner_egress` | 2,922 |
 
 `truth-v3.json` says, per case, whether it should flag, its actor and org as
 the packs normalize them, the times of its events and the stream lines that
 are its records. `past.py` moves both 104 weeks back, because the sqlite sink
 takes no time from the future. `windows.py` makes the judged windows: an hour
-either side of every case event, merged, 220 windows and 453 hours. Records
+either side of every case event, merged, 231 windows and 479 hours. Records
 outside a window are ingested as history and never judged.
 
 ## One command
