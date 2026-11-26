@@ -83,7 +83,7 @@ def days():
 # The company's own infrastructure is one partition, the company; a product's
 # logs partition by customer (the profile's `org` and `own_sources`).
 OWN_ORG = "acme"
-OWN_SOURCES = {"cloudtrail", "github_audit", "okta", "google_workspace", "gha_ci", "runner_egress"}
+OWN_SOURCES = {"cloudtrail", "github_audit", "okta", "google_workspace", "supabase", "gha_ci", "runner_egress"}
 
 
 def norm_keys(e):
@@ -173,6 +173,9 @@ def raw_keys(e):
         return cloudtrail_actor(e), (e.get("userIdentity") or {}).get("accountId")
     if s == "google_workspace":
         return e["actor"]["email"], None
+    if s == "supabase":   # the product's user; a refused request names nobody
+        a = e["log_attributes"]
+        return a.get("auth_event.actor_username") or a.get("auth_event.traits.user_email"), None
     if s == "app":
         return e.get("actor"), e.get("org")
     if s in ("gha_ci", "runner_egress"):
@@ -441,6 +444,8 @@ def place(cases, deltas):
                     e[f] = e["ts"]
             if "id" in e and isinstance(e["id"], dict) and "time" in e["id"]:
                 e["id"]["time"] = e["ts"]
+            if e.get("source") == "supabase":
+                e["timestamp"] = e["ts"].replace("T", " ").replace("Z", ".000000")
             # No marker on the event: the judge must not be told which case it is.
             events.append(e)
         last = max(parse(e["ts"]) for e in events)
@@ -749,6 +754,58 @@ def workspace_days(start, end, seed):
     return out
 
 
+def supabase_days(start, end, seed):
+    """The ordinary days of acme's product on Supabase Auth, from their own
+    seed: the product's users signing in from home, the app refreshing each
+    session about every hour, a password mistyped before a sign-in, some on
+    their phone, a second factor for the third who have one, a sign-out, and
+    now and then a new user or a forgotten password. The users gen.py's cases
+    are about are among them, at the addresses the cases give them."""
+    r = random.Random(seed)
+    users = dict(gen.SB_HOME)
+    for i in range(34):
+        pool = gen.SB_LAUNCH[i % len(gen.SB_LAUNCH)][0]
+        x = int(gen.h("sb-user", i), 16)
+        users[f"{gen.SB_FIRST[x % 24]}.{gen.h('sb-name', i)[:4]}@{gen.SB_FIRMS[i % 8]}.example"] = pool % (10 + x % 200, 2 + (x >> 8) % 250)
+    phone = {who: "172.58.%d.%d" % (32 + int(gen.h("phone", who), 16) % 8, 2 + int(gen.h("cell", who), 16) % 250) for who in users}
+    second = {who for who in users if int(gen.h("totp", who), 16) % 3 == 0} | {"jonas.weber@kiteworks.example", "claire.dubois@atelier-nord.example", "tomas.reyes@lumenfreight.example"}
+    out, d, n = [], start, 0
+    while d < end:
+        if d.weekday() < 5:
+            for who, home in users.items():
+                if r.random() > 0.5:
+                    continue
+                ip = phone[who] if r.random() < 0.06 else home
+                t = d + timedelta(hours=13) + timedelta(seconds=r.uniform(0, 9 * 3600))
+                if r.random() < 0.08:
+                    out.append(gen.sb(iso(t - timedelta(seconds=r.uniform(8, 40))), ip, "/token", status=400, error=gen.BAD_LOGIN))
+                if r.random() < 0.01:
+                    out += gen.recovery_at(iso(t), who, ip)
+                    t += timedelta(minutes=5)
+                else:
+                    out.append(gen.sb_login(iso(t), who, ip))
+                if who in second:
+                    factor = "/factors/" + gen.uid(who, "totp")
+                    out += [gen.sb(iso(t + timedelta(seconds=4)), ip, factor + "/challenge", action="challenge_created", who=who),
+                            gen.sb(iso(t + timedelta(seconds=19)), ip, factor + "/verify", action="mfa_code_login", who=who)]
+                for _ in range(r.randint(0, 4)):
+                    t += timedelta(seconds=r.uniform(3300, 3700))
+                    out.append(gen.sb(iso(t), ip, "/token", action="token_refreshed", who=who))
+                if r.random() < 0.3:
+                    out.append(gen.sb(iso(t + timedelta(seconds=r.uniform(60, 1500))), ip, "/logout", action="logout", who=who))
+            if r.random() < 0.3:
+                n += 1
+                pool = gen.SB_LAUNCH[n % len(gen.SB_LAUNCH)][0]
+                x = int(gen.h("sb-new", n), 16)
+                who, ip = f"{gen.SB_FIRST[x % 24]}.{gen.h('sb-new-name', n)[:4]}@{gen.SB_FIRMS[n % 8]}.example", pool % (10 + x % 200, 2 + (x >> 8) % 250)
+                t = d + timedelta(hours=14) + timedelta(seconds=r.uniform(0, 8 * 3600))
+                provider = "google" if n % 3 == 0 else "email"
+                out += [gen.sb(iso(t), ip, "/signup", action="user_signedup", who=who, provider=provider),
+                        gen.sb(iso(t + timedelta(seconds=2)), ip, "/token", action="login", who=who, provider=provider)]
+        d += timedelta(days=1)
+    return out
+
+
 def own_keys(ordinary, spliced):
     """A spliced technique is the member's call, so it is signed with the access
     key the member has that day (the one their ordinary calls last used), not a
@@ -798,6 +855,7 @@ def main():
             end = more
         events = v3_noise(events, START, end, seed=13)
         events += workspace_days(START, end, seed=17)
+        events += supabase_days(START, end, seed=19)
     owner = {id(e): t["id"] for t, e in zip([t for t in truth for _ in range(t["events"])], cases)}
     if v3:
         own_keys(events, [e for e in cases if owner[id(e)].startswith(("stratus/", "control/"))])

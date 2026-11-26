@@ -1244,6 +1244,221 @@ case("prompt-injection/workspace-oauth-app-name-answers",
                      NL_HOST["ip"], WS_OWN["erin@acme.io"] + WS_SHARED[:2]))
 
 
+# ---- Supabase ----------------------------------------------------------------
+# acme's product signs its customers' people in with Supabase Auth, and the
+# rows here are that project's `auth_logs`, as tangent's `supabase` source
+# reads them: one row a request, its fields flat in `log_attributes`. The
+# actors are the product's users, not acme's people. A refused request names
+# nobody: it has a path, a status, an error and an address.
+SUPABASE_FROM = len(CASES)
+SB_HOST = "db-qkzvhwpltmrxnayscfed"
+SB_APP = "https://app.acme.io"
+# The users the cases are about, each with the address they are always at.
+SB_HOME = {"nina.okafor@northwind.example": "73.189.44.12",      # Comcast
+           "tomas.reyes@lumenfreight.example": "99.36.120.7",    # AT&T
+           "priya.nair@harborlabs.example": "86.143.20.91",      # BT
+           "jonas.weber@kiteworks.example": "91.12.60.33",       # Deutsche Telekom
+           "claire.dubois@atelier-nord.example": "90.38.7.150",  # Orange
+           "sam.whitfield@northwind.example": "98.210.33.5",     # Comcast
+           "mei.tanaka@harborlabs.example": "73.71.9.140",       # Comcast
+           "omar.haddad@lumenfreight.example": "99.20.14.66"}    # AT&T
+SB_MOBILE = "172.58.33.19"                                       # T-Mobile USA
+SB_STUFFERS = ["45.148.10.4", "45.77.65.211", "5.161.92.17", "65.108.22.91"]
+
+
+SB_KINDS = {"login": "account", "logout": "account", "user_signedup": "team", "token_refreshed": "token",
+            "token_revoked": "token", "user_recovery_requested": "user", "user_updated_password": "user",
+            "user_modified": "user", "factor_deleted": "factor", "mfa_code_login": "account",
+            "challenge_created": "factor", "verification_attempted": "factor"}
+BAD_LOGIN = "400: Invalid login credentials"
+BAD_CODE = "422: Invalid TOTP code entered"
+
+
+def uid(*parts):
+    x = h("supabase", *parts)
+    return f"{x[:8]}-{x[8:12]}-4{x[13:16]}-a{x[17:20]}-{x[20:32]}"
+
+
+def sb(t, ip, path, status=200, action=None, who=None, error=None, provider="email", method="POST", **traits):
+    """One row of the Auth log. With `action`, the request did something as
+    `who`; with `error`, it was refused and names nobody."""
+    a = {"component": "api", "host": SB_HOST, "level": "info", "method": method, "path": path,
+         "referer": SB_APP + "/login", "remote_addr": ip, "status": str(status),
+         "duration": str(40000000 + int(h(t, ip, path), 16) % 90000000)}
+    if action:
+        a.update({"msg": "request completed", "auth_event.action": action,
+                  "auth_event.actor_id": uid(who), "auth_event.actor_username": who,
+                  "auth_event.actor_via_sso": "false", "auth_event.log_type": SB_KINDS.get(action, "account")})
+        if action in ("login", "user_signedup"):
+            a["auth_event.traits.provider"] = provider
+        for k, v in traits.items():
+            a["auth_event.traits." + k] = v
+        message = {"auth_event": {"action": action, "actor_id": uid(who), "actor_username": who},
+                   "msg": "request completed", "path": path, "remote_addr": ip, "status": status}
+    else:
+        a.update({"msg": error, "error": error})
+        message = {"component": "api", "error": error, "level": "info", "method": method, "msg": error,
+                   "path": path, "remote_addr": ip, "status": status}
+    return {"ts": t, "source": "supabase", "log": "auth_logs", "id": uid(t, ip, path, action, who),
+            "timestamp": t.replace("T", " ").replace("Z", ".000000"), "severity_text": "INFO",
+            "event_message": json.dumps(message, separators=(",", ":")), "log_attributes": a}
+
+
+def sb_login(t, who, ip, provider="email"):
+    return sb(t, ip, "/token", action="login", who=who, provider=provider)
+
+
+def sb_session(t, who, ip, refreshes, every=58):
+    """The app keeping a session alive: a refresh about every hour."""
+    return [sb(at(t, int(60 * every * (i + 1))), ip, "/token", action="token_refreshed", who=who) for i in range(refreshes)]
+
+
+# (a) passwords from somebody else's breach tried against the login, until one works
+def stuffing(who, ips, tries, then):
+    ev = []
+    for i in range(tries):
+        ev.append(sb(at(ts(hours=3), int(i * 420 / tries)), ips[i % len(ips)], "/token", status=400, error=BAD_LOGIN))
+    ip = ips[0]
+    ev.append(sb_login(ts(hours=3, minutes=7.2), who, ip))
+    ev += [sb(ts(hours=3, minutes=8 + i), ip, p, action=a, who=who, method=m, **tr) for i, (a, p, m, tr) in enumerate(then)]
+    return ev
+
+
+def mistyped(who, tries, refreshes):
+    home = SB_HOME[who]
+    ev = [sb(ts(hours=3, minutes=i * 0.4), home, "/token", status=400, error=BAD_LOGIN) for i in range(tries)]
+    ev.append(sb_login(ts(hours=3, minutes=tries * 0.4 + 0.3), who, home))
+    return ev + sb_session(ts(hours=3, minutes=tries * 0.4 + 0.3), who, home, refreshes)
+
+
+case("identity/supabase-credential-stuffing-then-in",
+     "Hundreds of refused sign-ins to the product from hosting providers in seven minutes; then one works, and that user's email is changed",
+     "identity", "P1", "actor", "1h", True, ["supabase"], True,
+     "240 sign-ins to the product were refused in seven minutes from four hosting-provider addresses, then one of those addresses signed in as nina.okafor@northwind.example, who is always on Comcast, and changed the account's email and password",
+     "sign nina's sessions out and restore her email; block the four addresses; which other accounts they got into",
+     stuffing("nina.okafor@northwind.example", SB_STUFFERS, 240,
+              [("token_refreshed", "/token", "POST", {}),
+               ("user_modified", "/user", "PUT", {"user_email": "nina.okafor@northwind.example"}),
+               ("user_updated_password", "/user", "PUT", {})]))
+case("benign/supabase-mistyped-password-at-home", "sam mistypes his password three times at home, then signs in and works",
+     "benign", "P1", "actor", "1h", True, ["supabase"], False,
+     "three refused sign-ins from sam's own Comcast address, then his sign-in from it and an afternoon of token refreshes", "",
+     mistyped("sam.whitfield@northwind.example", 3, 3))
+twin("identity/supabase-credential-stuffing-then-in", "benign/supabase-mistyped-password-at-home")
+
+
+# (b) a password recovery, and what the account does once it is in
+def recovery_at(t, who, ip):
+    """A recovery asked for, the link in the mail followed, a new password set."""
+    return [sb(t, ip, "/recover", action="user_recovery_requested", who=who),
+            sb(at(t, 180), ip, "/verify", action="login", who=who, method="GET"),
+            sb(at(t, 240), ip, "/user", action="user_updated_password", who=who, method="PUT")]
+
+
+def recovery(who, ip, tries, after):
+    ev = [sb(ts(hours=3, minutes=i * 0.5), ip, "/token", status=400, error=BAD_LOGIN) for i in range(tries)]
+    t = ts(hours=3, minutes=tries * 0.5 + 1)
+    ev += recovery_at(t, who, ip)
+    ev += [sb(at(t, 300 + 60 * i), ip, p, action=a, who=who, method=m) for i, (a, p, m) in enumerate(after)]
+    return ev
+
+
+case("identity/supabase-recovery-then-second-factor-removed",
+     "A user's password is recovered from a hosting provider abroad; the session then removes their second factor and changes the email",
+     "identity", "P1", "actor", "1h", True, ["supabase"], True,
+     "tomas.reyes@lumenfreight.example, always on AT&T in the US, asked for a password recovery from a Dutch hosting provider, signed in through the link there, set a new password, deleted the account's TOTP factor and changed its email",
+     "sign tomas out everywhere and restore his email and factor; ask whether his mailbox is his own; what the session read",
+     recovery("tomas.reyes@lumenfreight.example", NL_HOST["ip"], 0,
+              [("factor_deleted", "/factors/" + uid("tomas.reyes@lumenfreight.example", "totp"), "DELETE"), ("user_modified", "/user", "PUT"),
+               ("token_refreshed", "/token", "POST")]))
+case("benign/supabase-forgot-password-at-home", "omar forgets his password at home, recovers it and carries on",
+     "benign", "P1", "actor", "1h", True, ["supabase"], False,
+     "two refused sign-ins from omar's own AT&T address, a recovery asked for and followed from it, a new password, and the session kept alive", "",
+     recovery("omar.haddad@lumenfreight.example", SB_HOME["omar.haddad@lumenfreight.example"], 2,
+              [("token_refreshed", "/token", "POST"), ("token_refreshed", "/token", "POST")]))
+twin("identity/supabase-recovery-then-second-factor-removed", "benign/supabase-forgot-password-at-home")
+
+
+# (c) one session's refresh token used from two places
+def two_places(who, other, revoked):
+    home = SB_HOME[who]
+    ev = [sb_login(ts(hours=2), who, home)]
+    for i in range(6):
+        ev.append(sb(ts(hours=3, minutes=i * 9), home if i % 2 == 0 else other, "/token", action="token_refreshed", who=who))
+    if revoked:
+        ev.append(sb(ts(hours=3, minutes=55), other, "/token", action="token_revoked", who=who))
+        ev.append(sb(ts(hours=3, minutes=55.2), home, "/token", status=400, error="400: Invalid Refresh Token: Already Used"))
+    return ev
+
+
+case("identity/supabase-refresh-token-used-from-two-countries",
+     "One user's session is refreshed in turn from their home in the UK and from a hosting provider in Singapore, until the token is revoked for reuse",
+     "identity", "P1", "actor", "1h", True, ["supabase"], True,
+     "priya.nair@harborlabs.example's session was refreshed alternately from her BT address in the UK and an Akamai address in Singapore nine minutes apart for an hour, and Supabase then revoked the token as already used",
+     "sign priya out everywhere; how the refresh token left her browser; what the Singapore session called",
+     two_places("priya.nair@harborlabs.example", SG["ip"], True))
+case("benign/supabase-laptop-and-phone", "mei uses the product on her laptop at home and on her phone",
+     "benign", "P1", "actor", "1h", True, ["supabase"], False,
+     "mei's session refreshed from her Comcast address and from a T-Mobile address in the same country, as it does when she is on her phone", "",
+     two_places("mei.tanaka@harborlabs.example", SB_MOBILE, False))
+twin("identity/supabase-refresh-token-used-from-two-countries", "benign/supabase-laptop-and-phone")
+
+
+# (d) the right password, and the second factor guessed
+def second_factor(who, ip, wrong, gap):
+    factor = "/factors/" + uid(who, "totp")
+    ev = [sb_login(ts(hours=3), who, ip),
+          sb(ts(hours=3, minutes=0.5), ip, factor + "/challenge", action="challenge_created", who=who)]
+    ev += [sb(at(ts(hours=3, minutes=1), int(i * gap)), ip, factor + "/verify", status=422, error=BAD_CODE) for i in range(wrong)]
+    ev.append(sb(at(ts(hours=3, minutes=1), int(wrong * gap) + 2), ip, factor + "/verify", action="mfa_code_login", who=who))
+    return ev + sb_session(at(ts(hours=3, minutes=1), int(wrong * gap) + 2), who, ip, 1, every=20)
+
+
+case("identity/supabase-second-factor-guessed",
+     "A user's password works from a hosting provider, and their TOTP code is tried 180 times in ten minutes until one is accepted",
+     "identity", "P1", "actor", "1h", True, ["supabase"], True,
+     "jonas.weber@kiteworks.example, always on Deutsche Telekom, signed in with his password from a Hetzner address in the US; 180 wrong TOTP codes followed from it in ten minutes, then a right one",
+     "sign jonas out and reset his password and factor; rate-limit the verify path; what the session did",
+     second_factor("jonas.weber@kiteworks.example", US_HETZ["ip"], 180, 3.3))
+case("benign/supabase-wrong-code-twice", "claire types her TOTP code wrong twice at home, then right",
+     "benign", "P1", "actor", "1h", True, ["supabase"], False,
+     "claire signed in from her own Orange address, entered two wrong TOTP codes half a minute apart and then the right one", "",
+     second_factor("claire.dubois@atelier-nord.example", SB_HOME["claire.dubois@atelier-nord.example"], 2, 25))
+twin("identity/supabase-second-factor-guessed", "benign/supabase-wrong-code-twice")
+
+
+# (e) accounts made by a script, and accounts made by a launch
+def signups(n, seconds, who_ip, provider):
+    ev = []
+    for i in range(n):
+        who, ip = who_ip(i)
+        t = at(ts(hours=3), int(i * seconds / n))
+        ev.append(sb(t, ip, "/signup", action="user_signedup", who=who, provider=provider(i)))
+        ev.append(sb(at(t, 2), ip, "/token", action="login", who=who, provider=provider(i)))
+    return ev
+
+
+SB_LAUNCH = [("73.92.%d.%d", "US"), ("99.41.%d.%d", "US"), ("86.150.%d.%d", "GB"), ("91.20.%d.%d", "DE"),
+             ("90.44.%d.%d", "FR"), ("98.220.%d.%d", "US")]
+SB_FIRST = ["ava", "ben", "chloe", "dev", "elena", "farid", "gia", "hugo", "isla", "jun", "kofi", "lena", "milo", "nora",
+            "otto", "pia", "quinn", "rosa", "seth", "tess", "uma", "vik", "wren", "yara"]
+SB_FIRMS = ["bluepeak", "corvid", "dunmore", "eastlake", "fernhill", "greyfield", "hollis", "inkwell"]
+
+case("identity/supabase-signups-from-one-hosting-network",
+     "Sixty accounts are made in four minutes from one hosting provider's network, each with a random name at a throwaway mail domain",
+     "identity", "P2", "org", "1h", True, ["supabase"], True,
+     "sixty sign-ups in four minutes from addresses in one Dutch hosting network, each a random string at mailbox.example, each signed in once",
+     "suspend the sixty accounts; put a captcha or rate limit on sign-up; what they did after signing in",
+     signups(60, 240, lambda i: (f"{h('bot', i)[:10]}@mailbox.example", f"45.148.10.{10 + i % 40}"), lambda i: "email"))
+case("benign/supabase-launch-day-signups", "The product is on the front page of a news site: forty people sign up in an hour, from home",
+     "benign", "P2", "org", "1h", True, ["supabase"], False,
+     "forty sign-ups in an hour, people's names at eight companies' domains or through Google, from home broadband in four countries", "",
+     signups(40, 3400, lambda i: (f"{SB_FIRST[i % 24]}.{h('launch', i)[:4]}@{SB_FIRMS[i % 8]}.example",
+                                  SB_LAUNCH[i % 6][0] % (10 + int(h('l', i)[:2], 16) % 200, 2 + int(h('m', i)[:2], 16) % 250)),
+             lambda i: "google" if i % 3 == 0 else "email"))
+twin("identity/supabase-signups-from-one-hosting-network", "benign/supabase-launch-day-signups")
+
+
 # ---- write -----------------------------------------------------------------
 
 def yaml_scalar(v):
