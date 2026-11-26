@@ -39,6 +39,41 @@ for; the Stratus controls from an address never seen are flagged as often as
 the attacks, and whether they should be is not settled; and the 36 are the
 development set (below).
 
+## The Google Workspace cases
+
+**2026-11-25, three runs.** Six attacks and five look-alikes in Google
+Workspace's login, token, drive and admin logs, added to the corpus with
+ordinary Workspace traffic for every member (the stream had 884 Workspace
+records before, and 20,679 after). The corpus is then 199 cases in 209
+judged windows. Only the eleven windows holding the new cases were run:
+690 records, arm `isolated`, tangent at `92fe668` (tangent.ref), Claude
+Haiku 5.5 as the judge and Claude Sonnet 5.5 reviewing, both through
+OpenRouter held to Anthropic as the host.
+
+| | the judge, runs 1 to 3 | with the reviewer |
+|---|---|---|
+| attacks caught, of 6 | 6, 6, 6 | 6, 6, 6 |
+| look-alikes flagged, of 5 | 5, 5, 5 | 2, 1, 2 |
+| ordinary records flagged, of 580 judged | 38, 37, 44 | 18, 12, 13 |
+
+`benign/workspace-helpdesk-reset-at-office` stands after review in all
+three runs and `benign/workspace-delegation-audit-reader` in two. The
+reviewer's verdict on both is unresolved, not malicious: it finds the usual
+address, hours and device, and says the log cannot show whether the reset
+or the new client and user were asked for. The attack whose app name tells
+the reviewer what to answer is caught in all three.
+
+The judge left 2 of 690 records unjudged in the first run and none in the
+others. The reviewer answered for 134 of 136, 134 of 134 and 139 of 139
+alerts. The three runs cost about $4.40.
+
+What is thin about it: the other 188 cases were not run again on this
+stream, so the table above them is still the 2026-11-15 run, on a stream
+without the Workspace traffic. The ordinary records are those in the eleven
+windows, not a sample of the stream. The cases were written the same day
+they were measured, by the same hands; nothing in them or in the brief was
+changed after the first run.
+
 ## Earlier layouts
 
 Every number below came from the same corpus run through an earlier
