@@ -1,0 +1,13 @@
+id: identity/supabase-refresh-token-used-from-two-countries
+title: "One user's session is refreshed in turn from their home in the UK and from a hosting provider in Singapore, until the token is revoked for reuse"
+category: identity
+priority: P1
+scope: actor            # the window that reveals it
+cadence: 1h
+alone_innocent: true   # does each line look fine on its own?
+sources: [supabase]
+events: 9
+expected:
+  flag: true
+  one_line: "priya.nair@harborlabs.example's session was refreshed alternately from her BT address in the UK and an Akamai address in Singapore nine minutes apart for an hour, and Supabase then revoked the token as already used"
+  check_first: sign priya out everywhere; how the refresh token left her browser; what the Singapore session called

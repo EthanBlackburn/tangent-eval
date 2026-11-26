@@ -2,7 +2,7 @@
 
 What looks alarming and is not: Dependabot's weekly batch, the on-call's 3 a.m. login, a deploy's restart burst, a repo made public as planned, scanner probes, a rotation after a vendor's notice, the same sign-ins and reads as every day.
 
-22 cases: 0 should flag, 22 must not. `P1` is the first corpus to pass; `P2` is next. Each case is a directory with `case.yaml` (what it is, and what the judge should say) and `events.ndjson` (its records, in the shape of the real source); [gen.py](../../gen.py) writes both.
+27 cases: 0 should flag, 27 must not. `P1` is the first corpus to pass; `P2` is next. Each case is a directory with `case.yaml` (what it is, and what the judge should say) and `events.ndjson` (its records, in the shape of the real source); [gen.py](../../gen.py) writes both.
 
 | case | | sources | events | what the logs show |
 |---|---|---|---|---|
@@ -21,6 +21,11 @@ What looks alarming and is not: Dependabot's weekly batch, the on-call's 3 a.m. 
 | [`scanner-action-usual-run`](scanner-action-usual-run/) | must not flag | `gha_ci`, `runner_egress` | 5 | The image scan step runs as it does on every build |
 | [`scanner-probes`](scanner-probes/) | must not flag | `agent` | 5 | Internet scanners probe the public API for PHP and WordPress files |
 | [`secret-rotation-after-vendor-notice`](secret-rotation-after-vendor-notice/) | must not flag | `cloudtrail`, `app` | 10 | Admins rotate keys the morning after a vendor's breach notice |
+| [`supabase-forgot-password-at-home`](supabase-forgot-password-at-home/) | must not flag | `supabase` | 7 | omar forgets his password at home, recovers it and carries on |
+| [`supabase-laptop-and-phone`](supabase-laptop-and-phone/) | must not flag | `supabase` | 7 | mei uses the product on her laptop at home and on her phone |
+| [`supabase-launch-day-signups`](supabase-launch-day-signups/) | must not flag | `supabase` | 80 | The product is on the front page of a news site: forty people sign up in an hour, from home |
+| [`supabase-mistyped-password-at-home`](supabase-mistyped-password-at-home/) | must not flag | `supabase` | 7 | sam mistypes his password three times at home, then signs in and works |
+| [`supabase-wrong-code-twice`](supabase-wrong-code-twice/) | must not flag | `supabase` | 6 | claire types her TOTP code wrong twice at home, then right |
 | [`top-of-hour-sync-fanout`](top-of-hour-sync-fanout/) | must not flag | `agent` | 60 | The poller fans out to GitHub at the top of the hour |
 | [`vendor-429-burst`](vendor-429-burst/) | must not flag | `agent` | 9 | Okta rate-limits the poller, which backs off and succeeds |
 | [`workspace-delegation-audit-reader`](workspace-delegation-audit-reader/) | must not flag | `google_workspace` | 4 | The admin lets a log reader read the audit log, and sets up a new hire, at the office |

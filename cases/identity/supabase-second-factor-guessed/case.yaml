@@ -1,0 +1,13 @@
+id: identity/supabase-second-factor-guessed
+title: "A user's password works from a hosting provider, and their TOTP code is tried 180 times in ten minutes until one is accepted"
+category: identity
+priority: P1
+scope: actor            # the window that reveals it
+cadence: 1h
+alone_innocent: true   # does each line look fine on its own?
+sources: [supabase]
+events: 184
+expected:
+  flag: true
+  one_line: "jonas.weber@kiteworks.example, always on Deutsche Telekom, signed in with his password from a Hetzner address in the US; 180 wrong TOTP codes followed from it in ten minutes, then a right one"
+  check_first: sign jonas out and reset his password and factor; rate-limit the verify path; what the session did

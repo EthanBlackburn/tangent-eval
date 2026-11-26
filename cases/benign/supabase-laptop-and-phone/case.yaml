@@ -1,0 +1,13 @@
+id: benign/supabase-laptop-and-phone
+title: mei uses the product on her laptop at home and on her phone
+category: benign
+priority: P1
+scope: actor            # the window that reveals it
+cadence: 1h
+alone_innocent: true   # does each line look fine on its own?
+sources: [supabase]
+events: 7
+expected:
+  flag: false
+  one_line: "mei's session refreshed from her Comcast address and from a T-Mobile address in the same country, as it does when she is on her phone"
+  check_first: ""
