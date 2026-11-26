@@ -4,13 +4,13 @@ What [tangent](https://github.com/EthanBlackburn/tangent)'s security packs are m
 
 ## What tangent is evaluated against
 
-Each row is a category of cases; its page lists every case and what the logs show in it. A case is a sequence of records in the shape of the real source (CloudTrail, the GitHub audit log, Okta, Google Workspace, CI job lines, runner egress, a product's audit log, an AI agent's log), with what the judge should say about it.
+Each row is a category of cases; its page lists every case and what the logs show in it. A case is a sequence of records in the shape of the real source (CloudTrail, the GitHub audit log, Okta, Google Workspace, Supabase Auth, CI job lines, runner egress, a product's audit log, an AI agent's log), with what the judge should say about it.
 
 <!-- categories -->
 | category | what it covers | should flag | must not |
 |---|---|---|---|
 | [Cloud infrastructure](cases/cloud/README.md) | AWS through CloudTrail: logging stopped, a root login without MFA, a bucket made public, a security group opened to the internet, a new IAM user given admin rights, a key first used from a new host, an outside account assuming a role | 7 | 0 |
-| [Identity](cases/identity/README.md) | Okta, Google Workspace and a product's own logins: impossible travel, an admin signing in from a hosting provider abroad, MFA turned off or reset and re-enrolled elsewhere, a burst of failures then a success, a key or a promotion used minutes later, SSO bypassed | 14 | 0 |
+| [Identity](cases/identity/README.md) | Okta, Google Workspace, Supabase Auth and a product's own logins: impossible travel, an admin signing in from a hosting provider abroad, MFA turned off or reset and re-enrolled elsewhere, a burst of failures then a success, a key or a promotion used minutes later, SSO bypassed, a product's users' passwords stuffed, recovered or their second factor guessed | 19 | 0 |
 | [GitHub](cases/github/README.md) | The org audit log: branch protection removed and main force-pushed, a contractor made owner with a deploy key, one token pushing to a dozen repos, a fork's pull request editing a workflow that runs with secrets, Shai-Hulud's repos and runner | 6 | 0 |
 | [Supply chain](cases/supply-chain/README.md) | CI and dependencies: an Action's tags moved to a stealer, a postinstall that phones home, a typosquat, worms that publish credentials as repositories, a backdoored PyPI release, a trojaned axios | 8 | 0 |
 | [Data exfiltration](cases/data-exfil/README.md) | One API key paging through every record, a service posting to a file-sharing site, a mailbox forwarding outside, a database snapshot shared with another account | 5 | 0 |
@@ -18,8 +18,8 @@ Each row is a category of cases; its page lists every case and what the logs sho
 | [SaaS and integrations](cases/saas/README.md) | An integration's stolen OAuth token reading everything; provider keys taken from a developer console and run up from everywhere | 2 | 0 |
 | [AI agents](cases/agents/README.md) | An AI agent's own log: a plan reads a secret then posts where no plan named, retries with a different role each time, a tool result changes the task, a repository's settings redirect the model's calls and key, an MCP server copies every message out, an agent uses credentials it found | 6 | 0 |
 | [Prompt injection](cases/prompt-injection/README.md) | Records written to talk to the reviewer: a key name, a user agent, a pull request title or a token name telling the judge what to answer | 5 | 0 |
-| [Benign, must not flag](cases/benign/README.md) | What looks alarming and is not: Dependabot's weekly batch, the on-call's 3 a.m. login, a deploy's restart burst, a repo made public as planned, scanner probes, a rotation after a vendor's notice, the same sign-ins and reads as every day | 0 | 22 |
-| all | | 55 | 22 |
+| [Benign, must not flag](cases/benign/README.md) | What looks alarming and is not: Dependabot's weekly batch, the on-call's 3 a.m. login, a deploy's restart burst, a repo made public as planned, scanner probes, a rotation after a vendor's notice, the same sign-ins and reads as every day | 0 | 27 |
+| all | | 60 | 27 |
 <!-- /categories -->
 
 Two more suites:
@@ -29,7 +29,7 @@ Two more suites:
 | [Stratus Red Team](stratus/README.md) | 35 real AWS attack techniques Datadog recorded in its own test accounts, each spliced in as a member of acme whose credentials were stolen, from a hosting address and from the office; and for each, a control with every call made a harmless read | 70 | 70 |
 | macOS endpoint | 90 synthetic eslogger cases of AI-agent abuse on a developer's Mac, grounded in the [EAA catalog](https://github.com/0x4D31/endpoint-ai-agent-abuse); arrives with tangent's macOS pack ([#85](https://github.com/EthanBlackburn/tangent/pull/85)) | 45 | 45 |
 
-tangent's packs read six of the stream's eight sources (acme's product log and its agent's log have no pack), so a run judges the 199 cases with a record among those: 77 attacks to catch, the 35 Stratus techniques run from the member's usual place, which are counted apart, and 87 that must not be flagged.
+tangent's packs read seven of the stream's nine sources (acme's product log and its agent's log have no pack), so a run judges the 209 cases with a record among those: 82 attacks to catch, the 35 Stratus techniques run from the member's usual place, which are counted apart, and 92 that must not be flagged.
 
 Every case lands on a day of its own inside fourteen months of acme's ordinary traffic ([the stream](#the-stream)), so the judge sees it the way it would in production: against the history of the people and systems involved.
 
@@ -66,7 +66,17 @@ The eleven Google Workspace cases added on 2026-11-25 (six attacks, five look-al
 | look-alikes flagged, of 5 | 5, 5, 5 | 2, 1, 2 |
 | ordinary records flagged, of 580 | 38, 37, 44 | 18, 12, 13 |
 
-The look-alikes left standing are the admin resetting a colleague's password and 2-step verification (three runs of three) and the admin authorizing a new API client and creating a user (two of three). The reviewer calls both unresolved: the log does not hold the request behind either.
+The ten Supabase Auth cases (five attacks on the product's users, five look-alikes) can only run on a tangent with the Supabase pack, so they were run through `harness/release.py` on the 0.3.3 release, three times over their own windows:
+
+| | the judge alone | with the reviewer |
+|---|---|---|
+| attacks caught, of 5 | 5, 5, 5 | 5, 5, 5 |
+| look-alikes flagged, of 5 | 5, 5, 5 | 1, 2, 3 |
+| ordinary records flagged, of 779 | 17, 21, 22 | 3, 4, 7 |
+
+More than half the reviews in each run failed reading the lake and left their alerts standing ([RESULTS.md](RESULTS.md#the-supabase-cases)): the sign-up attack and two of the look-alikes stand that way, not on a reviewer's finding.
+
+Of the Workspace look-alikes, those left standing are the admin resetting a colleague's password and 2-step verification (three runs of three) and the admin authorizing a new API client and creating a user (two of three). The reviewer calls both unresolved: the log does not hold the request behind either.
 
 Two things limit what these numbers can say:
 
@@ -117,12 +127,15 @@ of acme's ordinary traffic from every source: sign-ins, the product's API
 traffic, pushes and pull requests, CI builds, each member's own AWS work, the
 agent's health checks, poller and plans, and the day's work in Google
 Workspace (sign-ins, documents opened and shared, apps granted access, the
-admin's group changes). 252,936 records:
+admin's group changes), and the product's own users signing in through
+Supabase Auth from home (sessions refreshed, a password mistyped or
+forgotten, a second factor, a new user now and then). 283,862 records:
 
 | source | records |
 |---|---|
 | `agent` | 147,570 |
 | `cloudtrail` | 32,409 |
+| `supabase` | 30,926 |
 | `app` | 21,584 |
 | `google_workspace` | 20,679 |
 | `okta` | 14,416 |
@@ -134,7 +147,7 @@ admin's group changes). 252,936 records:
 the packs normalize them, the times of its events and the stream lines that
 are its records. `past.py` moves both 104 weeks back, because the sqlite sink
 takes no time from the future. `windows.py` makes the judged windows: an hour
-either side of every case event, merged, 231 windows and 479 hours. Records
+either side of every case event, merged, 241 windows and 508 hours. Records
 outside a window are ingested as history and never judged.
 
 ## One command
@@ -347,7 +360,9 @@ year of history. `TANGENT` names a tangent that is not on the PATH, `SOURCES`
 init's sources, `PROFILE` the profile.
 
 It has run a few windows at a time (RESULTS.md), not the whole corpus: the
-numbers at the top are still the 0.1.9 harness's.
+numbers at the top are still the 0.1.9 harness's. The Supabase cases run
+only here, with `SOURCES=cloudtrail,github,okta,google_workspace,supabase`:
+0.1.9 has no pack for them.
 
 ## Score it
 

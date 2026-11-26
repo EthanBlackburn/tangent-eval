@@ -1,0 +1,13 @@
+id: benign/supabase-mistyped-password-at-home
+title: sam mistypes his password three times at home, then signs in and works
+category: benign
+priority: P1
+scope: actor            # the window that reveals it
+cadence: 1h
+alone_innocent: true   # does each line look fine on its own?
+sources: [supabase]
+events: 7
+expected:
+  flag: false
+  one_line: "three refused sign-ins from sam's own Comcast address, then his sign-in from it and an afternoon of token refreshes"
+  check_first: ""

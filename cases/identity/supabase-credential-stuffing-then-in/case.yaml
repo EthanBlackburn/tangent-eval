@@ -1,0 +1,13 @@
+id: identity/supabase-credential-stuffing-then-in
+title: "Hundreds of refused sign-ins to the product from hosting providers in seven minutes; then one works, and that user's email is changed"
+category: identity
+priority: P1
+scope: actor            # the window that reveals it
+cadence: 1h
+alone_innocent: true   # does each line look fine on its own?
+sources: [supabase]
+events: 244
+expected:
+  flag: true
+  one_line: "240 sign-ins to the product were refused in seven minutes from four hosting-provider addresses, then one of those addresses signed in as nina.okafor@northwind.example, who is always on Comcast, and changed the account's email and password"
+  check_first: "sign nina's sessions out and restore her email; block the four addresses; which other accounts they got into"

@@ -1,0 +1,13 @@
+id: benign/supabase-wrong-code-twice
+title: claire types her TOTP code wrong twice at home, then right
+category: benign
+priority: P1
+scope: actor            # the window that reveals it
+cadence: 1h
+alone_innocent: true   # does each line look fine on its own?
+sources: [supabase]
+events: 6
+expected:
+  flag: false
+  one_line: claire signed in from her own Orange address, entered two wrong TOTP codes half a minute apart and then the right one
+  check_first: ""

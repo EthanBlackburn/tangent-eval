@@ -7,7 +7,7 @@
 # gives ordinary days. Edit here for the eval, not in the example.
 
 org: acme                        # the org every one of your own infrastructure logs is folded into
-own_sources: [cloudtrail, github_audit, okta, google_workspace, gha_ci, runner_egress]
+own_sources: [cloudtrail, github_audit, okta, google_workspace, supabase, gha_ci, runner_egress]
 
 countries: [US]                  # where your people sign in from
 cloud: aws                       # where your services run (aws, gcp, cloudflare, datacenter); a service seen elsewhere is news
@@ -113,6 +113,8 @@ watch:                           # kinds a person wants seen every time, however
   - repo.access
   - pull_request_target
   - EMAIL_FORWARDING_OUT_OF_DOMAIN     # Google Workspace
+  - user_deleted                       # Supabase Auth
+  - factor_deleted
   - member.role.changed                # the product's own audit log
   - org.settings.changed
   - api_key.create

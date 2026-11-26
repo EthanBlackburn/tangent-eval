@@ -1,0 +1,13 @@
+id: identity/supabase-recovery-then-second-factor-removed
+title: "A user's password is recovered from a hosting provider abroad; the session then removes their second factor and changes the email"
+category: identity
+priority: P1
+scope: actor            # the window that reveals it
+cadence: 1h
+alone_innocent: true   # does each line look fine on its own?
+sources: [supabase]
+events: 6
+expected:
+  flag: true
+  one_line: "tomas.reyes@lumenfreight.example, always on AT&T in the US, asked for a password recovery from a Dutch hosting provider, signed in through the link there, set a new password, deleted the account's TOTP factor and changed its email"
+  check_first: sign tomas out everywhere and restore his email and factor; ask whether his mailbox is his own; what the session read

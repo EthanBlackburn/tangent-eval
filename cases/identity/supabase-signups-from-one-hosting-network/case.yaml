@@ -1,0 +1,13 @@
+id: identity/supabase-signups-from-one-hosting-network
+title: "Sixty accounts are made in four minutes from one hosting provider's network, each with a random name at a throwaway mail domain"
+category: identity
+priority: P2
+scope: org            # the window that reveals it
+cadence: 1h
+alone_innocent: true   # does each line look fine on its own?
+sources: [supabase]
+events: 120
+expected:
+  flag: true
+  one_line: sixty sign-ups in four minutes from addresses in one Dutch hosting network, each a random string at mailbox.example, each signed in once
+  check_first: suspend the sixty accounts; put a captcha or rate limit on sign-up; what they did after signing in

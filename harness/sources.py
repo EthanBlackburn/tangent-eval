@@ -11,7 +11,7 @@ some."""
 import json
 import sys
 
-SOURCES = {"cloudtrail", "github_audit", "gha_ci", "runner_egress", "okta", "google_workspace"}  # maincfg.py's packs
+SOURCES = {"cloudtrail", "github_audit", "gha_ci", "runner_egress", "okta", "google_workspace", "supabase"}  # what a pack reads; supabase only on a released tangent (release.py)
 
 stream, truth, out_stream, out_truth = sys.argv[1:5]
 at = {}  # a kept line's number in STREAM -> its number in OUT_STREAM

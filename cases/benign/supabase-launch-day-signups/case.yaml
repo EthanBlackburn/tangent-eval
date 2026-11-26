@@ -1,0 +1,13 @@
+id: benign/supabase-launch-day-signups
+title: "The product is on the front page of a news site: forty people sign up in an hour, from home"
+category: benign
+priority: P2
+scope: org            # the window that reveals it
+cadence: 1h
+alone_innocent: true   # does each line look fine on its own?
+sources: [supabase]
+events: 80
+expected:
+  flag: false
+  one_line: "forty sign-ups in an hour, people's names at eight companies' domains or through Google, from home broadband in four countries"
+  check_first: ""

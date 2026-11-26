@@ -1,0 +1,13 @@
+id: benign/supabase-forgot-password-at-home
+title: omar forgets his password at home, recovers it and carries on
+category: benign
+priority: P1
+scope: actor            # the window that reveals it
+cadence: 1h
+alone_innocent: true   # does each line look fine on its own?
+sources: [supabase]
+events: 7
+expected:
+  flag: false
+  one_line: "two refused sign-ins from omar's own AT&T address, a recovery asked for and followed from it, a new password, and the session kept alive"
+  check_first: ""

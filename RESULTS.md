@@ -129,6 +129,54 @@ which found the lake empty: the player did not yet wait long enough for it
 (it does now). One run says the release does about what 0.1.9 did on these
 windows, and no more than that.
 
+## The Supabase cases
+
+**2026-11-25, three runs.** Five attacks on the users of acme's product and
+five look-alikes, in Supabase Auth's log as tangent's `supabase` source
+reads it, added with ordinary traffic for some forty of the product's users
+(30,926 records). The corpus is then 209 cases in 219 judged windows. Only
+the ten windows holding the new cases were run: 1,451 records through
+`harness/release.py` on the 0.3.3 release binary, Claude Haiku 5.5 as the
+judge and Claude Sonnet 5.5 reviewing, both through OpenRouter held to
+Anthropic as the host.
+
+| | the judge, runs 1 to 3 | with the reviewer |
+|---|---|---|
+| attacks caught, of 5 | 5, 5, 5 | 5, 5, 5 |
+| look-alikes flagged, of 5 | 5, 5, 5 | 1, 2, 3 |
+| ordinary records flagged, of 779 judged | 17, 21, 22 | 3, 4, 7 |
+
+The judge has no history for a Supabase user (the baseline does not learn
+that source), so it flags every look-alike and the reviewer, who can read
+the lake, decides. Where the reviewer answered, it found the stuffed
+passwords, the recovery from a hosting provider, the token used from two
+countries and the guessed second factor malicious in every run, and the
+forgotten password and the mistyped code benign.
+`benign/supabase-laptop-and-phone` stands in all three: the reviewer calls
+it unresolved, the phone's address being new for that user.
+
+**More than half of the reviews failed.** 38 of 70, 49 of 85 and 51 of 80
+reviews came back with an error reading the lake ("Too many open files", or
+a query over 30 seconds), and an alert whose review failed stays flagged.
+The sign-up cases make a review for each new account, sixty at once, and
+each opens a month of the lake's files. So
+`identity/supabase-signups-from-one-hosting-network` is caught on the
+judge's flag with 38, 47 and 44 of its reviews failed, and
+`benign/supabase-launch-day-signups` (runs 2 and 3) and
+`benign/supabase-mistyped-password-at-home` (run 3) stand for the same
+reason, not because a reviewer found them suspicious.
+
+The judge left 3, 2 and 7 of 1,451 records unjudged. The three runs cost
+about $8.
+
+What is thin about it: the rows are shaped after the pack's own fixtures,
+not taken from a live project. The cases were written the day they were
+measured, by the same hands; nothing in them or in the brief was changed
+after the first run. The ordinary records are those in the ten windows. The
+reviews that failed are a fault to fix in tangent or in how the player
+fills the lake, and the numbers after review should be read again once it
+is.
+
 ## Earlier layouts
 
 Every number below came from the same corpus run through an earlier
