@@ -35,17 +35,30 @@ Every case lands on a day of its own inside fourteen months of acme's ordinary t
 
 ## How good is it
 
-Measured on 2026-11-15, one run, on the 188 cases the corpus had then, with Claude Haiku 5.5 as the judge and Claude Sonnet 5.5 as the second reviewer of what it flagged ([RESULTS.md](RESULTS.md) has the run):
+Measured on 2026-11-25, one run over all 199 cases, with Claude Haiku 5.5 as the judge and Claude Sonnet 5.5 as the second reviewer of what it flagged ([RESULTS.md](RESULTS.md) has the run, and the one of 2026-11-15 before it):
 
 | | the judge alone | with the reviewer |
 |---|---|---|
-| attacks caught, of 71 | 70 | 70 |
-| ordinary records flagged, of 5,304 | 462 | 40 |
-| must-not-flag cases flagged, of 82 | 68 | 38 |
+| attacks caught, of 77 | 77 | 77 |
+| ordinary records flagged, of 8,894 | 867 | 70 |
+| must-not-flag cases flagged, of 87 | 76 | 42 |
 
-[compare/](compare/README.md) puts the same logs to Elastic's and Sigma's public detection rules: 51 and 13 of the 71, with 43 and 121 ordinary records flagged.
+Of the 42, 35 are a Stratus technique's harmless twin from an address never seen (below), 3 the same from the usual place, and 4 our own look-alikes of 17.
 
-The eleven Google Workspace cases added on 2026-11-25 (six attacks, five look-alikes) were run apart, three times over their own windows, with the same two models:
+By the log our own cases are in, after review (a case in two logs counts in both; the Stratus techniques are all CloudTrail and are not in this table):
+
+| log | attacks caught | look-alikes flagged |
+|---|---|---|
+| AWS CloudTrail | 16 of 16 | 0 of 4 |
+| GitHub audit log | 13 of 13 | 1 of 5 |
+| GitHub Actions runs | 7 of 7 | 1 of 2 |
+| runner egress | 6 of 6 | 1 of 2 |
+| Okta | 9 of 9 | 0 of 5 |
+| Google Workspace | 8 of 8 | 2 of 5 |
+
+[compare/](compare/README.md) puts the logs of the 2026-11-15 run (188 cases, 71 attacks, of which tangent caught 70) to Elastic's and Sigma's public detection rules: 51 and 13 of the 71, with 43 and 121 ordinary records flagged. Neither was run over the cases added since.
+
+The eleven Google Workspace cases added on 2026-11-25 (six attacks, five look-alikes) were first run apart, three times over their own windows, with the same two models:
 
 | | the judge alone | with the reviewer |
 |---|---|---|
@@ -67,8 +80,8 @@ Two things limit what these numbers can say:
   ([stratus/README.md](stratus/README.md#not-citable-yet) lists them); those
   are fixed, and so is one found since: every spliced case signed with an
   access key the log had never seen. With them fixed, a technique's harmless
-  twin from an address never seen is flagged 34 times of 35. Whether it
-  should be is not settled, so read the 82 with that in it.
+  twin from an address never seen is flagged 35 times of 35. Whether it
+  should be is not settled, so read the 87 with that in it.
 
 ## Check it yourself
 
