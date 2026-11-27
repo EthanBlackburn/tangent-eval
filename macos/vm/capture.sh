@@ -17,6 +17,8 @@ sudo "$sensor" > es.ndjson 2> es.err &
 sleep 1
 python3 ps/ps.py > ps2.ndjson
 sudo tcpdump -i pktap,all -k NP -n -l -tt -X "$(python3 net/net.py --filter)" 2>/dev/null | python3 net/net.py > net.ndjson &
+python3 agent/transcripts.py > prompts.ndjson &
+prompts=$!
 sleep 4
 [ -s es.ndjson ] || { sudo pkill -x tcpdump || true; echo "the sensor wrote nothing (a development build is killed at launch in a VM): $(cat es.err)" >&2; exit 1; }
 
@@ -50,5 +52,6 @@ sleep "$settle"
 
 sudo pkill -x tangent-sensor || true
 sudo pkill -x tcpdump || true
+kill "$prompts" 2>/dev/null || true
 sleep 2
 echo "typed ${#typed[@]} lines; $(wc -l < es.ndjson | tr -d ' ') sensor lines, $(wc -l < net.ndjson | tr -d ' ') connections"

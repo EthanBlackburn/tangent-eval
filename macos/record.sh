@@ -6,6 +6,7 @@
 #
 #   OUT_DIR/es.ndjson.zst    a process snapshot, then the sensor's lines (the recorder's own taken out: scrub.py)
 #   OUT_DIR/net.ndjson       net.py's lines
+#   OUT_DIR/prompts.ndjson   transcripts.py's lines: what the person typed to a coding agent
 #   OUT_DIR/published.ndjson what the VM published to the stand-in registry
 #   OUT_DIR/received.ndjson  what was sent to the case's `hosts`: method, host, path and size, no content
 #
@@ -46,6 +47,16 @@ repos=$(python3 -I -c 'import json,sys; [print(f"--repo {k}={sys.argv[2]}/{v}") 
 # case with PyPI projects the two names pip talks to
 names=$hosts
 [ -z "$pypi" ] || names="$hosts pypi.org files.pythonhosted.org"
+# a case with `agent` runs Claude Code in the VM: its requests to
+# api.anthropic.com come to the stand-in, which passes them to MODEL_API
+# (default OpenRouter's Messages API) with MODEL_API_KEY. The names in `agent`
+# are answered the same way: where a hijacked agent's traffic is sent.
+model=
+if python3 -I -c 'import json,sys; sys.exit("agent" not in json.load(open(sys.argv[1])))' "$dir/case.json"; then
+  [ -n "${MODEL_API_KEY:-}" ] || { echo "$case runs a coding agent: set MODEL_API_KEY" >&2; exit 1; }
+  model="--model-api ${MODEL_API:-https://openrouter.ai/api} $(field agent | sed 's/^/--model-name /' | tr '\n' ' ')"
+  names="$names api.anthropic.com $(field agent | tr '\n' ' ')"
+fi
 tls=$(mktemp -d)
 # shellcheck disable=SC2086
 "$here/standin/certs.sh" "$state/certs" "$tls" $names
@@ -53,7 +64,7 @@ tls=$(mktemp -d)
 : > "$out/received.ndjson"
 # shellcheck disable=SC2086
 python3 -I "$here/standin/registry.py" --cert "$tls/leaf.pem" --key "$tls/leaf.key" \
-  --log "$out/published.ndjson" --sink-log "$out/received.ndjson" $(field http_ports | sed 's/^/--http-port /') $serve $repos $pypi $dirs 2> "$out/registry.log" &
+  --log "$out/published.ndjson" --sink-log "$out/received.ndjson" $(field http_ports | sed 's/^/--http-port /') $model $serve $repos $pypi $dirs 2> "$out/registry.log" &
 registry=$!
 sleep 1
 kill -0 "$registry" 2>/dev/null || { echo "the stand-in did not start: $(tail -1 "$out/registry.log")" >&2; exit 1; }
@@ -81,7 +92,7 @@ vssh=(ssh -i "$state/vm_key" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/
 
 # Outside the home directory: a case that scans the home must not find the capture.
 rec=/private/var/tmp/rec
-tar -C "$pack" -cf - ps/ps.py net/net.py -C "$(dirname "$sensor")" TangentSensor.app -C "$here/vm" capture.sh -C "$dir" "$what.sh" \
+tar -C "$pack" -cf - ps/ps.py net/net.py agent/transcripts.py -C "$(dirname "$sensor")" TangentSensor.app -C "$here/vm" capture.sh -C "$dir" "$what.sh" \
   | "${vssh[@]}" "mkdir -p $rec && tar -C $rec -xf -"
 
 # One ssh session for the whole capture: it is there before the sensor starts
@@ -90,6 +101,7 @@ tar -C "$pack" -cf - ps/ps.py net/net.py -C "$(dirname "$sensor")" TangentSensor
 [ "${PIPESTATUS[0]}" = 0 ] || { echo "the capture failed: $out/capture.log" >&2; exit 1; }
 "${vssh[@]}" "cd $rec && cat ps1.ndjson monitor.ndjson ps2.ndjson es.ndjson" > "$out/es.raw.ndjson"
 "${vssh[@]}" "cat $rec/net.ndjson" > "$out/net.raw.ndjson"
+"${vssh[@]}" "cat $rec/prompts.ndjson" > "$out/prompts.ndjson"   # what the person typed to a coding agent, as the pack is told it
 python3 -I "$here/scrub.py" "$out/es.raw.ndjson" "$out/net.raw.ndjson" "$out"   # the recorder itself, out of the recording
 rm "$out/es.raw.ndjson" "$out/net.raw.ndjson"
 echo "$out: $(zstd -dc "$out/es.ndjson.zst" | wc -l | tr -d ' ') sensor lines, $(wc -l < "$out/net.ndjson" | tr -d ' ') connections, $(wc -l < "$out/published.ndjson" | tr -d ' ') published, $(wc -l < "$out/received.ndjson" | tr -d ' ') requests to the case's hosts"

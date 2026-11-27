@@ -83,6 +83,14 @@ sqlite3 "$vscode" "INSERT OR REPLACE INTO ItemTable (key, value) VALUES ('conten
 # what VS Code did by default until 2026, and what its forks and many a
 # developer's settings still do. As it ships now it asks first.
 printf '{\n    "task.allowAutomaticTasks": "on"\n}\n' > "$HOME/Library/Application Support/Code/User/settings.json"
+# Claude Code, by its own installer, as a developer who uses it has it:
+# signed in (the key is random bytes; in a recording the stand-in answers for
+# api.anthropic.com with a key of the host's), edits accepted and shell
+# commands allowed without a question each time.
+[ -x ~/.local/bin/claude ] || curl -fsSL https://claude.ai/install.sh | bash
+grep -q '.local/bin' ~/.zshrc 2>/dev/null || echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
+mkdir -p ~/.claude
+[ -f ~/.claude/settings.json ] || printf '{\n  "model": "sonnet",\n  "env": { "ANTHROPIC_API_KEY": "sk-ant-api03-%sAA" },\n  "permissions": { "defaultMode": "acceptEdits", "allow": ["Bash"] }\n}\n' "$(rand A-Za-z0-9_- 93)" > ~/.claude/settings.json
 git config --global user.name dev
 git config --global user.email dev@acme.example
 git config --global init.defaultBranch main
