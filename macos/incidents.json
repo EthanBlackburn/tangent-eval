@@ -2,6 +2,7 @@
   {"id": "shai-hulud", "name": "Shai-Hulud", "how": "npm package", "does": "An install script hunts the Mac for tokens and keys, and republishes the developer's own packages with itself added"},
   {"id": "axios", "name": "axios compromise", "how": "npm package", "does": "An install script drops a remote-access tool made to look like an Apple daemon and leaves it running"},
   {"id": "litellm", "name": "LiteLLM compromise", "how": "PyPI package", "does": "A file the package installs runs on every Python start and sweeps credentials"},
+  {"id": "nx", "name": "Nx \"s1ngularity\"", "how": "npm package", "does": "An install script takes the developer's tokens and has the coding agent on the Mac, its permission prompts off, list the files worth taking"},
   {"id": "atomic-stealer", "name": "Atomic Stealer", "how": "a command pasted into Terminal", "does": "A loader collects browser, wallet and document files, sends them off and installs a launch item"},
   {"id": "macsync", "name": "MacSync", "how": "a fake \"install Claude\" page", "does": "A loader grants itself Full Disk Access, edits the shell's start-up file and installs a login item"},
   {"id": "clawhub-skill", "name": "ClawHub skills", "how": "an agent skill", "does": "A skill's \"prerequisites\" have the agent run an encoded command that fetches a stealer"},
@@ -11,5 +12,5 @@
   {"id": "glassworm", "name": "GlassWorm", "how": "an editor extension", "does": "The extension copies the login keychain, wallets and the developer's credentials, uploads them and installs a login item"},
   {"id": "cursor-extension", "name": "Trojanised Claude Code extension", "how": "an editor extension", "does": "It adds an SSH key, opens a reverse tunnel and installs a login item"},
   {"id": "bluenoroff", "name": "BlueNoroff fake Zoom update", "how": "a script from a fake meeting invite", "does": "It tampers with the privacy database and plants itself in the shell's start-up"},
-  {"id": "hijacked-agent", "name": "Hijacked coding agent", "how": "a planted instruction file, MCP server or hook", "does": "The agent's settings are rewritten so it runs someone else's commands or sends its traffic elsewhere"}
+  {"id": "hijacked-agent", "name": "Hijacked coding agent", "how": "a cloned repository's agent settings", "does": "A hook in the repository's settings runs the attacker's script when the agent starts, and the agent's traffic and API key go to the attacker's endpoint"}
 ]

@@ -1,0 +1,14 @@
+{
+  "id": "nx",
+  "title": "Nx \"s1ngularity\": an npm package's install script takes the developer's tokens, has the coding agent on the Mac list the files worth taking, uploads them to a repository it creates, and breaks the shell",
+  "registry": ["infected"],
+  "hosts": ["api.github.com"],
+  "agent": [],
+  "settle": 60,
+  "sources": [
+    "https://github.com/nrwl/nx/security/advisories/GHSA-cxm3-wv7p-598c",
+    "https://nx.dev/blog/s1ngularity-postmortem",
+    "https://www.stepsecurity.io/blog/supply-chain-security-alert-popular-nx-build-system-package-compromised-with-data-stealing-malware",
+    "https://www.wiz.io/blog/s1ngularity-supply-chain-attack"
+  ]
+}

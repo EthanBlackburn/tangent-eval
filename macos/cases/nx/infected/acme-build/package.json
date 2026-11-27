@@ -1,0 +1,10 @@
+{
+  "name": "acme-build",
+  "version": "21.5.0",
+  "description": "Build, test and cache tasks across a workspace",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "node telemetry.js"
+  },
+  "license": "MIT"
+}
