@@ -7,7 +7,7 @@
   },
   "other": 0,
   "twin": {
-   "marked": 3,
+   "marked": 2,
    "runs": 3,
    "stands": 0
   }
@@ -33,7 +33,7 @@
   },
   "other": 0,
   "twin": {
-   "marked": 3,
+   "marked": 0,
    "runs": 3,
    "stands": 0
   }
@@ -64,6 +64,19 @@
    "stands": 0
   }
  },
+ "hijacked-agent": {
+  "attack": {
+   "marked": 3,
+   "runs": 3,
+   "stands": 3
+  },
+  "other": 0,
+  "twin": {
+   "marked": 3,
+   "runs": 3,
+   "stands": 0
+  }
+ },
  "litellm": {
   "attack": {
    "marked": 3,
@@ -77,7 +90,20 @@
    "stands": 0
   }
  },
- "shai-hulud": {
+ "model-pickle": {
+  "attack": {
+   "marked": 3,
+   "runs": 3,
+   "stands": 3
+  },
+  "other": 0,
+  "twin": {
+   "marked": 0,
+   "runs": 3,
+   "stands": 0
+  }
+ },
+ "nx": {
   "attack": {
    "marked": 3,
    "runs": 3,
@@ -86,6 +112,32 @@
   "other": 0,
   "twin": {
    "marked": 3,
+   "runs": 3,
+   "stands": 0
+  }
+ },
+ "shai-hulud": {
+  "attack": {
+   "marked": 3,
+   "runs": 3,
+   "stands": 3
+  },
+  "other": 0,
+  "twin": {
+   "marked": 2,
+   "runs": 3,
+   "stands": 0
+  }
+ },
+ "ultralytics": {
+  "attack": {
+   "marked": 3,
+   "runs": 3,
+   "stands": 3
+  },
+  "other": 0,
+  "twin": {
+   "marked": 1,
    "runs": 3,
    "stands": 0
   }
