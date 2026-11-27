@@ -40,7 +40,7 @@ wallets, Documents and Desktop files, all random bytes.
 bash -n cases/atomic-stealer/update.sh
 TANGENT_ROOT=~/code/tangent ./record.sh atomic-stealer attack
 TANGENT_ROOT=~/code/tangent ./record.sh atomic-stealer twin
-python3 -I replay.py ../runs/macos/recordings/atomic-stealer/attack ../runs/macos/replay-free/atomic-stealer-attack
+python3 -I replay.py ../runs/macos/recordings/atomic-stealer/attack ../runs/macos/replay/atomic-stealer-attack-1
 ```
 
 ## What happens in the recording
