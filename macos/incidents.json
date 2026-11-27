@@ -3,6 +3,8 @@
   {"id": "axios", "name": "axios compromise", "how": "npm package", "does": "An install script drops a remote-access tool made to look like an Apple daemon and leaves it running"},
   {"id": "litellm", "name": "LiteLLM compromise", "how": "PyPI package", "does": "A file the package installs runs on every Python start and sweeps credentials"},
   {"id": "nx", "name": "Nx \"s1ngularity\"", "how": "npm package", "does": "An install script takes the developer's tokens and has the coding agent on the Mac, its permission prompts off, list the files worth taking"},
+  {"id": "ultralytics", "name": "Ultralytics compromise", "how": "PyPI package", "does": "Making the package's model downloads a coin miner into /tmp, starts it against a mining pool and deletes the file"},
+  {"id": "model-pickle", "name": "Malicious Hugging Face models", "how": "a model file", "does": "Loading the model's weights, a pickle, has the developer's Python connect back to an address and start a shell"},
   {"id": "atomic-stealer", "name": "Atomic Stealer", "how": "a command pasted into Terminal", "does": "A loader collects browser, wallet and document files, sends them off and installs a launch item"},
   {"id": "macsync", "name": "MacSync", "how": "a fake \"install Claude\" page", "does": "A loader grants itself Full Disk Access, edits the shell's start-up file and installs a login item"},
   {"id": "clawhub-skill", "name": "ClawHub skills", "how": "an agent skill", "does": "A skill's \"prerequisites\" have the agent run an encoded command that fetches a stealer"},

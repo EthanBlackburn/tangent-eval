@@ -1,0 +1,22 @@
+{
+  "id": "ultralytics",
+  "title": "The Ultralytics compromise: a PyPI package, when its model class is first made, has curl fetch a coin miner into /tmp, makes it executable, starts it against a mining pool on port 8080 and deletes the file",
+  "pypi": ["infected"],
+  "hosts": ["api.acme-vision.example", "pool.acme-vision.example"],
+  "http_ports": [8080],
+  "serve": {
+    "api.acme-vision.example/repos/acme/acme-vision/git/blobs/3f1c9a7e52b84d06a1e9c7f4b2d85e6093a7c41d": "runner.py"
+  },
+  "settle": 120,
+  "sources": [
+    "https://www.hiddenlayer.com/research/ultralytics-python-package-compromise-deploys-cryptominer",
+    "https://github.com/ltdrdata/ComfyUI-Impact-Pack/issues/843",
+    "https://github.com/ultralytics/ultralytics/issues/18027",
+    "https://www.reversinglabs.com/blog/compromised-ultralytics-pypi-package-delivers-crypto-coinminer",
+    "https://www.wiz.io/blog/ultralytics-ai-library-hacked-via-github-for-cryptomining",
+    "https://blog.pypi.org/posts/2024-12-11-ultralytics-attack-analysis/",
+    "https://blog.yossarian.net/2024/12/06/zizmor-ultralytics-injection",
+    "https://www.bleepingcomputer.com/news/security/ultralytics-ai-model-hijacked-to-infect-thousands-with-cryptominer/",
+    "https://socket.dev/blog/ultralytics-pypi-package-compromised-through-github-actions-cache-poisoning"
+  ]
+}
